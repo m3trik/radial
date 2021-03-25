@@ -6,8 +6,9 @@
 
 *desktop.ini
 *.rar
-*/.vscode
-*/.grepWin_backup
+.vscode
+grepWin_backup
+
 
 
 
