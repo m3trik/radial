@@ -16,7 +16,8 @@
 -- ||||||||||||||||||||||||||||||+
 
 
-func = (python.Import "max_init").Init -- fn func=(return (python.Import "max_init").Init)
+--func = (python.Import "max_init").Init --
+fn func=(return (python.Import "max_init").Init)
 
 
 
