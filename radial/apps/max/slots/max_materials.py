@@ -495,7 +495,7 @@ class Materials(Init):
 		if rt.subObjectLevel==4: #if face selection check for multimaterial
 			if rt.getNumSubMtls(mat): #if multimaterial; use selected face to get material ID
 				if face is None:
-					face = rt.bitArrayToArray(rt.getFaceSelection(obj))[0] #get selected face
+					face = Init.bitArrayToArray(rt.getFaceSelection(obj))[0] #get selected face
 
 				if rt.classOf(obj)==rt.Editable_Poly:
 					ID_ = rt.polyop.GetFaceId_(obj, face) #Returns the material ID of the specified face.

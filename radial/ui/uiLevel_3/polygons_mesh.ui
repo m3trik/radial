@@ -286,37 +286,6 @@
              </widget>
             </item>
             <item>
-             <widget class="ToolButton" name="tb001">
-              <property name="enabled">
-               <bool>true</bool>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>20</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>125</width>
-                <height>20</height>
-               </size>
-              </property>
-              <property name="toolTip">
-               <string>Create a bridge between two sets of edges or faces</string>
-              </property>
-              <property name="text">
-               <string>Bridge</string>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>18</width>
-                <height>18</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-            <item>
              <widget class="QPushButton" name="b021">
               <property name="enabled">
                <bool>true</bool>

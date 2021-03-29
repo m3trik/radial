@@ -462,7 +462,7 @@ class Polygons(Init):
 				position = 0.5
 
 				edges = rt.getEdgeSelection(obj)
-				for edge in self.bitArrayToArray(edges):
+				for edge in Init.bitArrayToArray(edges):
 					rt.polyop.divideEdge(obj, edge, position)
 
 			if level==4:

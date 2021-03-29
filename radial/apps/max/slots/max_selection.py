@@ -316,11 +316,11 @@ class Selection(Init):
 
 		if index>0:
 			for obj in rt.selection:
-				for i in list_:
+				for i in cmb.items:
 					if index==cmb.items.index(i):
 						obj.convertSelection('CurrentLevel', i) #Convert current selection to index of string i
 						# rt.setSelectionLevel(obj, i) #Change component mode to i
-						rt.subObjectLevel = items.index(i)
+						rt.subObjectLevel = cmb.items.index(i) #the needed component level corresponds to the item's index.
 			cmb.setCurrentIndex(0)
 
 
@@ -431,11 +431,13 @@ class Selection(Init):
 		step = tb.menu_.s003.value()
 
 
-		if edgeRing:
-			rt.macros.run('PolyTools', 'Ring')
+		if edgeRing: # rt.macros.run('PolyTools', 'Ring')
+			obj = rt.objects[0]
+			Init.selectRing(obj)
 
-		elif edgeLoop:
-			rt.macros.run('PolyTools', 'Loop')
+		elif edgeLoop: #rt.macros.run('PolyTools', 'Loop')
+			obj = rt.objects[0]
+			Init.selectLoop(obj)
 
 		elif pathAlongLoop:
 			pm.select(self.getPathAlongLoop(selection, step=step))
@@ -456,7 +458,12 @@ class Selection(Init):
 			return
 
 		tolerance = str(tb.menu_.s000.value()) #string value because mel.eval is sending a command string
-		# mel.eval("doSelectSimilar 1 {\""+ tolerance +"\"}")
+		
+		level = rt.subObjectLevel
+		if level is 0: #object
+			maxEval('actionMan.executeAction 0 "40099"') #Selection: Select Similar
+		else:
+			print ('# Error: No support for sub-object level selections. #')
 
 
 	def tb002(self, state=None):
@@ -500,7 +507,7 @@ class Selection(Init):
 
 		objects = pm.ls(sl=1, objectsOnly=1)
 		edges = Init.getEdgesByNormalAngle(objects, lowAngle=angleLow, highAngle=angleHigh)
-		pm.select(edges)
+		rt.select(edges)
 
 
 	def generateUniqueSetName(self):

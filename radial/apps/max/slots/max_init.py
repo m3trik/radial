@@ -119,7 +119,7 @@ class Init(Slots):
 
 	# # ------------------------------------------------
 	' DAG Objects'
-	# # ------------------------------------------------
+	# --------------------------------------------------
 
 
 	@staticmethod
@@ -171,37 +171,87 @@ class Init(Slots):
 	# ------------------------------------------------
 
 	@staticmethod
-	def selectFaceLoop(tolerance, includeOpenEdges=False):
-		'''
+	def selectLoop(obj):
+		'''Select a component loop from two or more selected adjacent components (or a single edge).
+
 		:Parameters:
-			tolerance (float) = Face normal tolerance.
-			includeOpenEdges (bool) = 
+			obj (obj) = An Editable polygon object.
+
+		ex. obj = rt.objects[0]
+			selectLoop(obj)
+		'''
+		level = rt.subObjectLevel
+		if level is 1: #vertex
+			obj.convertselection('Vertex',  'Edge', requireAll=True)
+			obj.SelectEdgeLoop()
+			obj.convertselection('Edge', 'Vertex')
+
+		elif level is 2: #edge
+			obj.SelectEdgeLoop()
+
+		elif level is 4: #face
+			obj.convertselection('Face', 'Edge', requireAll=True)
+			obj.SelectEdgeRing()
+			obj.convertselection('Edge', 'Face')
+
+		rt.redrawViews()
+
+
+	@staticmethod
+	def selectRing(obj):
+		'''Select a component ring from two or more selected adjacent components (or a single edge).
+
+		:Parameters:
+			obj (obj) = An Editable polygon object.
+
+		ex. obj = rt.objects[0]
+			selectRing(obj)
+		'''
+		level = rt.subObjectLevel
+		if level is 1: #vertex
+			obj.convertselection('Vertex',  'Edge', requireAll=True)
+			obj.SelectEdgeRing()
+			obj.convertselection('Edge', 'Vertex')
+
+		elif level is 2: #edge
+			obj.SelectEdgeRing()
+
+		elif level is 4: #face
+			obj.convertselection('Face', 'Edge', requireAll=True)
+			obj.SelectEdgeLoop()
+			obj.convertselection('Edge', 'Face')
+
+		rt.redrawViews()
+
+
+	@staticmethod
+	def getFacesByNormal(normal, tolerance, includeBackFaces):
+		'''Get all faces in a mesh/poly that have normals within the given tolerance range.
+
+		:Parameters:
+			normal (obj) = Polygon face normal.
+			tolerance (float) = Normal tolerance.
+			includeBackFaces (bool) = Include back-facing faces.
 		'''
 		maxEval('''
-		selEdges = #{}
-		theObj = $
+		local collected_faces = for i = 1 to num_faces
+			where (local norm_vect = normalize (get_face_normal obj i)).x <= (normal.x + tolerance.x) AND norm_vect.x >= (normal.x - tolerance.x) AND
+				norm_vect.y <= (normal.y + tolerance.y) AND norm_vect.y >= (normal.y - tolerance.y) AND
+				norm_vect.z <= (normal.z + tolerance.z) AND norm_vect.z >= (normal.z - tolerance.z) collect i
 
-		eCount = polyOp.getNumEdges theObj
-		for e = 1 to eCount do
+		if includeBackFaces do
 		(
-			theFaces = (polyOp.getEdgeFaces theObj e) as array
-			if theFaces.count == 2 then
-			(
-			 theAngle = acos(dot (polyOp.getFaceNormal theObj theFaces[1]) (polyOp.getFaceNormal theObj theFaces[2])) 
-				if theAngle >= tolerance do selEdges[e] = true
-			)	
-			else 
-				if includeOpenEdges do selEdges[e] = true
+			local collected_back_faces = for i = 1 to num_faces
+				where (local norm_vect = - (normalize (get_face_normal obj i))).x <= (normal.x + tolerance.x) AND norm_vect.x >= (normal.x - tolerance.x) AND
+					norm_vect.y <= (normal.y + tolerance.y) AND norm_vect.y >= (normal.y - tolerance.y) AND
+					norm_vect.z <= (normal.z + tolerance.z) AND norm_vect.z >= (normal.z - tolerance.z) collect i
+			join collected_faces collected_back_faces
 		)
-		case classof (modPanel.getCurrentObject()) of
-		(
-			Editable_Poly: polyOp.setEdgeSelection theObj selEdges 
-			Edit_Poly: (modPanel.getCurrentObject()).SetSelection #Edge &selEdges 
-		)	
-		redrawViews()
 		''')
+		return collected_faces
 
 
+	@staticmethod
 	def circularize(self):
 		'''Circularize a set of vertices on a circle or an elipse.
 
@@ -310,123 +360,137 @@ class Init(Slots):
 		if level in (0, None): #objs
 			s = [i for i in sel]
 		elif level==1: #verts
-			s = Init.getSelectedVertices(sel[0])
+			s = Init.getComponents(sel[0], 'vertices', selection=True)
 		elif level==2: #edges
-			s = Init.getSelectedEdges(sel[0])
+			s = Init.getComponents(sel[0], 'edges', selection=True)
 		elif level==3: #borders
 			s = rt.getBorderSelection(sel[0])
 		elif level==4: #faces
-			s = Init.getSelectedFaces(sel[0])
+			s = Init.getComponents(sel[0], 'faces', selection=True)
 
 		return rt.array(*s) #unpack list s and convert to an array.
 
 
 	@staticmethod
-	def getVertices(obj):
-		'''Get a list of vertices of a given object whether it is an editable mesh or polygon.
+	def getComponents(obj=None, componentType=None, selection=False, returnType='Array'):
+		'''Get the components of the given type. (editable mesh or polygon)
 
 		:Parameters:
-			obj (obj) = polygon or mesh object.
+			obj (obj) = An Editable mesh or Editable polygon object. If None; the first currently selected object will be used.
+			componentType (str)(int) = The desired component mask. (valid: 'vertex', 'vertices', 'edge', 'edges', 'face', 'faces').
+			selection (bool) = Filter to currently selected components.
+			returnType (type) = The desired returned object type. (valid: Array(default), BitArray)
 
 		:Return:
-			(list) vertex list.		
-		'''
-		try:
-			vertices = Init.bitArrayToArray(rt.polyop.getVertSelection(obj)) #polygon
-		except:
-			vertices = Init.bitArrayToArray(rt.getVertSelection(obj)) #mesh
+			(array) Dependant on flags.
 
-		return vertices
+		ex. getComponents(obj, 'vertices', selection=True, returnType='BitArray')
+		'''
+		if not obj:
+			obj = rt.objects[0]
+
+		if not any((rt.isKindOf(obj, rt.Editable_Mesh), rt.isKindOf(obj, rt.Editable_Poly))): #filter for valid objects.
+			return '# Error: Invalid object type: {} #'.format(obj)
+
+		c=[] #for cases when no componentType given; initialize c with an empty list.
+		if componentType in ('vertex', 'vertices'):
+			if selection:
+				try:
+					c = rt.polyop.getVertSelection(obj) #polygon
+				except:
+					c = rt.getVertSelection(obj) #mesh
+			else:
+				try:
+					c = range(1, rt.polyop.getNumVerts(obj))
+				except:
+					c = range(1, rt.getNumVerts(obj))
+
+		elif componentType in ('edge', 'edges'):
+			if selection:
+				try:
+					c = rt.polyop.getEdgeSelection(obj) #polygon
+				except:
+					c = rt.getEdgeSelection(obj) #mesh
+			else:
+				try:
+					c = range(1, rt.polyop.getNumEdges(obj))
+				except:
+					c = range(1, obj.edges.count)
+
+		elif componentType in ('face', 'faces'):
+			if selection:
+				try:
+					c = rt.polyop.getFaceSelection(obj) #polygon
+				except:
+					c = rt.getFaceSelection(obj) #mesh
+			else:
+				try:
+					c = range(1, rt.polyop.getNumFaces(obj))
+				except:
+					c = range(1, obj.faces.count)
+
+		if returnType is 'Array':
+			result = Init.bitArrayToArray(c)
+		else:
+			result = Init.arrayToBitArray(c)
+
+		return result
 
 
 	@staticmethod
-	def getSelectedVertices(obj):
-		'''Get a list of the selected vertices of a given object whether it is an editable mesh or polygon.
+	def convertComponents(obj=None, components=None, convertFrom=None, convertTo=None, returnType='Array'):
+		'''Convert the components to the given type. (editable mesh, editable poly)
 
 		:Parameters:
-			obj (obj) = polygon or mesh object.
+			obj (obj) = An Editable mesh or Editable polygon object. If None; the first currently selected object will be used.
+			components (list) = The component id's of the given object.  If None; all components of the given convertFrom type will be used.
+			convertFrom (str) = Starting component type. (valid: 'vertex', 'vertices', 'edge', 'edges', 'face', 'faces').
+			convertTo (str) = Resulting component type.  (valid: 'vertex', 'vertices', 'edge', 'edges', 'face', 'faces').
+			returnType (type) = The desired returned object type. (valid: Array(default), 'BitArray')
 
 		:Return:
-			(list) vertex list.		
+			(array) Component ID's. ie. [1, 2, 3]
+
+		ex. obj = rt.objects[0]
+			edges = rt.getEdgeSelection(obj)
+			faces = convertComponents(obj, edges, 'edges', 'faces')
+			rt.setFaceSelection(obj, faces)
 		'''
-		try:
-			vertices = list(range(1, rt.polyop.getNumVerts(obj)))
-		except:
-			vertices = list(range(1, rt.getNumVerts(obj)))
+		if not obj:
+			obj = rt.objects[0]
+		if not components:
+			components = Init.getComponents(obj, convertFrom)
 
-		return vertices
+		if not any((rt.isKindOf(obj, rt.Editable_Mesh), rt.isKindOf(obj, rt.Editable_Poly))): #filter for valid objects.
+			return '# Error: Invalid object type: {} #'.format(obj)
 
+		if convertFrom in ('vertex', 'vertices') and convertTo in ('edge', 'edges'): #vertex to edge
+			c = rt.polyop.getEdgesUsingVert(obj, components)
 
-	@staticmethod
-	def getEdges(obj):
-		'''Get a list of faces of a given object whether it is an editable mesh or polygon.
+		elif convertFrom in ('vertex', 'vertices') and convertTo in ('face', 'faces'): #vertex to edge
+			c = rt.polyop.getFacesUsingVert(obj, components)
 
-		:Parameters:
-			obj (obj) = polygon or mesh object.
+		elif convertFrom in ('edge', 'edges') and convertTo in ('vertex', 'vertices'): #vertex to edge
+			c = rt.polyop.getVertsUsingEdge(obj, components)
 
-		:Return:
-			(list) edge list.		
-		'''
-		try:
-			edges = list(range(1, rt.polyop.getNumEdges(obj)))
-		except:
-			edges = list(range(1, obj.edges.count))
+		elif convertFrom in ('edge', 'edges') and convertTo in ('face', 'faces'): #vertex to edge
+			c = rt.polyop.getFacesUsingEdge(obj, components)
 
-		return edges
+		elif convertFrom in ('face', 'faces') and convertTo in ('vertex', 'vertices'): #vertex to edge
+			c = rt.polyop.getVertsUsingFace(obj, components)
 
+		elif convertFrom in ('face', 'faces') and convertTo in ('edge', 'edges'): #vertex to edge
+			c = rt.polyop.getEdgesUsingFace(obj, components)
 
-	@staticmethod
-	def getSelectedEdges(obj):
-		'''Get a list of the selected edges of a given object whether it is an editable mesh or polygon.
+		else:
+			return '# Error: Cannot convert from {} to type: {}: #'.format(convertFrom, convertTo)
 
-		:Parameters:
-			obj (obj) = polygon or mesh object.
+		if returnType is 'Array':
+			result = Init.bitArrayToArray(c)
+		else:
+			result = Init.arrayToBitArray(c)
 
-		:Return:
-			(list) edge list.		
-		'''
-		try:
-			edges = Init.bitArrayToArray(rt.polyop.getEdgeSelection(obj)) #polygon
-		except:
-			edges = Init.bitArrayToArray(rt.getEdgeSelection(obj)) #mesh
-
-		return edges
-
-
-	@staticmethod
-	def getFaces(obj):
-		'''Get a list of faces of a given object whether it is an editable mesh or polygon.
-
-		:Parameters:
-			obj (obj) = polygon or mesh object.
-
-		:Return:
-			(list) facet list.		
-		'''
-		try:
-			faces = list(range(1, rt.polyop.getNumFaces(obj)))
-		except:
-			faces = list(range(1, obj.faces.count))
-
-		return faces
-
-
-	@staticmethod
-	def getSelectedFaces(obj):
-		'''Get a list of the selected faces of a given object whether it is an editable mesh or polygon.
-
-		:Parameters:
-			obj (obj) = polygon or mesh object.
-
-		:Return:
-			(list) facet list.		
-		'''
-		try:
-			faces = Init.bitArrayToArray(rt.polyop.getFaceSelection(obj)) #polygon
-		except:
-			faces = Init.bitArrayToArray(rt.getFaceSelection(obj)) #mesh
-
-		return faces
+		return result
 
 
 	@Slots.message
@@ -581,6 +645,98 @@ class Init(Slots):
 				obj.scale([1, 1, 1])
 
 
+	@staticmethod
+	def compareSize(obj1, obj2, factor):
+		'''Compares two point3 sizes from obj bounding boxes.
+
+		:Parameters:
+			obj1 (obj) = 
+			obj2 (obj) = 
+			factor () = 
+		'''
+		maxEval('''
+		s1 = obj1.max - obj1.min --determine bounding boxes
+		s2 = obj2.max - obj2.min
+		
+		if (s2.x >= (s1.x*(1-factor)) AND s2.x <= (s1.x*(1+factor))) OR (s2.x >= (s1.y*(1-factor)) AND s2.x <= (s1.y*(1+factor))) OR (s2.x >= (s1.z*(1-factor)) AND s2.x <= (s1.z*(1+factor)))THEN
+			if (s2.y >= (s1.y*(1-factor)) AND s2.y <= (s1.y*(1+factor))) OR (s2.y >= (s1.x*(1-factor)) AND s2.y <= (s1.x*(1+factor))) OR (s2.y >= (s1.z*(1-factor)) AND s2.y <= (s1.z*(1+factor))) THEN
+				if (s2.z >= (s1.z*(1-factor)) AND s2.z <= (s1.z*(1+factor))) OR (s2.z >= (s1.x*(1-factor)) AND s2.z <= (s1.x*(1+factor))) OR (s2.z >= (s1.y*(1-factor)) AND s2.z <= (s1.y*(1+factor))) THEN
+				(
+					dbgSelSim ("  Size match on '" + obj1.name + "' with '" + obj2.name + "'")
+					return true
+				)
+				else return false
+			else return false
+		else return false			
+		''')
+
+
+	@staticmethod
+	def compareMesh(obj1, obj2, factor):
+		'''Compares vert/face/edges counts.
+
+		:Parameters:
+			obj1 (obj) = 
+			obj2 (obj) = 
+			factor () = 
+		'''
+		maxEval('''
+		if superclassof obj1 == GeometryClass then	--if object is a geometry type (mesh)
+		(
+			o1v = obj1.mesh.verts.count	--store object 1 and 2 vert / face / edge counts
+			o1f = obj1.mesh.faces.count
+			o1e = obj1.mesh.edges.count
+			o2v = obj2.mesh.verts.count
+			o2f = obj2.mesh.faces.count
+			o2e = obj2.mesh.edges.count
+			
+			if o2v >= o1v*(1-factor) AND o2v <= o1v*(1+factor) THEN 		--simpler than it looks. the 'factor' aka 'ratio' in the ui is 
+				if o2f >= o1f*(1-factor) AND o2f <= o1f*(1+factor) THEN		--allows for slop in the comparison. 0.1 is a 10% difference so comparing
+					if o2e >= o1e*(1-factor) AND o2e <= o1e*(1+factor) THEN	--face*(1-factor) is the same as saying face*0.9 in our example
+					(
+						dbgSelSim ("  Mesh match on '" + obj1.name + "' with '" + obj2.name + "' | V: " + o1v as string + ", " + o2v as string + " | F: " + o1f as string + ", " + o2f as string + " | E: " + o1e as string + ", " + o2e as string)
+						return true
+					)
+					else return false
+				else return false
+			else return false
+		)
+		else if superclassof obj1 == shape then
+		(
+			o1v = numKnots obj1
+			o2v = numKnots obj2
+			
+			if o2v >= o1v*(1-factor) AND o2v <= o1v*(1+factor) THEN
+				return true
+			else return false
+		)
+		''')
+	
+
+	@staticmethod
+	def compareMats(obj1, obj2):
+		'''Compare material names. unlike other properties, this is a simple true/false comparison, it doesn't find 'similar' names.
+
+		:Parameters:
+			obj1 (obj) = 
+			obj2 (obj) = 
+		'''
+		maxEval('''
+		m1 = obj1.material
+		m2 = obj2.material
+		
+		if m1 != undefined and m2 != undefined then --verify both objects have a material assigned
+		(
+			if m1.name == m2.name then 
+			(
+				dbgSelSim ("  Material match on object: '" + obj1.name + "' with '" + obj2.name + "'")
+				true	--check if material names are the same, if they are, return a true value
+			)
+			else false --uh oh. material names aren't the same. return false.
+		)
+		else false	--one or both objects do not have a material assigned. returning false.
+		''')
+
 
 	#--ExtrudeObject------------------------------------------------------------------------
 
@@ -706,40 +862,42 @@ class Init(Slots):
 
 
 	@staticmethod
+	def arrayToBitArray(array):
+		'''Convert an integer array to a bitarray.
+		'''
+		MaxPlus.Core.EvalMAXScript("fn a2b a = (return a as bitArray)")
+		result = rt.a2b(array)
+		#~ result = rt.Array(*array) #alt
+
+		return result
+
+	@staticmethod
 	def bitArrayToArray(bitArray):
+		'''Convert a bitArray to an integer array.
 		'''
-		:Parameters:
-			bitArray=bit array
-				*or list of bit arrays
+		MaxPlus.Core.EvalMAXScript("fn b2a b = (return b as array)")
+		result = rt.b2a(bitArray)
 
-		:Return:
-			(list) containing values of the indices of the on (True) bits.
-		'''
-		if len(bitArray):
-			if type(bitArray[0])!=bool: #if list of bitArrays: flatten
-				list_=[]
-				for array in bitArray:
-					list_.append([i+1 for i, bit in enumerate(array) if bit==1])
-				return [bit for array in list_ for bit in array]
+		return result
 
-			return [i+1 for i, bit in enumerate(bitArray) if bit==1]
+	# @staticmethod
+	# def bitArrayToArray(bitArray):
+	# 	'''
+	# 	:Parameters:
+	# 		bitArray=bit array
+	# 			*or list of bit arrays
 
+	# 	:Return:
+	# 		(list) containing values of the indices of the on (True) bits.
+	# 	'''
+	# 	if len(bitArray):
+	# 		if type(bitArray[0])!=bool: #if list of bitArrays: flatten
+	# 			list_=[]
+	# 			for array in bitArray:
+	# 				list_.append([i+1 for i, bit in enumerate(array) if bit==1])
+	# 			return [bit for array in list_ for bit in array]
 
-	try:
-		'''
-		Alternate bitArray to array function.
-
-		:Parameters:
-			bitArray=bit array
-		
-		ie. rt.bitArrayToArray(bitArray)
-		'''
-		MaxPlus.Core.EvalMAXScript('''
-			fn bitArrayToArray bitArray = 
-				(return bitArray as Array)
-			''')
-	except Exception as error:
-		print(error)
+	# 		return [i+1 for i, bit in enumerate(bitArray) if bit==1]
 
 
 	@staticmethod
@@ -1065,7 +1223,153 @@ print(os.path.splitext(os.path.basename(__file__))[0])
 # Notes
 # -----------------------------------------------
 
-#deprecated:
+
+
+
+# -----------------------------------------------
+# deprecated:
+# -----------------------------------------------
+
+	# def selectFaceLoop(tolerance, includeOpenEdges=False):
+	# 	'''
+	# 	:Parameters:
+	# 		tolerance (float) = Face normal tolerance.
+	# 		includeOpenEdges (bool) = 
+	# 	'''
+	# 	maxEval('''
+	# 	selEdges = #{}
+	# 	theObj = $
+
+	# 	eCount = polyOp.getNumEdges theObj
+	# 	for e = 1 to eCount do
+	# 	(
+	# 		theFaces = (polyOp.getEdgeFaces theObj e) as array
+	# 		if theFaces.count == 2 then
+	# 		(
+	# 		 theAngle = acos(dot (polyOp.getFaceNormal theObj theFaces[1]) (polyOp.getFaceNormal theObj theFaces[2])) 
+	# 			if theAngle >= tolerance do selEdges[e] = true
+	# 		)	
+	# 		else 
+	# 			if includeOpenEdges do selEdges[e] = true
+	# 	)
+	# 	case classof (modPanel.getCurrentObject()) of
+	# 	(
+	# 		Editable_Poly: polyOp.setEdgeSelection theObj selEdges 
+	# 		Edit_Poly: (modPanel.getCurrentObject()).SetSelection #Edge &selEdges 
+	# 	)	
+	# 	redrawViews()
+	# 	''')
+
+
+	# @staticmethod
+	# def getVertices(obj):
+	# 	'''Get the vertices of a given object whether it is an editable mesh or polygon.
+
+	# 	:Parameters:
+	# 		obj (obj) = polygon or mesh object.
+
+	# 	:Return:
+	# 		(list) vertex list.		
+	# 	'''
+	# 	try:
+	# 		vertices = Init.bitArrayToArray(rt.polyop.getVertSelection(obj)) #polygon
+	# 	except:
+	# 		vertices = Init.bitArrayToArray(rt.getVertSelection(obj)) #mesh
+
+	# 	return vertices
+
+
+	# @staticmethod
+	# def getSelectedVertices(obj):
+	# 	'''Get the selected vertices of a given object whether it is an editable mesh or polygon.
+
+	# 	:Parameters:
+	# 		obj (obj) = polygon or mesh object.
+
+	# 	:Return:
+	# 		(list) vertex list.		
+	# 	'''
+	# 	try:
+	# 		vertices = list(range(1, rt.polyop.getNumVerts(obj)))
+	# 	except:
+	# 		vertices = list(range(1, rt.getNumVerts(obj)))
+
+	# 	return vertices
+
+
+	# @staticmethod
+	# def getEdges(obj):
+	# 	'''Get the edges of a given object whether it is an editable mesh or polygon.
+
+	# 	:Parameters:
+	# 		obj (obj) = polygon or mesh object.
+
+	# 	:Return:
+	# 		(list) edge list.		
+	# 	'''
+	# 	try:
+	# 		edges = list(range(1, rt.polyop.getNumEdges(obj)))
+	# 	except:
+	# 		edges = list(range(1, obj.edges.count))
+
+	# 	return edges
+
+
+	# @staticmethod
+	# def getSelectedEdges(obj):
+	# 	'''Get the selected edges of a given object whether it is an editable mesh or polygon.
+
+	# 	:Parameters:
+	# 		obj (obj) = polygon or mesh object.
+
+	# 	:Return:
+	# 		(list) edge list.		
+	# 	'''
+	# 	try:
+	# 		edges = Init.bitArrayToArray(rt.polyop.getEdgeSelection(obj)) #polygon
+	# 	except:
+	# 		edges = Init.bitArrayToArray(rt.getEdgeSelection(obj)) #mesh
+
+	# 	return edges
+
+
+	# @staticmethod
+	# def getFaces(obj):
+	# 	'''Get the faces of a given object whether it is an editable mesh or polygon.
+
+	# 	:Parameters:
+	# 		obj (obj) = polygon or mesh object.
+
+	# 	:Return:
+	# 		(list) facet list.		
+	# 	'''
+	# 	try:
+	# 		faces = list(range(1, rt.polyop.getNumFaces(obj)))
+	# 	except:
+	# 		faces = list(range(1, obj.faces.count))
+
+	# 	return faces
+
+
+	# @staticmethod
+	# def getSelectedFaces(obj):
+	# 	'''Get the selected faces of a given object whether it is an editable mesh or polygon.
+
+	# 	:Parameters:
+	# 		obj (obj) = polygon or mesh object.
+
+	# 	:Return:
+	# 		(list) facet list.		
+	# 	'''
+	# 	try:
+	# 		faces = Init.bitArrayToArray(rt.polyop.getFaceSelection(obj)) #polygon
+	# 	except:
+	# 		faces = Init.bitArrayToArray(rt.getFaceSelection(obj)) #mesh
+
+	# 	return faces
+
+
+
 
 	# @staticmethod
 	# def splitNonManifoldVertex(obj, vertex):

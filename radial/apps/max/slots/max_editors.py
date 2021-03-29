@@ -15,11 +15,11 @@ class Editors(Init):
 		self.dynLayout_ui = self.sb.getUi('dynLayout')
 		self.stackedWidget = self.dynLayout_ui.stackedWidget
 
-		self.editors_ui.v000.setText('')
+		self.editors_ui.v000.setText('Command Panel')
 		self.editors_ui.v001.setText('Scene Explorer')
-		self.editors_ui.v002.setText('')
+		self.editors_ui.v002.setText('Ribbon')
 		self.editors_ui.v003.setText('Layer Manager')
-		self.editors_ui.v004.setText('')
+		self.editors_ui.v004.setText('Track Bar')
 		self.editors_ui.v005.setText('Schematic View')
 		self.editors_ui.v006.setText('Asset Tracking')
 
@@ -254,7 +254,7 @@ class Editors(Init):
 	def v000(self):
 		'''Attributes
 		'''
-		maxEval('')
+		maxEval('actionMan.executeAction 0 "408"') #Tools: Show Command Panel Toggle.
 
 
 	def v001(self):
@@ -266,7 +266,7 @@ class Editors(Init):
 	def v002(self):
 		'''Tool
 		'''
-		maxEval('')
+		maxEval('actionMan.executeAction 60545 "26914"') #Ribbon: Show Ribbon.
 
 
 	def v003(self):
@@ -278,7 +278,7 @@ class Editors(Init):
 	def v004(self):
 		'''Channels
 		'''
-		maxEval('')
+		maxEval('actionMan.executeAction 0 "407"') #Show track bar.
 
 
 	def v005(self):

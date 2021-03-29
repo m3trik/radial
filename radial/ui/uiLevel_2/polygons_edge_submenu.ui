@@ -155,41 +155,10 @@
      <string>Edge</string>
     </property>
    </widget>
-   <widget class="ToolButton" name="tb001">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>230</x>
-      <y>250</y>
-      <width>56</width>
-      <height>19</height>
-     </rect>
-    </property>
-    <property name="maximumSize">
-     <size>
-      <width>111</width>
-      <height>19</height>
-     </size>
-    </property>
-    <property name="toolTip">
-     <string>Create a bridge between two sets of edges or faces</string>
-    </property>
-    <property name="text">
-     <string>Bridge</string>
-    </property>
-    <property name="iconSize">
-     <size>
-      <width>18</width>
-      <height>18</height>
-     </size>
-    </property>
-   </widget>
    <widget class="QPushButton" name="i026">
     <property name="geometry">
      <rect>
-      <x>320</x>
+      <x>235</x>
       <y>250</y>
       <width>66</width>
       <height>21</height>
@@ -216,13 +185,6 @@
    </widget>
   </widget>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>ToolButton</class>
-   <extends>QToolButton</extends>
-   <header>widgets.toolbutton.h</header>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
  <designerdata>

@@ -164,7 +164,7 @@ class Create(Init):
 		obj = rt.selection[0]
 		if obj:
 			if rt.subObjectLevel==1: #vertex
-				vertex = rt.bitArrayToArray(rt.polyop.getVertSelection(obj))
+				vertex = Init.bitArrayToArray(rt.polyop.getVertSelection(obj))
 				point = rt.polyop.getVert(obj, vertex[0]) #Returns the position of the specified vertex.
 				self.point = point
 			else:

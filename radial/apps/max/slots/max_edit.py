@@ -169,7 +169,7 @@ class Edit(Init):
 		:Return:
 			(list) list containing any found N-Gons		
 		'''
-		faces = Init.getFaces(obj)
+		faces = Init.getComponents(obj, 'faces')
 
 		Init.setSubObjectLevel(4)
 				
@@ -226,7 +226,7 @@ class Edit(Init):
 		:Return:
 			(list) list containing any found isolated verts.		
 		'''
-		vertices = Init.getVertices(obj) #get all vertices for the given object
+		vertices = Init.getComponents(obj, 'vertices') #get all vertices for the given object
 
 		isolatedVerts=[]
 		vectors = Edit.getVertexVectors(obj, vertices)
