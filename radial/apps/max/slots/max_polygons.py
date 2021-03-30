@@ -291,14 +291,19 @@ class Polygons(Init):
 			tb.menu_.add('QRadioButton', setText='Intersection', setObjectName='chk013', setToolTip='Keep only the interaction point of two objects.')
 			return
 
-		# if tb.menu_.chk011.isChecked(): #union
-		# 	mel.eval("polyPerformBooleanAction 1 o 0;") #PolygonBooleanIntersection;
+		objects = list(Init.bitArrayToArray(rt.selection))
 
-		# if tb.menu_.chk012.isChecked(): #difference
-		# 	mel.eval("polyPerformBooleanAction 2 o 0;") #PolygonBooleanDifference;
+		if tb.menu_.chk011.isChecked(): #union
+			for obj in objects[:-1]:
+				objects[-1] + obj
 
-		# if tb.menu_.chk013.isChecked(): #intersection
-		# 	mel.eval("polyPerformBooleanAction 3 o 0;") #PolygonBooleanIntersection;
+		if tb.menu_.chk012.isChecked(): #difference
+			for obj in objects[:-1]:
+				objects[-1] - obj
+
+		if tb.menu_.chk013.isChecked(): #intersection
+			for obj in objects[:-1]:
+				objects[-1] * obj
 
 
 	@Slots.message

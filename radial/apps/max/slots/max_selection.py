@@ -432,11 +432,11 @@ class Selection(Init):
 
 
 		if edgeRing: # rt.macros.run('PolyTools', 'Ring')
-			obj = rt.objects[0]
+			obj = rt.selection[0]
 			Init.selectRing(obj)
 
 		elif edgeLoop: #rt.macros.run('PolyTools', 'Loop')
-			obj = rt.objects[0]
+			obj = rt.selection[0]
 			Init.selectLoop(obj)
 
 		elif pathAlongLoop:

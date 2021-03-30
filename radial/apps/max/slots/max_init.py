@@ -44,7 +44,7 @@ class Init(Slots):
 		try:
 			selection = rt.selection
 		except AttributeError:
-			return
+			selection = None
 
 		if selection:
 			if len(selection) is 1:
@@ -55,51 +55,45 @@ class Init(Slots):
 					axis = {0:'x', 1:'y', 2:'z'}
 					hud.insertText('Symmetry Axis: <font style="color: Yellow;">{}'.format(axis[int_].upper())) #symmetry axis
 
-			level = rt.subObjectLevel
-			if level==0: #object level
-				name_and_type = ['<font style="color: Yellow;">{0}<font style="color: LightGray;">:{1}'.format(obj.name, rt.classOf(obj.baseObject)) for obj in selection]
-				name_and_type_str = str(name_and_type).translate(None, '[]\'') #format as single string.
-				hud.insertText('Selected: <font style="color: Yellow;">{}'.format(name_and_type_str)) #currently selected objects
+				level = rt.subObjectLevel
+				if level==0: #object level
+					name_and_type = ['<font style="color: Yellow;">{0}<font style="color: LightGray;">:{1}'.format(obj.name, rt.classOf(obj.baseObject)) for obj in selection]
+					name_and_type_str = str(name_and_type).translate(None, '[]\'') #format as single string.
+					hud.insertText('Selected: <font style="color: Yellow;">{}'.format(name_and_type_str)) #currently selected objects
 
-				# xformConstraint = pm.xformConstraint(query=True, type=True)
-				# if xformConstraint=='none':
-				# 	xformConstraint=None
-				# if xformConstraint:
-				# 	hud.insertText('Xform Constrait: <font style="color: Yellow;">{}'.format(xformConstraint)) #transform constraits
+				elif level>0: #component level
+					obj = selection[0]
+					objType = rt.classOf(obj.baseObject)
+					if objType=='Editable_Poly' or objType=='Edit_Poly':
+						if level==1: #get vertex info
+							type_ = 'Verts'
+							selected = Init.bitArrayToArray(rt.polyop.getVertSelection(obj))
+							total_num = rt.polyop.getNumVerts(obj)
 
-			elif level>0: #component level
-				obj = selection[0]
-				objType = rt.classOf(obj.baseObject)
-				if objType=='Editable_Poly' or objType=='Edit_Poly':
-					if level==1: #get vertex info
-						type_ = 'Verts'
-						selected = Init.bitArrayToArray(rt.polyop.getVertSelection(obj))
-						total_num = rt.polyop.getNumVerts(obj)
+						elif level==2: #get edge info
+							type_ = 'Edges'
+							selected = Init.bitArrayToArray(rt.polyop.getEdgeSelection(obj))
+							total_num = rt.polyop.getNumEdges(obj)
 
-					elif level==2: #get edge info
-						type_ = 'Edges'
-						selected = Init.bitArrayToArray(rt.polyop.getEdgeSelection(obj))
-						total_num = rt.polyop.getNumEdges(obj)
+						elif level==3: #get border info
+							type_ = 'Borders'
+							# rt.polyop.SetSelection #Edge ((polyOp.getOpenEdges $) as bitarray)
+							selected = Init.bitArrayToArray(rt.polyop.getBorderSelection(obj))
+							total_num = rt.polyop.getNumBorders(obj)
 
-					elif level==3: #get border info
-						type_ = 'Borders'
-						# rt.polyop.SetSelection #Edge ((polyOp.getOpenEdges $) as bitarray)
-						selected = Init.bitArrayToArray(rt.polyop.getBorderSelection(obj))
-						total_num = rt.polyop.getNumBorders(obj)
+						elif level==4: #get face info
+							type_ = 'Faces'
+							selected = Init.bitArrayToArray(rt.polyop.getFaceSelection(obj))
+							total_num = rt.polyop.getNumFaces(obj)
 
-					elif level==4: #get face info
-						type_ = 'Faces'
-						selected = Init.bitArrayToArray(rt.polyop.getFaceSelection(obj))
-						total_num = rt.polyop.getNumFaces(obj)
+						elif level==5: #get element info
+							type_ = 'Elements'
+							selected = Init.bitArrayToArray(rt.polyop.getElementSelection(obj))
+							total_num = rt.polyop.getNumElements(obj)
 
-					elif level==5: #get element info
-						type_ = 'Elements'
-						selected = Init.bitArrayToArray(rt.polyop.getElementSelection(obj))
-						total_num = rt.polyop.getNumElements(obj)
-
-					num_selected = len(selected)
-					if all((type_, num_selected, total_num)):
-						hud.insertText('Selected {}: <font style="color: Yellow;">{} <font style="color: LightGray;">/{}'.format(type_, num_selected, total_num)) #selected components
+						num_selected = len(selected)
+						if all((type_, num_selected, total_num)):
+							hud.insertText('Selected {}: <font style="color: Yellow;">{} <font style="color: LightGray;">/{}'.format(type_, num_selected, total_num)) #selected components
 
 
 		prevCommand = self.sb.prevCommand(docString=True)
@@ -177,7 +171,7 @@ class Init(Slots):
 		:Parameters:
 			obj (obj) = An Editable polygon object.
 
-		ex. obj = rt.objects[0]
+		ex. obj = rt.selection[0]
 			selectLoop(obj)
 		'''
 		level = rt.subObjectLevel
@@ -204,7 +198,7 @@ class Init(Slots):
 		:Parameters:
 			obj (obj) = An Editable polygon object.
 
-		ex. obj = rt.objects[0]
+		ex. obj = rt.selection[0]
 			selectRing(obj)
 		'''
 		level = rt.subObjectLevel
@@ -372,14 +366,14 @@ class Init(Slots):
 
 
 	@staticmethod
-	def getComponents(obj=None, componentType=None, selection=False, returnType='Array'):
+	def getComponents(obj=None, componentType=None, selection=False, returnType='List'):
 		'''Get the components of the given type. (editable mesh or polygon)
 
 		:Parameters:
 			obj (obj) = An Editable mesh or Editable polygon object. If None; the first currently selected object will be used.
 			componentType (str)(int) = The desired component mask. (valid: 'vertex', 'vertices', 'edge', 'edges', 'face', 'faces').
 			selection (bool) = Filter to currently selected components.
-			returnType (type) = The desired returned object type. (valid: Array(default), BitArray)
+			returnType (type) = The desired returned object type. (valid: 'Array', 'BitArray', 'List'(default))
 
 		:Return:
 			(array) Dependant on flags.
@@ -387,7 +381,7 @@ class Init(Slots):
 		ex. getComponents(obj, 'vertices', selection=True, returnType='BitArray')
 		'''
 		if not obj:
-			obj = rt.objects[0]
+			obj = rt.selection[0]
 
 		if not any((rt.isKindOf(obj, rt.Editable_Mesh), rt.isKindOf(obj, rt.Editable_Poly))): #filter for valid objects.
 			return '# Error: Invalid object type: {} #'.format(obj)
@@ -429,8 +423,10 @@ class Init(Slots):
 				except:
 					c = range(1, obj.faces.count)
 
-		if returnType is 'Array':
+		if returnType in ('Array', 'List'):
 			result = Init.bitArrayToArray(c)
+			if returnType is 'List':
+				result = list(result)
 		else:
 			result = Init.arrayToBitArray(c)
 
@@ -438,7 +434,7 @@ class Init(Slots):
 
 
 	@staticmethod
-	def convertComponents(obj=None, components=None, convertFrom=None, convertTo=None, returnType='Array'):
+	def convertComponents(obj=None, components=None, convertFrom=None, convertTo=None, returnType='List'):
 		'''Convert the components to the given type. (editable mesh, editable poly)
 
 		:Parameters:
@@ -446,18 +442,18 @@ class Init(Slots):
 			components (list) = The component id's of the given object.  If None; all components of the given convertFrom type will be used.
 			convertFrom (str) = Starting component type. (valid: 'vertex', 'vertices', 'edge', 'edges', 'face', 'faces').
 			convertTo (str) = Resulting component type.  (valid: 'vertex', 'vertices', 'edge', 'edges', 'face', 'faces').
-			returnType (type) = The desired returned object type. (valid: Array(default), 'BitArray')
+			returnType (type) = The desired returned object type. (valid: 'Array', 'BitArray', 'List'(default))
 
 		:Return:
 			(array) Component ID's. ie. [1, 2, 3]
 
-		ex. obj = rt.objects[0]
+		ex. obj = rt.selection[0]
 			edges = rt.getEdgeSelection(obj)
 			faces = convertComponents(obj, edges, 'edges', 'faces')
 			rt.setFaceSelection(obj, faces)
 		'''
 		if not obj:
-			obj = rt.objects[0]
+			obj = rt.selection[0]
 		if not components:
 			components = Init.getComponents(obj, convertFrom)
 
@@ -485,8 +481,10 @@ class Init(Slots):
 		else:
 			return '# Error: Cannot convert from {} to type: {}: #'.format(convertFrom, convertTo)
 
-		if returnType is 'Array':
+		if returnType in ('Array', 'List'):
 			result = Init.bitArrayToArray(c)
+			if returnType is 'List':
+				result = list(result)
 		else:
 			result = Init.arrayToBitArray(c)
 
@@ -863,41 +861,28 @@ class Init(Slots):
 
 	@staticmethod
 	def arrayToBitArray(array):
-		'''Convert an integer array to a bitarray.
+		'''Convert an integer array to a bitArray.
+
+		:Parameters:
+			array (list) = The array that will be converted to a bitArray.
 		'''
-		MaxPlus.Core.EvalMAXScript("fn a2b a = (return a as bitArray)")
-		result = rt.a2b(array)
-		#~ result = rt.Array(*array) #alt
+		MaxPlus.Core.EvalMAXScript("fn _arrayToBitArray a = (return a as bitArray)")
+		result = rt._arrayToBitArray(array)
 
 		return result
+
 
 	@staticmethod
 	def bitArrayToArray(bitArray):
 		'''Convert a bitArray to an integer array.
+
+		:Parameters:
+			bitArray (list) = The bitArray that will be converted to a standard array.
 		'''
-		MaxPlus.Core.EvalMAXScript("fn b2a b = (return b as array)")
-		result = rt.b2a(bitArray)
+		MaxPlus.Core.EvalMAXScript("fn _bitArrayToArray b = (return b as array)")
+		result = rt._bitArrayToArray(bitArray)
 
 		return result
-
-	# @staticmethod
-	# def bitArrayToArray(bitArray):
-	# 	'''
-	# 	:Parameters:
-	# 		bitArray=bit array
-	# 			*or list of bit arrays
-
-	# 	:Return:
-	# 		(list) containing values of the indices of the on (True) bits.
-	# 	'''
-	# 	if len(bitArray):
-	# 		if type(bitArray[0])!=bool: #if list of bitArrays: flatten
-	# 			list_=[]
-	# 			for array in bitArray:
-	# 				list_.append([i+1 for i, bit in enumerate(array) if bit==1])
-	# 			return [bit for array in list_ for bit in array]
-
-	# 		return [i+1 for i, bit in enumerate(bitArray) if bit==1]
 
 
 	@staticmethod
@@ -988,8 +973,6 @@ class Init(Slots):
 
 
 		if toggle==0: #preview off
-			# try: Init.setSubObjectLevel(previousSmoothPreviewLevel) #restore previous subObjectLevel
-			# except: pass
 			rt.showEndResult = False
 			Init.displayWireframeOnMesh(True)
 
@@ -1001,8 +984,6 @@ class Init(Slots):
 				except: pass
 
 		else: #preview on
-			# previousSmoothPreviewLevel = rt.subObjectLevel #store previous subObjectLevel
-			# Init.setSubObjectLevel(0)
 			rt.showEndResult = True
 			Init.displayWireframeOnMesh(False)
 
@@ -1036,8 +1017,10 @@ class Init(Slots):
 				if toggle:
 					rt.modPanel.setCurrentObject(obj.baseObject)
 				else:
-					try: rt.modPanel.setCurrentObject(obj.modifiers[0])
-					except: rt.modPanel.setCurrentObject(obj.baseObject) #if index error
+					try:
+						rt.modPanel.setCurrentObject(obj.modifiers[0])
+					except:
+						rt.modPanel.setCurrentObject(obj.baseObject) #if index error
 
 
 	@staticmethod

@@ -16,9 +16,7 @@
 -- ||||||||||||||||||||||||||||||+
 
 
---func = (python.Import "max_init").Init --
-fn func=(return (python.Import "max_init").Init)
-
+fn func = (python.Execute "if 'Init' not in locals() and 'Init' not in globals(): from max_init import Init;" return Init) --func = (python.Import "max_init").Init --fn func=(return (python.Import "max_init").Init)
 
 
 
@@ -27,7 +25,7 @@ category: "_macros.ui"
 silentErrors: false
 autoUndoEnabled: false
 (
-	python.Execute "if 'main' not in locals() and 'main' not in globals(): from main_max import Instance; main = Instance()" --create instance
+	python.Execute "if 'main' not in locals() and 'main' not in globals(): from main_max import Instance; main = Instance()" --create an instance
 	python.Execute "main.show_();"
 )
 

@@ -649,6 +649,27 @@ class Slots(QtCore.QObject):
 		return result
 
 
+	@staticmethod
+	def bitArrayToList(bitArray):
+		'''Convert a binary bitArray to a python list.
+
+		:Parameters:
+			bitArray=bit array
+				*or list of bit arrays
+
+		:Return:
+			(list) containing values of the indices of the on (True) bits.
+		'''
+		if len(bitArray):
+			if type(bitArray[0])!=bool: #if list of bitArrays: flatten
+				list_=[]
+				for array in bitArray:
+					list_.append([i+1 for i, bit in enumerate(array) if bit==1])
+				return [bit for array in list_ for bit in array]
+
+			return [i+1 for i, bit in enumerate(bitArray) if bit==1]
+
+
 
 	# ----------------------------------------------------------------------------------------------------------
 	' MATH '
