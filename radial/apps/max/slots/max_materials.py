@@ -23,16 +23,24 @@ class Materials(Init):
 		'''Get the current material using the current index of the materials combobox.
 		'''
 		text = self.materials_ui.cmb002.currentText()
-		return self.currentMats[text] if text else None
+
+		try:
+			result = self.currentMats[text]
+		except:
+			result = None
+
+		return result
 
 
 	def draggable_header(self, state=None):
 		'''Context menu
 		'''
-		draggable_header = self.materials_ui.draggable_header
+		dh = self.materials_ui.draggable_header
 
 		if state is 'setMenu':
-			draggable_header.contextMenu.add(wgts.ComboBox, setObjectName='cmb001', setToolTip='3dsMax Material Editors')
+			dh.contextMenu.add(wgts.ComboBox, setObjectName='cmb001', setToolTip='3dsMax Material Editors')
+			dh.contextMenu.add(wgts.ToolButton, setText='Relink Scene Bitmaps', setObjectName='tb003', setToolTip='Repair broken bitmap file links for any scene materials. If no materials are selected, all scene materials will be used.')
+			dh.contextMenu.add(wgts.ToolButton, setText='Relink Library Bitmaps', setObjectName='tb004', setToolTip='Repair broken bitmap file links for all libraries in a given directory.')
 			return
 
 
@@ -64,7 +72,8 @@ class Materials(Init):
 			return
 
 		if index>0:
-			if index==cmb.items.index('Material Editor'):
+			text = cmb.items[index]
+			if text=='Material Editor':
 				maxEval('max mtledit')
 			cmb.setCurrentIndex(0)
 
@@ -228,6 +237,37 @@ class Materials(Init):
 			pass
 
 		rt.redrawViews()
+
+
+	def tb003(self, state=None):
+		'''Relink Scene Bitmaps
+		'''
+		tb = self.materials_ui.tb003
+		if state is 'setMenu':
+			tb.menu_.add('QLineEdit', setPlaceholderText='Set Bitmaps Directory:', setText=r'\\m3trik-Server\NAS\Graphics\_materials', setObjectName='l000', setToolTip='Location to search for missing bitmaps.') #
+			return
+
+		mat_dir = tb.menu_.l000.text()
+		mats = Materials.getNodesSME(selected=True) #find bitmaps for any currently selected nodes in the slate material editor, else relink all scene nodes.
+		if not mats:
+			mats = None
+
+		self.relinkSceneBitmaps(mat_dir, mats=mats, replaceTxWithTif=True)
+
+
+	def tb004(self, state=None):
+		'''Relink Material Library Bitmaps
+		'''
+		tb = self.materials_ui.tb004
+		if state is 'setMenu':
+			tb.menu_.add('QLineEdit', setPlaceholderText='Set Bitmaps Directory:', setText=r'\\m3trik-Server\NAS\Graphics\_materials', setObjectName='l001', setToolTip='Location to search for missing bitmaps.') #
+			tb.menu_.add('QLineEdit', setPlaceholderText='Set Material Library Directory:', setText=r'\\m3trik-Server\NAS\Graphics\_materials\libraries', setObjectName='l002', setToolTip='Location of material libraries.') #
+			return
+
+		library_dir = tb.menu_.l001.text()
+		mat_dir = tb.menu_.l002.text()
+
+		self.relinkMatLibBitmaps(library_dir, mat_dir, replaceTxWithTif=True)
 
 
 	@Slots.message
@@ -495,7 +535,7 @@ class Materials(Init):
 		if rt.subObjectLevel==4: #if face selection check for multimaterial
 			if rt.getNumSubMtls(mat): #if multimaterial; use selected face to get material ID
 				if face is None:
-					face = Init.bitArrayToArray(rt.getFaceSelection(obj))[0] #get selected face
+					face = self.bitArrayToArray(rt.getFaceSelection(obj))[0] #get selected face
 
 				if rt.classOf(obj)==rt.Editable_Poly:
 					ID_ = rt.polyop.GetFaceId_(obj, face) #Returns the material ID of the specified face.
@@ -553,6 +593,192 @@ class Materials(Init):
 				obj.material = mat
 
 		rt.redrawViews()
+
+
+	@staticmethod
+	def getMaterialBitmaps(mats=None, missing=False, processChildren=True):
+		'''Get any bitmaps from a given material(s), or from all scene materials.
+
+		:Parameters:
+			mats (obj)(list) = Mat object or list of mat objects. If None is given, all bitmap textures in the scene are used.
+			missing (bool) = Return only filenames from missing bitmaps.
+			processChildren (bool) = Child scene nodes are also searched as part of the Animatable or Reference hierarchy.
+
+		:Return:
+			(list) material bitmaps.
+		'''
+		if mats is None:
+			result = list(rt.getClassInstances(rt.BitmapTexture, processChildren=False))
+		else:
+			result=[]
+			for mat in list(mats):
+				result+=list(rt.getClassInstances(rt.BitmapTexture, target=mat, processChildren=processChildren))
+
+		if missing: #get only the names from bitmaps that are missing.
+			result = {bitmap:bitmap.filename.rsplit('\\')[-1]
+			for bitmap in bitmaps
+				if not rt.doesFileExist(bitmap.filename)}
+
+		return result
+
+
+	@staticmethod
+	def getBitmapFilenames(bitmaps=None, missing=False, returnType=list):
+		'''Get the file paths for the given bitmaps. If no bitmaps are given all bitmaps in the scene will be used.
+
+		:Parameters:
+			bitmaps (list) = A list of bitmaps. If no bitmaps are given all bitmaps in the scene will be used.
+			missing (bool) = Return only filenames from missing bitmaps.
+			returnType (type) = Valid (list (default), dict).
+
+		:Return:
+			dependant on returnType flag.
+			(dict) {bitmap object:filepath}
+			(list) [filepath]
+		'''
+		import fnmatch
+
+		if not bitmaps: #if no bitmaps are given, use all scene bitmaps.
+			bitmaps = Materials.getMaterialBitmaps(missing=missing)
+
+		result = {bitmap:bitmap.filename.rsplit('\\')[-1] for bitmap in bitmaps}
+
+		if returnType is list:
+			result = result.values()
+
+		return result
+
+
+	@staticmethod
+	def setBitmapFilenames(dict_, reload=False):
+		'''Set the file paths for the given bitmaps. Bitmaps are given as a dict of bitmaps as keys, and filenames as values.
+
+		:Parameters:
+			dict_ (dict) = A dict of bitmaps as keys, and filenames as values.
+			reload (bool) = Refresh the bitmap node after updating the path.
+		'''
+		for bitmap,name in dict_.items():
+			bitmap.filename = name
+			if reload:
+				bitmap.reload()
+
+
+	@staticmethod
+	def relinkBitmaps(dir_, bitmaps=None, replaceTxWithTif=False):
+		'''Find the first valid path in the given dir for each bitmap in a given dict. If no bitmaps are given all bitmaps in the scene will be used.
+
+		:Parameters:
+			dir_ (str) = The parent dir to recursively search for files in.
+			bitmaps (dict) = A dict of bitmaps as keys, and filenames as values. If no bitmaps are given all bitmaps in the scene will be used.
+			replaceTxWithTif (bool) = Look instead for a .tif file of the same name, to replace a previoud .tx format.
+
+		:Return:
+			(dict) Any bitmaps that are not found. {bitmap object:filename}
+		'''
+		import fnmatch
+
+		bitmaps = Materials.getBitmapFilenames(bitmaps, missing=True, returnType=dict)
+
+		if replaceTxWithTif:
+			for bitmap,filename in bitmaps.items():
+				if filename.endswith('.tx'):
+					bitmaps[bitmap] = filename.replace('.tx', '.tif')
+
+		print('Relinking bitmaps in {} ..'.format(dir_))
+		result={}
+		for root, dirnames, filenames in os.walk(dir_):
+
+			for bitmap, pattern in bitmaps.items():
+				for filename in fnmatch.filter(filenames, pattern):
+					path = os.path.join(root, filename)
+					result[bitmap] = path
+					bitmaps.pop(bitmap, None)
+					print ('# Result: {}: {}: {} #'.format(filename, bitmap.name, path))
+
+		Materials.setBitmapFilenames(result, reload=True)
+
+		if bitmaps:
+			for bitmap,filename in bitmaps.items():
+				print ('# Error: {}: {} #'.format(bitmap.name, filename))
+
+
+	@staticmethod
+	def relinkMatLibBitmaps(library_dir, mat_dir, replaceTxWithTif=False):
+		'''Repair broken bitmap file links for all libraries in a given directory.
+
+		:Parameters:
+			library_dir (str) = A path to a directory containing the library files.
+			mat_dir (str) = A path to a directory containing the material dependancies.
+		'''
+		bitmaps=[]; tempLibs={}
+		for root, dirnames, filenames in os.walk(library_dir):
+			for filename in filenames:
+				if filename.endswith('.mat'):
+					try:
+						path = os.path.join(root, filename)
+						tempLib = rt.loadTempMaterialLibrary(path)
+
+						for bitmap in Materials.getMaterialBitmaps(tempLib):
+							bitmaps.append(bitmap)
+
+						tempLibs[tempLib] = path
+					except Exception as e:
+						print ('# Error: {}: {} #'.format(filename, e))
+
+		if bitmaps:
+			Materials.relinkBitmaps(mat_dir, bitmaps, replaceTxWithTif=replaceTxWithTif)
+			{rt.saveTempMaterialLibrary(lib, name) for lib,name in tempLibs.items()}
+
+
+	@staticmethod
+	def relinkSceneBitmaps(mat_dir, mats=None, replaceTxWithTif=False):
+		'''Repair broken bitmap file links.  If no mats are given, all scene bitmaps will be used.
+
+		:Parameters:
+			mats (obj)(list) = Specify material(s) to get bitmaps for. If none are given, all scene materials will be used.
+			replaceTxWithTif (bool) = Look instead for a .tif file of the same name, to replace a previoud .tx format.
+		'''
+		bitmaps = Materials.getMaterialBitmaps(mats)
+
+		if bitmaps:
+			Materials.relinkBitmaps(mat_dir, bitmaps, replaceTxWithTif=True)
+
+
+	@staticmethod
+	def getNodesSME(nodeType=None, selected=False):
+		'''Get any nodes in the slate material editor that are currently selected.
+
+		:Parameters:
+			nodeType (obj)(str) = The type of node to filter the results for. If 'query' is given, the node type will be returned. ie. rt.VRayMtl()
+			selected (bool) = When True, only currently selected nodes will be returned.
+		:Return:
+			(list) nodes or node types.
+		'''
+		view = rt.SME.getView(rt.SME.activeView)
+
+		result=[]
+		for i in range(1, view.GetNumNodes()):
+			node = view.getNode(i)
+			if all((nodeType, rt.isKindOf(node, nodeType), selected, node.selected)): #get selected of type.
+				result.append(node)
+
+			elif all((nodeType, nodeType=='query', selected, node.selected)): #query type of selected.
+				result.append(rt.classOf(node))
+
+			elif selected and node.selected: #get selected.
+				result.append(node)
+
+			elif all((nodeType, nodeType!='query', rt.isKindOf(node, nodeType))): #get node of type.
+				result.append(node)
+
+			elif nodeType and nodeType=='query': #query type.
+				result.append(rt.classOf(node))
+
+			else: #get all SME nodes.
+				result.append(node)
+
+		return result
+
 
 
 

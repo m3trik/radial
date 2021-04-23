@@ -17,12 +17,12 @@ class Subdivision(Init):
 	def draggable_header(self, state=None):
 		'''Context menu
 		'''
-		draggable_header = self.subdivision_ui.draggable_header
+		dh = self.subdivision_ui.draggable_header
 
 		if state is 'setMenu':
-			draggable_header.contextMenu.add(wgts.ComboBox, setObjectName='cmb000', setToolTip='Maya Subdivision Editiors.')
-			draggable_header.contextMenu.add(wgts.ComboBox, setObjectName='cmb002', setToolTip='Maya Subdivision Operations.')
-			draggable_header.contextMenu.add(wgts.ComboBox, setObjectName='cmb001', setToolTip='Smooth Proxy.')
+			dh.contextMenu.add(wgts.ComboBox, setObjectName='cmb000', setToolTip='Maya Subdivision Editiors.')
+			dh.contextMenu.add(wgts.ComboBox, setObjectName='cmb002', setToolTip='Maya Subdivision Operations.')
+			dh.contextMenu.add(wgts.ComboBox, setObjectName='cmb001', setToolTip='Smooth Proxy.')
 			return
 
 
@@ -37,7 +37,8 @@ class Subdivision(Init):
 			return
 
 		if index>0:
-			if index==cmb.items.index('Polygon Display Options'):
+			text = cmb.items[index]
+			if text=='Polygon Display Options':
 				pm.mel.CustomPolygonDisplayOptions() #Polygon Display Options #mel.eval("polysDisplaySetup 1;")
 			cmb.setCurrentIndex(0)
 
@@ -53,15 +54,16 @@ class Subdivision(Init):
 			return
 
 		if index>0:
-			if index==cmb.items.index('Create Subdiv Proxy'):
+			text = cmb.items[index]
+			if text=='Create Subdiv Proxy':
 				pm.mel.SmoothProxyOptions() #'Add polygons to the selected proxy objects.' #performSmoothProxy 1;
-			elif index==cmb.items.index('Remove Subdiv Proxy Mirror'):
+			elif text=='Remove Subdiv Proxy Mirror':
 				pm.mel.UnmirrorSmoothProxyOptions() #'Create a single low resolution mesh for a mirrored proxy setup.' #performUnmirrorSmoothProxy 1;
-			elif index==cmb.items.index('Crease Tool'):
+			elif text=='Crease Tool':
 				pm.mel.polyCreaseProperties() #'Harden or soften the edges of a smooth mesh preview.' #polyCreaseValues polyCreaseContext;
-			elif index==cmb.items.index('Toggle Subdiv Proxy Display'):
+			elif text=='Toggle Subdiv Proxy Display':
 				pm.mel.SmoothingDisplayToggle()	#'Toggle the display of smooth shapes.' #smoothingDisplayToggle 1;
-			elif index==cmb.items.index('Both Proxy and Subdiv Display'):
+			elif text=='Both Proxy and Subdiv Display':
 				pm.mel.SmoothingDisplayShowBoth() #'Display both smooth shapes' #smoothingDisplayToggle 0;
 			cmb.setCurrentIndex(0)
 

@@ -35,16 +35,16 @@ class Selection(Init):
 	def draggable_header(self, state=None):
 		'''Context menu
 		'''
-		draggable_header = self.selection_ui.draggable_header
+		dh = self.selection_ui.draggable_header
 
 		if state is 'setMenu':
-			draggable_header.contextMenu.add(wgts.ComboBox, setObjectName='cmb001', setToolTip='')
-			draggable_header.contextMenu.add(wgts.ComboBox, setObjectName='cmb004', setToolTip='Set the select tool type.')
-			draggable_header.contextMenu.add(wgts.ComboBox, setObjectName='cmb006', setToolTip='A list of currently selected objects.')
-			draggable_header.contextMenu.add('QCheckBox', setText='Ignore Backfacing', setObjectName='chk004', setToolTip='Ignore backfacing components during selection.')
-			draggable_header.contextMenu.add('QCheckBox', setText='Soft Selection', setObjectName='chk008', setToolTip='Toggle soft selection mode.')
-			draggable_header.contextMenu.add(wgts.Label, setText='Grow Selection', setObjectName='lbl003', setToolTip='Grow the current selection.')
-			draggable_header.contextMenu.add(wgts.Label, setText='Shrink Selection', setObjectName='lbl004', setToolTip='Shrink the current selection.')
+			dh.contextMenu.add(wgts.ComboBox, setObjectName='cmb001', setToolTip='')
+			dh.contextMenu.add(wgts.ComboBox, setObjectName='cmb004', setToolTip='Set the select tool type.')
+			dh.contextMenu.add(wgts.ComboBox, setObjectName='cmb006', setToolTip='A list of currently selected objects.')
+			dh.contextMenu.add('QCheckBox', setText='Ignore Backfacing', setObjectName='chk004', setToolTip='Ignore backfacing components during selection.')
+			dh.contextMenu.add('QCheckBox', setText='Soft Selection', setObjectName='chk008', setToolTip='Toggle soft selection mode.')
+			dh.contextMenu.add(wgts.Label, setText='Grow Selection', setObjectName='lbl003', setToolTip='Grow the current selection.')
+			dh.contextMenu.add(wgts.Label, setText='Shrink Selection', setObjectName='lbl004', setToolTip='Shrink the current selection.')
 			return
 
 
@@ -267,7 +267,8 @@ class Selection(Init):
 			return
 
 		if index>0:
-			if index==cmb.items.index('Polygon Selection Constraints'):
+			text = cmb.items[index]
+			if text=='Polygon Selection Constraints':
 				mel.eval('PolygonSelectionConstraints;')
 			cmb.setCurrentIndex(0)
 
@@ -283,58 +284,59 @@ class Selection(Init):
 			return
 
 		if index>0:
-			if index==cmb.items.index('IK Handles'): #
+			text = cmb.items[index]
+			if text=='IK Handles': #
 				type_ = pm.ls(type=['ikHandle', 'hikEffector'])
-			if index==cmb.items.index('Joints'): #
+			elif text=='Joints': #
 				type_ = pm.ls(type='joint')
-			if index==cmb.items.index('Clusters'): #
+			elif text=='Clusters': #
 				type_ = pm.listTransforms(type='clusterHandle')
-			if index==cmb.items.index('Lattices'): #
+			elif text=='Lattices': #
 				type_ = pm.listTransforms(type='lattice')
-			if index==cmb.items.index('Sculpt Objects'): #
+			elif text=='Sculpt Objects': #
 				type_ = pm.listTransforms(type=['implicitSphere', 'sculpt'])
-			if index==cmb.items.index('Wires'): #
+			elif text=='Wires': #
 				type_ = pm.ls(type='wire')
-			if index==cmb.items.index('Transforms'): #
+			elif text=='Transforms': #
 				type_ = pm.ls(type='transform')
-			if index==cmb.items.index('Geometry'): #Select all Geometry
+			elif text=='Geometry': #Select all Geometry
 				geometry = pm.ls(geometry=True)
 				type_ = pm.listRelatives(geometry, p=True, path=True) #pm.listTransforms(type='nRigid')
-			if index==cmb.items.index('NURBS Curves'): #
+			elif text=='NURBS Curves': #
 				type_ = pm.listTransforms(type='nurbsCurve')
-			if index==cmb.items.index('NURBS Surfaces'): #
+			elif text=='NURBS Surfaces': #
 				type_ = pm.ls(type='nurbsSurface')
-			if index==cmb.items.index('Polygon Geometry'): #
+			elif text=='Polygon Geometry': #
 				type_ = pm.listTransforms(type='mesh')
-			if index==cmb.items.index('Cameras'): #
+			elif text=='Cameras': #
 				type_ = pm.listTransforms(cameras=1)
-			if index==cmb.items.index('Lights'): #
+			elif text=='Lights': #
 				type_ = pm.listTransforms(lights=1)
-			if index==cmb.items.index('Image Planes'): #
+			elif text=='Image Planes': #
 				type_ = pm.ls(type='imagePlane')
-			if index==cmb.items.index('Assets'): #
+			elif text=='Assets': #
 				type_ = pm.ls(type=['container', 'dagContainer'])
-			if index==cmb.items.index('Fluids'): #
+			elif text=='Fluids': #
 				type_ = pm.listTransforms(type='fluidShape')
-			if index==cmb.items.index('Particles'): #
+			elif text=='Particles': #
 				type_ = pm.listTransforms(type='particle')
-			if index==cmb.items.index('Rigid Bodies'): #
+			elif text=='Rigid Bodies': #
 				type_ = pm.listTransforms(type='rigidBody')
-			if index==cmb.items.index('Rigid Constraints'): #
+			elif text=='Rigid Constraints': #
 				type_ = pm.ls(type='rigidConstraint')
-			if index==cmb.items.index('Brushes'): #
+			elif text=='Brushes': #
 				type_ = pm.ls(type='brush')
-			if index==cmb.items.index('Strokes'): #
+			elif text=='Strokes': #
 				type_ = pm.listTransforms(type='stroke')
-			if index==cmb.items.index('Dynamic Constraints'): #
+			elif text=='Dynamic Constraints': #
 				type_ = pm.listTransforms(type='dynamicConstraint')
-			if index==cmb.items.index('Follicles'): #
+			elif text=='Follicles': #
 				type_ = pm.listTransforms(type='follicle')
-			if index==cmb.items.index('nCloths'): #
+			elif text=='nCloths': #
 				type_ = pm.listTransforms(type='nCloth')
-			if index==cmb.items.index('nParticles'): #
+			elif text=='nParticles': #
 				type_ = pm.listTransforms(type='nParticle')
-			if index==cmb.items.index('nRigids'): #
+			elif text=='nRigids': #
 				type_ = pm.listTransforms(type='nRigid')
 
 			pm.select(type_)
@@ -352,45 +354,46 @@ class Selection(Init):
 			return
 
 		if index>0:
-			if index==cmb.items.index('Verts'): #Convert Selection To Vertices
+			text = cmb.items[index]
+			if text=='Verts': #Convert Selection To Vertices
 				mel.eval('PolySelectConvert 3;')
-			if index==cmb.items.index('Vertex Faces'): #
+			elif text=='Vertex Faces': #
 				mel.eval('PolySelectConvert 5;')
-			if index==cmb.items.index('Vertex Perimeter'): #
+			elif text=='Vertex Perimeter': #
 				mel.eval('ConvertSelectionToVertexPerimeter;')
-			if index==cmb.items.index('Edges'): #Convert Selection To Edges
+			elif text=='Edges': #Convert Selection To Edges
 				mel.eval('PolySelectConvert 2;')
-			if index==cmb.items.index('Edge Loop'): #
+			elif text=='Edge Loop': #
 				mel.eval('polySelectSp -loop;')
-			if index==cmb.items.index('Edge Ring'): #Convert Selection To Edge Ring
+			elif text=='Edge Ring': #Convert Selection To Edge Ring
 				mel.eval('SelectEdgeRingSp;')
-			if index==cmb.items.index('Contained Edges'): #
+			elif text=='Contained Edges': #
 				mel.eval('PolySelectConvert 20;')
-			if index==cmb.items.index('Edge Perimeter'): #
+			elif text=='Edge Perimeter': #
 				mel.eval('ConvertSelectionToEdgePerimeter;')
-			if index==cmb.items.index('Border Edges'): #
+			elif text=='Border Edges': #
 				pm.select(self.getBorderEdgeFromFace())
-			if index==cmb.items.index('Faces'): #Convert Selection To Faces
+			elif text=='Faces': #Convert Selection To Faces
 				mel.eval('PolySelectConvert 1;')
-			if index==cmb.items.index('Face Path'): #
+			elif text=='Face Path': #
 				mel.eval('polySelectEdges edgeRing;')
-			if index==cmb.items.index('Contained Faces'): #
+			elif text=='Contained Faces': #
 				mel.eval('PolySelectConvert 10;')
-			if index==cmb.items.index('Face Perimeter'): #
+			elif text=='Face Perimeter': #
 				mel.eval('polySelectFacePerimeter;')
-			if index==cmb.items.index('UV\'s'): #
+			elif text=='UV\'s': #
 				mel.eval('PolySelectConvert 4;')
-			if index==cmb.items.index('UV Shell'): #
+			elif text=='UV Shell': #
 				mel.eval('polySelectBorderShell 0;')
-			if index==cmb.items.index('UV Shell Border'): #
+			elif text=='UV Shell Border': #
 				mel.eval('polySelectBorderShell 1;')
-			if index==cmb.items.index('UV Perimeter'): #
+			elif text=='UV Perimeter': #
 				mel.eval('ConvertSelectionToUVPerimeter;')
-			if index==cmb.items.index('UV Edge Loop'): #
+			elif text=='UV Edge Loop': #
 				mel.eval('polySelectEdges edgeUVLoopOrBorder;')
-			if index==cmb.items.index('Shell'): #
+			elif text=='Shell': #
 				mel.eval('polyConvertToShell;')
-			if index==cmb.items.index('Shell Border'): #
+			elif text=='Shell Border': #
 				mel.eval('polyConvertToShellBorder;')
 			cmb.setCurrentIndex(0)
 
@@ -406,11 +409,12 @@ class Selection(Init):
 			return
 
 		if index>0:
-			if index==cmb.items.index('Marquee'): #
+			text = cmb.items[index]
+			if text=='Marquee': #
 				self.chk005()
-			if index==cmb.items.index('Lasso'): #
+			elif text=='Lasso': #
 				self.chk006()
-			if index==cmb.items.index('Paint'): #
+			elif text=='Paint': #
 				self.chk007()
 			cmb.setCurrentIndex(0)
 
@@ -426,17 +430,18 @@ class Selection(Init):
 			return
 
 		if index>0:
-			if index==cmb.items.index('Angle'):
+			text = cmb.items[index]
+			if text=='Angle':
 				mel.eval('dR_selConstraintAngle;') #dR_DoCmd("selConstraintAngle");
-			elif index==cmb.items.index('Border'):
+			elif text=='Border':
 				mel.eval('dR_selConstraintBorder;') #dR_DoCmd("selConstraintBorder");
-			elif index==cmb.items.index('Edge Loop'):
+			elif text=='Edge Loop':
 				mel.eval('dR_selConstraintEdgeLoop;') #dR_DoCmd("selConstraintEdgeLoop");
-			elif index==cmb.items.index('Edge Ring'):
+			elif text=='Edge Ring':
 				mel.eval('dR_selConstraintEdgeRing;') #dR_DoCmd("selConstraintEdgeRing");
-			elif index==cmb.items.index('Shell'):
+			elif text=='Shell':
 				mel.eval('dR_selConstraintElement;') #dR_DoCmd("selConstraintElement");
-			elif index==cmb.items.index('UV Edge Loop'):
+			elif text=='UV Edge Loop':
 				mel.eval('dR_selConstraintUVEdgeLoop;') #dR_DoCmd("selConstraintUVEdgeLoop");
 		else:
 			mel.eval('dR_selConstraintOff;') #dR_DoCmd("selConstraintOff");

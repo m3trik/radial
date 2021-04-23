@@ -20,14 +20,14 @@ class File(Init):
 	def draggable_header(self, state=None):
 		'''Context menu
 		'''
-		draggable_header = self.file_ui.draggable_header
+		dh = self.file_ui.draggable_header
 
 		if state is 'setMenu':
-			draggable_header.contextMenu.add(wgts.ComboBox, setObjectName='cmb005', setToolTip='')
-			draggable_header.contextMenu.add(wgts.ToolButton, setObjectName='tb000', setText='Save', setToolTip='')
-			draggable_header.contextMenu.add(wgts.Label, setObjectName='lbl001', setText='Minimize App', setToolTip='Minimize the main application.')
-			draggable_header.contextMenu.add(wgts.Label, setObjectName='lbl002', setText='Maximize App', setToolTip='Restore the main application.')
-			draggable_header.contextMenu.add(wgts.Label, setObjectName='lbl003', setText='Close App', setToolTip='Close the main application.')
+			dh.contextMenu.add(wgts.ComboBox, setObjectName='cmb005', setToolTip='')
+			dh.contextMenu.add(wgts.ToolButton, setObjectName='tb000', setText='Save', setToolTip='')
+			dh.contextMenu.add(wgts.Label, setObjectName='lbl001', setText='Minimize App', setToolTip='Minimize the main application.')
+			dh.contextMenu.add(wgts.Label, setObjectName='lbl002', setText='Maximize App', setToolTip='Restore the main application.')
+			dh.contextMenu.add(wgts.Label, setObjectName='lbl003', setText='Close App', setToolTip='Close the main application.')
 			return
 
 
@@ -157,11 +157,12 @@ class File(Init):
 			return
 
 		if index>0:
-			if index==cmb.items.index(''):
+			text = cmb.items[index]
+			if text=='':
 				mel.eval('') #
-			if index==cmb.items.index(''):
+			if text=='':
 				mel.eval('') #
-			if index==cmb.items.index(''):
+			if text=='':
 				mel.eval('') #
 			cmb.setCurrentIndex(0)
 

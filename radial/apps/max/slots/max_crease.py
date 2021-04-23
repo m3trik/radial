@@ -30,10 +30,10 @@ class Crease(Init):
 	def draggable_header(self, state=None):
 		'''Context menu
 		'''
-		draggable_header = self.crease_ui.draggable_header
+		dh = self.crease_ui.draggable_header
 
 		if state is 'setMenu':
-			draggable_header.contextMenu.add(wgts.ComboBox, setObjectName='cmb000', setToolTip='3ds Max Crease Modifiers')
+			dh.contextMenu.add(wgts.ComboBox, setObjectName='cmb000', setToolTip='3ds Max Crease Modifiers')
 			return
 
 
@@ -48,7 +48,8 @@ class Crease(Init):
 			return
 
 		if index>0:
-			if index==cmb.items.index('Crease Modifier'):
+			text = cmb.items[index]
+			if text=='Crease Modifier':
 				#check if modifier exists
 				for obj in rt.selection:
 					mod = obj.modifiers[rt.Crease]

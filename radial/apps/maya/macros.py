@@ -610,11 +610,11 @@ class Macros(Init):
 
 		profile: Prints the total running time, times each function separately, and tells you how many times each function was called.
 		'''
-		if 'main' not in locals() and 'main' not in globals():
+		if 'radial' not in locals() and 'radial' not in globals():
 			from main_maya import Instance
-			main = Instance()
+			radial = Instance()
 
-		main.show_()
+		radial.show_()
 		# import cProfile
 		# cProfile.run('main.show_()')
 

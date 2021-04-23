@@ -16,10 +16,10 @@ class Edit(Init):
 	def draggable_header(self, state=None):
 		'''Context menu
 		'''
-		draggable_header = self.edit_ui.draggable_header
+		dh = self.edit_ui.draggable_header
 
 		if state is 'setMenu':
-			draggable_header.contextMenu.add(wgts.ComboBox, setObjectName='cmb000', setToolTip='Maya Editors')
+			dh.contextMenu.add(wgts.ComboBox, setObjectName='cmb000', setToolTip='Maya Editors')
 			return
 
 
@@ -34,12 +34,13 @@ class Edit(Init):
 			return
 
 		if index>0:
-			if index==cmb.items.index('Cleanup'):
+			text = cmb.items[index]
+			if text=='Cleanup':
 				pm.mel.CleanupPolygonOptions()
-			if index==cmb.items.index('Transfer: Attribute Values'):
+			if text=='Transfer: Attribute Values':
 				pm.mel.TransferAttributeValuesOptions()
 				# mel.eval('performTransferAttributes 1;') #Transfer Attributes Options
-			if index==cmb.items.index('Transfer: Shading Sets'):
+			if text=='Transfer: Shading Sets':
 				pm.mel.performTransferShadingSets(1)
 			cmb.setCurrentIndex(0)
 

@@ -16,10 +16,10 @@ class Pivot(Init):
 	def draggable_header(self, state=None):
 		'''Context menu
 		'''
-		draggable_header = self.pivot_ui.draggable_header
+		dh = self.pivot_ui.draggable_header
 
 		if state is 'setMenu':
-			draggable_header.contextMenu.add(wgts.ComboBox, setObjectName='cmb000', setToolTip='')
+			dh.contextMenu.add(wgts.ComboBox, setObjectName='cmb000', setToolTip='')
 			return
 
 
@@ -34,7 +34,8 @@ class Pivot(Init):
 			return
 
 		if index>0:
-			if index==cmb.items.index(''):
+			text = cmb.items[index]
+			if text=='':
 				pass
 			cmb.setCurrentIndex(0)
 
@@ -121,7 +122,7 @@ class Pivot(Init):
 		'''Center Pivot: Object
 		'''
 		tb = self.pivot_ui.tb001
-		tb.menu_.chk003.setChecked()
+		tb.menu_.chk003.setChecked(True)
 		self.tb001()
 
 
@@ -129,7 +130,7 @@ class Pivot(Init):
 		'''Center Pivot: Component
 		'''
 		tb = self.pivot_ui.tb001
-		tb.menu_.chk002.setChecked()
+		tb.menu_.chk002.setChecked(True)
 		self.tb001()
 
 
@@ -137,7 +138,7 @@ class Pivot(Init):
 		'''Center Pivot: World
 		'''
 		tb = self.pivot_ui.tb001
-		tb.menu_.chk004.setChecked()
+		tb.menu_.chk004.setChecked(True)
 		self.tb001()
 
 

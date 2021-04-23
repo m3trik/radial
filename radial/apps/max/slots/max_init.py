@@ -18,7 +18,7 @@ except ImportError as error:
 	maxEval = p
 	rt = None
 
-from ui import widgets as wgts
+from radial.ui import widgets as wgts
 from slots import Slots
 
 
@@ -1033,7 +1033,7 @@ class Init(Slots):
 			index (int) = place modifier before given index. default is at the top of the stack.
 						Negative indices place the modifier from the bottom of the stack.
 		:Return:
-			modifier
+			(obj) modifier object.
 		'''
 		m = obj.modifiers[modifier] #check the stack for the given modifier.
 		
@@ -1051,85 +1051,11 @@ class Init(Slots):
 
 	@staticmethod
 	def undo(state=True):
+		'''
+		'''
 		import pymxs
 		pymxs.undo(state)
 		return state
-
-
-
-
-
-
-	# ------------------------------------------------
-	'FILE'
-	# ------------------------------------------------
-
-	@staticmethod
-	def getRecentFiles():
-		'''Get a list of recently opened files.
-
-		:Return:
-			(list)
-		'''
-		#get recent file list. #convert to python
-		maxEval('''
-		Fn getRecentFiles =
-			(
-			local recentfiles = (getdir #maxData) + "RecentDocuments.xml"
-			if doesfileexist recentfiles then
-				(
-				XMLArray = #()		
-				xDoc = dotnetobject "system.xml.xmldocument"	
-				xDoc.Load recentfiles
-				Rootelement = xDoc.documentelement
-
-				XMLArray = for i = 0 to rootelement.childnodes.item[4].childnodes.itemof[0].childnodes.count-1 collect 
-					(
-					rootelement.childnodes.item[4].childnodes.itemof[0].childnodes.itemof[i].childnodes.itemof[3].innertext	
-					)
-					
-				Return XMLArray
-				LRXML = Undefined
-				XDoc = Undefined
-				XDoc = nothing	
-				)
-			)
-			''')
-
-		files = rt.getRecentfiles()
-		result = [Init.formatPath(f) for f in files]
-
-		return result
-
-
-	@staticmethod
-	def getRecentProjects():
-		'''Get a list of recently set projects.
-
-		:Return:
-			(list)
-		'''
-		files = ['No 3ds max function']
-		result = [Init.formatPath(f) for f in list(reversed(files))]
-
-		return result
-
-
-	@staticmethod
-	def getRecentAutosave():
-		'''Get a list of autosave files.
-
-		:Return:
-			(list)
-		'''
-		path = MaxPlus.PathManager.GetAutobackDir()
-		files = [f for f in os.listdir(path) if f.endswith('.max') or f.endswith('.bak')] #get list of max autosave files
-
-		list_ = [f+'  '+datetime.fromtimestamp(os.path.getmtime(path+'\\'+f)).strftime('%H:%M  %m-%d-%Y') for f in files] #attach modified timestamp
-
-		result = sorted(list_, reverse=1)
-
-		return result
 
 
 

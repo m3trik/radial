@@ -16,10 +16,10 @@ class Rigging(Init):
 	def draggable_header(self, state=None):
 		'''Context menu
 		'''
-		draggable_header = self.rigging_ui.draggable_header
+		dh = self.rigging_ui.draggable_header
 
 		if state is 'setMenu':
-			draggable_header.contextMenu.add(wgts.ComboBox, setObjectName='cmb000', setToolTip='Maya Rigging Editors')
+			dh.contextMenu.add(wgts.ComboBox, setObjectName='cmb000', setToolTip='Maya Rigging Editors')
 			return
 
 
@@ -34,19 +34,20 @@ class Rigging(Init):
 			return
 
 		if index>0:
-			if index==cmb.items.index('Quick Rig'):
+			text = cmb.items[index]
+			if text=='Quick Rig':
 				mel.eval('QuickRigEditor;') #Quick Rig
-			elif index==cmb.items.index('HumanIK'):
+			elif text=='HumanIK':
 				mel.eval('HIKCharacterControlsTool;') #HumanIK
-			elif index==cmb.items.index('Expression Editor'):
+			elif text=='Expression Editor':
 				mel.eval('ExpressionEditor;') #Expression Editor
-			elif index==cmb.items.index('Shape Editor'):
+			elif text=='Shape Editor':
 				mel.eval('ShapeEditor;') #Shape Editor
-			elif index==cmb.items.index('Connection Editor'):
+			elif text=='Connection Editor':
 				mel.eval('ConnectionEditor;') #Connection Editor
-			elif index==cmb.items.index('Channel Control Editor'):
+			elif text=='Channel Control Editor':
 				mel.eval('ChannelControlEditor;') #Channel Control Editor
-			elif index==cmb.items.index('Set Driven Key'):
+			elif text=='Set Driven Key':
 				mel.eval('SetDrivenKeyOptions;') #Set Driven Key
 			cmb.setCurrentIndex(0)
 
@@ -62,15 +63,16 @@ class Rigging(Init):
 			return
 
 		if index>0:
-			if index==cmb.items.index('Joints'):
+			text = cmb.items[index]
+			if text=='Joints':
 				pm.setToolTo('jointContext') #create joint tool
-			elif index==cmb.items.index('Locator'):
+			elif text=='Locator':
 				pm.spaceLocator(p=[0,0,0]) #locator
-			elif index==cmb.items.index('IK Handle'):
+			elif text=='IK Handle':
 				pm.setToolTo('ikHandleContext') #create ik handle
-			elif index==cmb.items.index('Lattice'):
+			elif text=='Lattice':
 				pm.lattice(divisions=[2,5,2], objectCentered=1, ldv=[2,2,2]) ##create lattice
-			elif index==cmb.items.index('Cluster'):
+			elif text=='Cluster':
 				mel.eval('CreateCluster;') #create cluster
 			cmb.setCurrentIndex(0)
 
@@ -128,7 +130,7 @@ class Rigging(Init):
 		joints = pm.ls(type="joint") #get all scene joints
 
 		state = pm.toggle(joints[0], query=1, localAxis=1)
-		if tb.isChecked():
+		if tb.menu_.isChecked():
 			if not state:
 				toggle=True
 		else:
@@ -150,10 +152,30 @@ class Rigging(Init):
 			return
 
 		orientJoint = 'xyz' #orient joints
-		if tb.isChecked():
+		if tb.menu_.isChecked():
 			orientJoint = 'none' #orient joint to world
 
 		pm.joint(edit=1, orientJoint=orientJoint, zeroScaleOrient=1, ch=1)
+
+
+	def tb002(self, state=None):
+		'''Constraint: Parent
+		'''
+		tb = self.current_ui.tb002
+		if state is 'setMenu':
+			tb.menu_.add('QCheckBox', setText='Template Child', setObjectName='chk004', setChecked=False, setToolTip='Template child object(s) after parenting.')		
+			return
+
+		template = tb.menu_.chk004.isChecked()
+
+		objects = pm.ls(sl=1, objectsOnly=1)
+
+		for obj in objects[:-1]:
+			pm.parentConstraint(obj, objects[:-1], maintainOffset=1, weight=1)
+
+			if template:
+				if not pm.toggle(obj, template=1, query=1):
+					pm.toggle(obj, template=1, query=1)
 
 
 	def b001(self):
@@ -172,12 +194,6 @@ class Rigging(Init):
 		'''Reroot
 		'''
 		pm.reroot() #re-root joints
-
-
-	def b005(self):
-		'''Constraint: Parent
-		'''
-		pm.parentConstraint(mo=1, weight=1)
 
 
 	def b006(self):

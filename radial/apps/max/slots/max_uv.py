@@ -32,11 +32,11 @@ class Uv(Init):
 	def draggable_header(self, state=None):
 		'''Context menu
 		'''
-		draggable_header = self.uv_ui.draggable_header
+		dh = self.uv_ui.draggable_header
 
 		if state is 'setMenu':
-			draggable_header.contextMenu.add(wgts.ComboBox, setObjectName='cmb000', setToolTip='Maya UV Editors')
-			draggable_header.contextMenu.add('QPushButton', setText='Create UV Snapshot', setObjectName='b001', setToolTip='Save an image file of the current UV layout.')
+			dh.contextMenu.add(wgts.ComboBox, setObjectName='cmb000', setToolTip='Maya UV Editors')
+			dh.contextMenu.add('QPushButton', setText='Create UV Snapshot', setObjectName='b001', setToolTip='Save an image file of the current UV layout.')
 			return
 
 
@@ -102,24 +102,25 @@ class Uv(Init):
 			return
 
 		if index>0:
+			text = cmb.items[index]
 			self.main.hide() #hide hotbox then perform operation
-			if index==cmb.items.index('Flip U'):
+			if text=='Flip U':
 				pm.polyFlipUV(flipType=0, local=1, usePivot=1, pivotU=0, pivotV=0)
-			elif index==cmb.items.index('Flip V'):
+			elif text=='Flip V':
 				pm.polyFlipUV(flipType=1, local=1, usePivot=1, pivotU=0, pivotV=0)
-			elif index==cmb.items.index('Align U Left'):
+			elif text=='Align U Left':
 				pm.mel.performAlignUV('minU')
-			elif index==cmb.items.index('Align U Middle'):
+			elif text=='Align U Middle':
 				pm.mel.performAlignUV('avgU')
-			elif index==cmb.items.index('Align U Right'):
+			elif text=='Align U Right':
 				pm.mel.performAlignUV('maxU')
-			elif index==cmb.items.index('Align U Top'):
+			elif text=='Align U Top':
 				pm.mel.performAlignUV('maxV')
-			elif index==cmb.items.index('Align U Middle'):
+			elif text=='Align U Middle':
 				pm.mel.performAlignUV('avgV')
-			elif index==cmb.items.index('Align U Bottom'):
+			elif text=='Align U Bottom':
 				pm.mel.performAlignUV('minV')
-			elif index==cmb.items.index('Linear Align'):
+			elif text=='Linear Align':
 				pm.mel.performLinearAlignUV()
 			cmb.setCurrentIndex(0)
 

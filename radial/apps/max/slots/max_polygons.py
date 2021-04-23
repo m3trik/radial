@@ -34,10 +34,10 @@ class Polygons(Init):
 	def draggable_header(self, state=None):
 		'''Context menu
 		'''
-		draggable_header = self.polygons_ui.draggable_header
+		dh = self.polygons_ui.draggable_header
 
 		if state is 'setMenu':
-			draggable_header.contextMenu.add(wgts.ComboBox, setObjectName='cmb000', setToolTip='')
+			dh.contextMenu.add(wgts.ComboBox, setObjectName='cmb000', setToolTip='')
 
 			return
 
@@ -53,7 +53,8 @@ class Polygons(Init):
 			return
 
 		if index>0:
-			if index==cmb.items.index('Bridge'):
+			text = cmb.items[index]
+			if text=='Bridge':
 				maxEval('''
 				if Ribbon - Modeling.ValidSOMode() and (subObjectLevel == 2 or subObjectLevel == 3) then
 				(
@@ -68,7 +69,7 @@ class Polygons(Init):
 					)
 				)
 				''')
-			if index==cmb.items.index('Extrude'):
+			if text=='Extrude':
 				maxEval('''
 				If subObjectLevel == undefined then Max Modify Mode
 				-- default to Face level:

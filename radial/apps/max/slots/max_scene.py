@@ -18,10 +18,10 @@ class Scene(Init):
 	def draggable_header(self, state=None):
 		'''Context menu
 		'''
-		draggable_header = self.scene_ui.draggable_header
+		dh = self.scene_ui.draggable_header
 
 		if state is 'setMenu':
-			draggable_header.contextMenu.add(wgts.ComboBox, setObjectName='cmb000', setToolTip='')
+			dh.contextMenu.add(wgts.ComboBox, setObjectName='cmb000', setToolTip='')
 			return
 
 
@@ -36,7 +36,8 @@ class Scene(Init):
 			return
 
 		if index>0:
-			if index==cmb.items.index(''):
+			text = cmb.items[index]
+			if text=='':
 				pass
 			cmb.setCurrentIndex(0)
 

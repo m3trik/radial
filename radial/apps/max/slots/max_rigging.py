@@ -16,10 +16,10 @@ class Rigging(Init):
 	def draggable_header(self, state=None):
 		'''Context menu
 		'''
-		draggable_header = self.rigging_ui.draggable_header
+		dh = self.rigging_ui.draggable_header
 
 		if state is 'setMenu':
-			draggable_header.contextMenu.add(wgts.ComboBox, setObjectName='cmb000', setToolTip='')
+			dh.contextMenu.add(wgts.ComboBox, setObjectName='cmb000', setToolTip='')
 			return
 
 
@@ -29,26 +29,21 @@ class Rigging(Init):
 		cmb = self.rigging_ui.cmb000
 
 		if index is 'setMenu':
-			list_ = ['Quick Rig','HumanIK','Expression Editor','Shape Editor','Connection Editor','Channel Control Editor','Set Driven Key']
-			cmb.addItems_(list_, '')
+			list_ = ['Bone Tools','Parameter Editor','Parameter Collector','Parameter Wire Dialog']
+			cmb.addItems_(list_, 'Rigging Editors')
 			return
 
-		# if index>0:
-		# 	if index==cmb.items.index('Quick Rig'):
-		# 		mel.eval('QuickRigEditor;') #Quick Rig
-		# 	if index==cmb.items.index('HumanIK'):
-		# 		mel.eval('HIKCharacterControlsTool;') #HumanIK
-		# 	if index==cmb.items.index('Expression Editor'):
-		# 		mel.eval('ExpressionEditor;') #Expression Editor
-		# 	if index==cmb.items.index('Shape Editor'):
-		# 		mel.eval('ShapeEditor;') #Shape Editor
-		# 	if index==cmb.items.index('Connection Editor'):
-		# 		mel.eval('ConnectionEditor;') #Connection Editor
-		# 	if index==cmb.items.index('Channel Control Editor'):
-		# 		mel.eval('ChannelControlEditor;') #Channel Control Editor
-		# 	if index==cmb.items.index('Set Driven Key'):
-		# 		mel.eval('SetDrivenKeyOptions;') #Set Driven Key
-		# 	cmb.setCurrentIndex(0)
+		if index>0:
+			text = cmb.items[index]
+			if text=='Bone Tools':
+				maxEval('macros.run "Animation Tools" "BoneAdjustmentTools"')
+			elif text=='Parameter Editor':
+				maxEval('macros.run "Customize User Interface" "Custom_Attributes"')
+			elif text=='Parameter Collector':
+				maxEval('macros.run "Parameter Collector" "ParamCollectorShow"')
+			elif text=='Parameter Wire Dialog':
+				maxEval('macros.run "Parameter Wire" "paramWire_dialog"')
+			cmb.setCurrentIndex(0)
 
 
 	def cmb001(self, index=None):
@@ -57,24 +52,27 @@ class Rigging(Init):
 		cmb = self.rigging_ui.cmb001
 
 		if index is 'setMenu':
-			list_ = ['Joints','Locator','IK Handle', 'Lattice', 'Cluster']
+			list_ = ['Bones IK Chain','Point','Dummy','Grid','Expose Transform','Lattice','Biped']
 			cmb.addItems_(list_, "Create")
 			return
 
-		# if not index:
-		# 	index = cmb.currentIndex()
-		# if index!=0:
-		# 	if index==cmb.items.index('Joints'):
-		# 		pm.setToolTo('jointContext') #create joint tool
-		# 	if index==cmb.items.index('Locator'):
-		# 		pm.spaceLocator(p=[0,0,0]) #locator
-		# 	if index==cmb.items.index('IK Handle'):
-		# 		pm.setToolTo('ikHandleContext') #create ik handle
-		# 	if index==cmb.items.index('Lattice'):
-		# 		pm.lattice(divisions=[2,5,2], objectCentered=1, ldv=[2,2,2]) ##create lattice
-		# 	if index==cmb.items.index('Cluster'):
-		# 		mel.eval('CreateCluster;') #create cluster
-		# 	cmb.setCurrentIndex(0)
+		if index>0:
+			text = cmb.items[index]
+			if text=='Bones IK Chain':
+				maxEval('macros.run "Inverse Kinematics" "Bones"') #create joint tool
+			elif text=='Point':
+				maxEval('macros.run "Objects Helpers" "Point"') #Point pos:[46.5545,-11.1098,0] isSelected:on #locator
+			elif text=='Dummy':
+				maxEval('macros.run "Objects Helpers" "Dummy"')
+			elif text=='Grid':
+				maxEval('macros.run "Objects Helpers" "Grid"') #grid pos:[14.957,-79.0478,0] isSelected:on width:49.0621 length:51.0787
+			elif text=='Expose Transform':
+				maxEval('macros.run "Objects Helpers" "ExposeTM"') #ExposeTm pos:[1.12888,-35.9943,0] isSelected:on
+			elif text=='Lattice':
+				maxEval('modPanel.addModToSelection (Lattice ()) ui:on') #create lattice
+			elif text=='macros.run "Objects Systems" "Biped"':
+				maxEval('macros.run "Objects Systems" "Biped"')
+			cmb.setCurrentIndex(0)
 
 
 	def chk000(self, state=None):
@@ -128,7 +126,7 @@ class Rigging(Init):
 		# joints = pm.ls(type="joint") #get all scene joints
 
 		# state = pm.toggle(joints[0], query=1, localAxis=1)
-		# if tb.isChecked():
+		# if tb.menu_.isChecked():
 		# 	if not state:
 		# 		toggle=True
 		# else:
@@ -150,10 +148,29 @@ class Rigging(Init):
 			return
 
 		# orientJoint = 'xyz' #orient joints
-		# if tb.isChecked():
+		# if tb.menu_.isChecked():
 		# 	orientJoint = 'none' #orient joint to world
 
 		# pm.joint(edit=1, orientJoint=orientJoint, zeroScaleOrient=1, ch=1)
+
+
+	def tb002(self, state=None):
+		'''Constraint: Parent
+		'''
+		tb = self.current_ui.tb002
+		if state is 'setMenu':
+			tb.menu_.add('QCheckBox', setText='Template Child', setObjectName='chk004', setChecked=False, setToolTip='Template child object(s) after parenting.')		
+			return
+
+		template = tb.menu_.chk004.isChecked()
+
+		objects = list(Init.bitArrayToArray(rt.selection))
+
+		for obj in objects[:-1]:
+			obj.parent = objects[-1]
+
+			if template:
+				obj.isFrozen = True
 
 
 	def b001(self):
@@ -172,12 +189,6 @@ class Rigging(Init):
 		'''Reroot
 		'''
 		pm.reroot() #re-root joints
-
-
-	def b005(self):
-		'''Constraint: Parent
-		'''
-		pm.parentConstraint(mo=1, weight=1)
 
 
 	def b006(self):

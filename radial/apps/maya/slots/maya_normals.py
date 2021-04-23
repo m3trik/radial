@@ -16,10 +16,10 @@ class Normals(Init):
 	def draggable_header(self, state=None):
 		'''Context menu
 		'''
-		draggable_header = self.normals_ui.draggable_header
+		dh = self.normals_ui.draggable_header
 
 		if state is 'setMenu':
-			draggable_header.contextMenu.add(wgts.ComboBox, setObjectName='cmb000', setToolTip='')
+			dh.contextMenu.add(wgts.ComboBox, setObjectName='cmb000', setToolTip='')
 			return
 
 
@@ -244,12 +244,13 @@ class Normals(Init):
 	def b010(self):
 		'''Reverse Normals
 		'''
-		pm.mel.ReversePolygonNormals()
+		sel = pm.ls(sl=1)
+		pm.polyNormal(sel, normalMode=3, userNormalMode=1) #3: reverse and cut a new shell on selected face(s). 4: reverse and propagate; Reverse the normal(s) and propagate this direction to all other faces in the shell.
+
 
 
 
 		
-
 
 
 

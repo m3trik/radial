@@ -30,10 +30,10 @@ class Crease(Init):
 	def draggable_header(self, state=None):
 		'''Context menu
 		'''
-		draggable_header = self.crease_ui.draggable_header
+		dh = self.crease_ui.draggable_header
 
 		if state is 'setMenu':
-			draggable_header.contextMenu.add(wgts.ComboBox, setObjectName='cmb000', setToolTip='Maya Crease Editors')
+			dh.contextMenu.add(wgts.ComboBox, setObjectName='cmb000', setToolTip='Maya Crease Editors')
 			return
 
 
@@ -48,7 +48,8 @@ class Crease(Init):
 			return
 
 		if index>0:
-			if index==cmb.items.index('Crease Set Editor'):
+			text = cmb.items[index]
+			if text=='Crease Set Editor':
 				from maya.app.general import creaseSetEditor
 				creaseSetEditor.showCreaseSetEditor()
 

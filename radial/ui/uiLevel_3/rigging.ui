@@ -309,25 +309,6 @@
             <property name="spacing">
              <number>0</number>
             </property>
-            <item row="0" column="0" colspan="2">
-             <widget class="QPushButton" name="b005">
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>20</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>999</width>
-                <height>20</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>Parent</string>
-              </property>
-             </widget>
-            </item>
             <item row="0" column="2">
              <widget class="QPushButton" name="b006">
               <property name="minimumSize">
@@ -432,6 +413,25 @@
               </property>
               <property name="text">
                <string>Pole Vector</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0" colspan="2">
+             <widget class="ToolButton" name="tb002">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>999</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Parent</string>
               </property>
              </widget>
             </item>

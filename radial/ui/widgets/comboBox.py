@@ -80,9 +80,9 @@ class ComboBox(QtWidgets.QComboBox, MenuInstance, Attributes):
 		for item in [header]+items:
 			if item is not None:
 				if ascending:
-					self.insertItem(0, str(item))
+					self.insertItem(0, item.encode('utf-8'))
 				else:
-					self.addItem(str(item))
+					self.addItem(item.encode('utf-8'))
 
 		self.setCurrentIndex(index)
 		self.blockSignals(False)

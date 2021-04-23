@@ -18,10 +18,10 @@ class Scene(Init):
 	def draggable_header(self, state=None):
 		'''Context menu
 		'''
-		draggable_header = self.scene_ui.draggable_header
+		dh = self.scene_ui.draggable_header
 
 		if state is 'setMenu':
-			draggable_header.contextMenu.add(wgts.ComboBox, setObjectName='cmb000', setToolTip='Maya Scene Editors')
+			dh.contextMenu.add(wgts.ComboBox, setObjectName='cmb000', setToolTip='Maya Scene Editors')
 			return
 
 
@@ -36,17 +36,18 @@ class Scene(Init):
 			return
 
 		if index>0:
-			if index==cmb.items.index('Node Editor'):
+			text = cmb.items[index]
+			if text=='Node Editor':
 				mel.eval('NodeEditorWindow;') #
-			elif index==cmb.items.index('Outlinder'):
+			elif text=='Outlinder':
 				mel.eval('OutlinerWindow;') #
-			elif index==cmb.items.index('Content Browser'):
+			elif text=='Content Browser':
 				mel.eval('ContentBrowserWindow;') #
-			elif index==cmb.items.index('Optimize Scene Size'):
+			elif text=='Optimize Scene Size':
 				mel.eval('cleanUpScene 2;')
-			elif index==cmb.items.index('Prefix Hierarchy Names'):
+			elif text=='Prefix Hierarchy Names':
 				mel.eval('prefixHierarchy;') #Add a prefix to all hierarchy names.
-			elif index==cmb.items.index('Search and Replace Names'):
+			elif text=='Search and Replace Names':
 				mel.eval('SearchAndReplaceNames;') #performSearchReplaceNames 1; #Rename objects in the scene.
 			cmb.setCurrentIndex(0)
 

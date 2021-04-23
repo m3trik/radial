@@ -35,10 +35,10 @@ class Create(Init):
 	def draggable_header(self, state=None):
 		'''Context menu
 		'''
-		draggable_header = self.create_ui.draggable_header
+		dh = self.create_ui.draggable_header
 
 		if state is 'setMenu':
-			draggable_header.contextMenu.add(wgts.ComboBox, setObjectName='cmb003', setToolTip='')
+			dh.contextMenu.add(wgts.ComboBox, setObjectName='cmb003', setToolTip='')
 			return
 
 
@@ -53,7 +53,8 @@ class Create(Init):
 			return
 
 		if index>0:
-			if index==cmb.items.index(''):
+			text = cmb.items[index]
+			if text=='':
 				pass
 			cmb.setCurrentIndex(0)
 

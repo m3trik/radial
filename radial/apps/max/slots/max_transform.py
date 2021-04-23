@@ -16,10 +16,10 @@ class Transform(Init):
 	def draggable_header(self, state=None):
 		'''Context menu
 		'''
-		draggable_header = self.transform_ui.draggable_header
+		dh = self.transform_ui.draggable_header
 
 		if state is 'setMenu':
-			draggable_header.contextMenu.add(wgts.ComboBox, setObjectName='cmb000', setToolTip='')
+			dh.contextMenu.add(wgts.ComboBox, setObjectName='cmb000', setToolTip='')
 			return
 
 
@@ -34,7 +34,8 @@ class Transform(Init):
 			return
 
 		if inde>0:
-			if index==cmb.items.index(''):
+			text = cmb.items[index]
+			if text=='':
 				pass
 			cmb.setCurrentIndex(0)
 
@@ -92,21 +93,22 @@ class Transform(Init):
 			return
 
 		if index>0:
-			if index==cmb.items.index('Point to Point'):
+			text = cmb.items[index]
+			if text=='Point to Point':
 				mel.eval('SnapPointToPointOptions;') #performSnapPtToPt 1; Select any type of point object or component.
-			elif index==cmb.items.index('2 Points to 2 Points'):
+			elif text=='2 Points to 2 Points':
 				mel.eval('Snap2PointsTo2PointsOptions;') #performSnap2PtTo2Pt 1; Select any type of point object or component.
-			elif index==cmb.items.index('3 Points to 3 Points'):
+			elif text=='3 Points to 3 Points':
 				mel.eval('Snap3PointsTo3PointsOptions;') #performSnap3PtTo3Pt 1; Select any type of point object or component.
-			elif index==cmb.items.index('Align Objects'):
+			elif text=='Align Objects':
 				mel.eval('performAlignObjects 1;') #Align the selected objects.
-			elif index==cmb.items.index('Position Along Curve'):
+			elif text=='Position Along Curve':
 				mel.eval('PositionAlongCurve;') #Position selected objects along a selected curve.
 				# import maya.app.general.positionAlongCurve
 				# maya.app.general.positionAlongCurve.positionAlongCurve()
-			elif index==cmb.items.index('Align Tool'):
+			elif text=='Align Tool':
 				mel.eval('SetAlignTool;') #setToolTo alignToolCtx; Align the selection to the last selected object.
-			elif index==cmb.items.index('Snap Together Tool'):
+			elif text=='Snap Together Tool':
 				mel.eval('SetSnapTogetherToolOptions;') #setToolTo snapTogetherToolCtx; toolPropertyWindow;) Snap two objects together.
 
 

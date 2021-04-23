@@ -35,15 +35,15 @@ class Selection(Init):
 	def draggable_header(self, state=None):
 		'''Context menu
 		'''
-		draggable_header = self.selection_ui.draggable_header
+		dh = self.selection_ui.draggable_header
 
 		if state is 'setMenu':
-			draggable_header.contextMenu.add(wgts.ComboBox, setObjectName='cmb001', setToolTip='')
-			draggable_header.contextMenu.add(wgts.ComboBox, setObjectName='cmb004', setToolTip='Set the select tool type.')
-			draggable_header.contextMenu.add('QCheckBox', setText='Ignore Backfacing', setObjectName='chk004', setToolTip='Ignore backfacing components during selection.')
-			draggable_header.contextMenu.add('QCheckBox', setText='Soft Selection', setObjectName='chk008', setToolTip='Toggle soft selection mode.')
-			draggable_header.contextMenu.add(wgts.Label, setText='Grow Selection', setObjectName='lbl003', setToolTip='Grow the current selection.')
-			draggable_header.contextMenu.add(wgts.Label, setText='Shrink Selection', setObjectName='lbl004', setToolTip='Shrink the current selection.')
+			dh.contextMenu.add(wgts.ComboBox, setObjectName='cmb001', setToolTip='')
+			dh.contextMenu.add(wgts.ComboBox, setObjectName='cmb004', setToolTip='Set the select tool type.')
+			dh.contextMenu.add('QCheckBox', setText='Ignore Backfacing', setObjectName='chk004', setToolTip='Ignore backfacing components during selection.')
+			dh.contextMenu.add('QCheckBox', setText='Soft Selection', setObjectName='chk008', setToolTip='Toggle soft selection mode.')
+			dh.contextMenu.add(wgts.Label, setText='Grow Selection', setObjectName='lbl003', setToolTip='Grow the current selection.')
+			dh.contextMenu.add(wgts.Label, setText='Shrink Selection', setObjectName='lbl004', setToolTip='Shrink the current selection.')
 			return
 
 
@@ -268,7 +268,8 @@ class Selection(Init):
 			return
 
 		if index>0:
-			if index==cmb.items.index('Selection Set Editor'):
+			text = cmb.items[index]
+			if text=='Selection Set Editor':
 				maxEval('macros.run "Edit" "namedSelSets"')
 			cmb.setCurrentIndex(0)
 
@@ -284,21 +285,22 @@ class Selection(Init):
 			return
 
 		if index>0:
-			if index==cmb.items.index('Geometry'): #Select all Geometry
+			text = cmb.items[index]
+			if text=='Geometry': #Select all Geometry
 				rt.select(rt.geometry)
-			elif index==cmb.items.index('Shapes'): #Select all Geometry
+			elif text=='Shapes': #Select all Geometry
 				rt.select(rt.shapes)
-			elif index==cmb.items.index('Lights'): #Select all Geometry
+			elif text=='Lights': #Select all Geometry
 				rt.select(rt.lights)
-			elif index==cmb.items.index('Cameras'): #Select all Geometry
+			elif text=='Cameras': #Select all Geometry
 				rt.select(rt.cameras)
-			elif index==cmb.items.index('Helpers'): #Select all Geometry
+			elif text=='Helpers': #Select all Geometry
 				rt.select(rt.helpers)
-			elif index==cmb.items.index('Space Warps'): #Select all Geometry
+			elif text=='Space Warps': #Select all Geometry
 				rt.select(rt.spacewarps)
-			elif index==cmb.items.index('Particle Systems'): #Select all Geometry
+			elif text=='Particle Systems': #Select all Geometry
 				rt.select(rt.particelsystems)
-			elif index==cmb.items.index('Bone Objects'): #Select all Geometry
+			elif text=='Bone Objects': #Select all Geometry
 				rt.select(rt.boneobjects)
 
 			cmb.setCurrentIndex(0)
@@ -315,6 +317,7 @@ class Selection(Init):
 			return
 
 		if index>0:
+			text = cmb.items[index]
 			for obj in rt.selection:
 				for i in cmb.items:
 					if index==cmb.items.index(i):
@@ -335,15 +338,16 @@ class Selection(Init):
 			return
 
 		if index>0:
-			if index==cmb.items.index('Marquee'):
+			text = cmb.items[index]
+			if text=='Marquee':
 				maxEval('actionMan.executeAction 0 "59232"') #Rectangular select region
-			elif index==cmb.items.index('Circular'):
+			elif text=='Circular':
 				maxEval('actionMan.executeAction 0 "59233"') #Circular select region
-			elif index==cmb.items.index('Fence'):
+			elif text=='Fence':
 				maxEval('actionMan.executeAction 0 "59234"') #Fence select region
-			elif index==cmb.items.index('Lasso'):
+			elif text=='Lasso':
 				maxEval('actionMan.executeAction 0 "59235"') #Lasso select region
-			elif index==cmb.items.index('Paint'):
+			elif text=='Paint':
 				maxEval('actionMan.executeAction 0 "59236"') #Paint select region
 			cmb.setCurrentIndex(0)
 
@@ -358,21 +362,22 @@ class Selection(Init):
 			cmb.addItems_(list_, 'Off')
 			return
 
-		# if index>0:
-		# 	if index==cmb.items.index('Angle'):
-		# 		mel.eval('dR_selConstraintAngle;') #dR_DoCmd("selConstraintAngle");
-		# 	elif index==cmb.items.index('Border'):
-		# 		mel.eval('dR_selConstraintBorder;') #dR_DoCmd("selConstraintBorder");
-		# 	elif index==cmb.items.index('Edge Loop'):
-		# 		mel.eval('dR_selConstraintEdgeLoop;') #dR_DoCmd("selConstraintEdgeLoop");
-		# 	elif index==cmb.items.index('Edge Ring'):
-		# 		mel.eval('dR_selConstraintEdgeRing;') #dR_DoCmd("selConstraintEdgeRing");
-		# 	elif index==cmb.items.index('Shell'):
-		# 		mel.eval('dR_selConstraintElement;') #dR_DoCmd("selConstraintElement");
-		# 	elif index==cmb.items.index('UV Edge Loop'):
-		# 		mel.eval('dR_selConstraintUVEdgeLoop;') #dR_DoCmd("selConstraintUVEdgeLoop");
-		# else:
-		# 	mel.eval('dR_selConstraintOff;') #dR_DoCmd("selConstraintOff");
+		if index>0:
+			text = cmb.items[index]
+			if text=='Angle':
+				mel.eval('dR_selConstraintAngle;') #dR_DoCmd("selConstraintAngle");
+			elif text=='Border':
+				mel.eval('dR_selConstraintBorder;') #dR_DoCmd("selConstraintBorder");
+			elif text=='Edge Loop':
+				mel.eval('dR_selConstraintEdgeLoop;') #dR_DoCmd("selConstraintEdgeLoop");
+			elif text=='Edge Ring':
+				mel.eval('dR_selConstraintEdgeRing;') #dR_DoCmd("selConstraintEdgeRing");
+			elif text=='Shell':
+				mel.eval('dR_selConstraintElement;') #dR_DoCmd("selConstraintElement");
+			elif text=='UV Edge Loop':
+				mel.eval('dR_selConstraintUVEdgeLoop;') #dR_DoCmd("selConstraintUVEdgeLoop");
+		else:
+			mel.eval('dR_selConstraintOff;') #dR_DoCmd("selConstraintOff");
 
 
 	def cmb006(self, index=None):

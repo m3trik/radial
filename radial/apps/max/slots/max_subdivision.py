@@ -23,10 +23,10 @@ class Subdivision(Init):
 	def draggable_header(self, state=None):
 		'''Context menu
 		'''
-		draggable_header = self.subdivision_ui.draggable_header
+		dh = self.subdivision_ui.draggable_header
 
 		if state is 'setMenu':
-			draggable_header.contextMenu.add(wgts.ComboBox, setObjectName='cmb000', setToolTip='Subdivision Modifiers')
+			dh.contextMenu.add(wgts.ComboBox, setObjectName='cmb000', setToolTip='Subdivision Modifiers')
 			return
 
 
@@ -41,7 +41,8 @@ class Subdivision(Init):
 			return
 
 		if index>0:
-			if index==1: #TurboSmooth
+			text = cmb.items[index]
+			if text=='TurboSmooth':
 				mod = rt.TurboSmooth()
 				mod.iterations = 0
 				mod.renderIterations = 1
@@ -50,7 +51,7 @@ class Subdivision(Init):
 				mod.sepByMats = True
 				rt.modpanel.addModToSelection(mod)
 
-			if index==2: #TurboSmooth Pro
+			if text=='TurboSmooth Pro':
 				mod = TurboSmooth_Pro()
 				mod.iterations = 0
 				mod.renderIterations = 1
@@ -62,24 +63,24 @@ class Subdivision(Init):
 				mod.creaseMaterials = True
 				rt.modpanel.addModToSelection(mod)
 
-			if index==3: #OpenSubDiv
+			if text=='OpenSubDiv':
 				mod = OpenSubdiv()
 				mod.iterations = 0
 				mod.renderIterations = 1
 				mod.useRenderIterations = True
 				rt.modpanel.addModToSelection(mod)
 
-			if index==4: #Subdivide
+			if text=='Subdivide':
 				mod = subdivide()
 				mod.size = 0.075
 				rt.modpanel.addModToSelection(mod)
 
-			if index==5: #Subdivide (WSM)
+			if text=='Subdivide (WSM)':
 				mod = subdivideSpacewarpModifier()
 				mod.size = 40
 				rt.modpanel.addModToSelection(mod)
 
-			if index==6: #MeshSmooth
+			if text=='MeshSmooth':
 				mod = meshsmooth()
 				mod.iterations = 0
 				mod.renderIterations = 1
@@ -87,18 +88,17 @@ class Subdivision(Init):
 				mod.useRenderSmoothness = True
 				rt.modpanel.addModToSelection(mod)
 
-			if index==7: #Optimize
+			if text=='Optimize':
 				mod = optimize()
 				rt.modpanel.addModToSelection(mod)
 
-			if index==8: #Pro optimizer
+			if text=='Pro optimizer':
 				mod = ProOptimizer()
 				rt.modpanel.addModToSelection(mod)
 
-			if index==cmb.items.index('Add Divisions'):
+			if text=='Add Divisions':
 				maxEval('''
-				Try 
-				(
+				Try (
 					local A = modPanel.getCurrentObject()
 					A.popupDialog #Tessellate
 				)

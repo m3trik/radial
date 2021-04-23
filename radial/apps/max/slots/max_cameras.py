@@ -92,7 +92,8 @@ class Cameras(Init):
 
 
 	def tree000(self, wItem=None, column=None):
-		''''''
+		'''Camera Menu
+		'''
 		tree = self.cameras_ui.tree000
 
 		if wItem is 'setMenu':
@@ -101,6 +102,9 @@ class Cameras(Init):
 
 			l = []
 			[tree.add('QLabel', 'Editors', setText=s) for s in l]
+
+			l = ['Create Camera Point']
+			[tree.add('QLabel', 'Options', setText=s) for s in l]
 			return
 
 		if not any([wItem, column]): #refresh list items -----------------------------
@@ -136,6 +140,8 @@ class Cameras(Init):
 				self.clippingMenu.show()
 			if text=='Toggle Safe Frames':
 				maxEval('actionMan.executeAction 0 "219"') #Tools: Viewport Safeframes Toggle
+			if text=='Create Camera Point':
+				maxEval('actionMan.executeAction 0 "40015"') #CamPoint(); CamPoint pos:[34.8904,27.6277,0] isSelected:on
 
 
 	def v000(self):

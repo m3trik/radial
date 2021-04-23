@@ -27,15 +27,16 @@ class Editors(Init):
 	def draggable_header(self, state=None):
 		'''Context menu
 		'''
-		draggable_header = self.editors_ui.draggable_header
+		dh = self.editors_ui.draggable_header
 
 		if state is 'setMenu':
-			draggable_header.contextMenu.add(wgts.ComboBox, setObjectName='cmb000', setToolTip='')
+			dh.contextMenu.add(wgts.ComboBox, setObjectName='cmb000', setToolTip='')
 			return
 
 
 	def tree000(self, wItem=None, column=None):
-		''''''
+		'''All Editors
+		'''
 		tree = self.editors_ui.tree000
 
 		if wItem is 'setMenu':
@@ -199,22 +200,6 @@ class Editors(Init):
 				maxEval('schematicView.Open "Schematic View 1"')
 			elif text=='schematic View: New':
 				maxEval('actionMan.executeAction 0 "40429"') #Schematic View: New Schematic View
-
-
-	def cmb000(self, index=None):
-		'''Editors
-		'''
-		cmb = self.editors_ui.cmb000
-		
-		if index is 'setMenu':
-			list_ = ['']
-			cmb.addItems_(list_, '')
-			return
-
-		if index>0:
-			if index==cmb.items.index(''):
-				pass
-			cmb.setCurrentIndex(0)
 
 
 	def getEditorWidget(self, name):

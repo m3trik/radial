@@ -34,10 +34,10 @@ class Polygons(Init):
 	def draggable_header(self, state=None):
 		'''Context menu
 		'''
-		draggable_header = self.polygons_ui.draggable_header
+		dh = self.polygons_ui.draggable_header
 
 		if state is 'setMenu':
-			draggable_header.contextMenu.add(wgts.ComboBox, setObjectName='cmb000', setToolTip='')
+			dh.contextMenu.add(wgts.ComboBox, setObjectName='cmb000', setToolTip='')
 			return
 
 
@@ -52,27 +52,28 @@ class Polygons(Init):
 			return
 
 		if index>0:
-			if index==cmb.items.index('Extrude'):
+			text = cmb.items[index]
+			if text=='Extrude':
 				pm.mel.PolyExtrudeOptions()
-			elif index==cmb.items.index('Bevel'):
+			elif text=='Bevel':
 				pm.mel.BevelPolygonOptions()
-			elif index==cmb.items.index('Bridge'):
+			elif text=='Bridge':
 				pm.mel.BridgeEdgeOptions()
-			elif index==cmb.items.index('Combine'):
+			elif text=='Combine':
 				pm.mel.CombinePolygonsOptions()
-			elif index==cmb.items.index('Merge Vertex'):
+			elif text=='Merge Vertex':
 				pm.mel.PolyMergeOptions()
-			elif index==cmb.items.index('Offset Edgeloop'):
+			elif text=='Offset Edgeloop':
 				pm.mel.DuplicateEdgesOptions()
-			elif index==cmb.items.index('Edit Edgeflow'):
+			elif text=='Edit Edgeflow':
 				pm.mel.PolyEditEdgeFlowOptions()
-			elif index==cmb.items.index('Extract Curve'):
+			elif text=='Extract Curve':
 				pm.mel.CreateCurveFromPolyOptions()
-			elif index==cmb.items.index('Poke'):
+			elif text=='Poke':
 				pm.mel.PokePolygonOptions()
-			elif index==cmb.items.index('Wedge'):
+			elif text=='Wedge':
 				pm.mel.WedgePolygonOptions()
-			elif index==cmb.items.index('Assign Invisible'):
+			elif text=='Assign Invisible':
 				pm.mel.PolyAssignSubdivHoleOptions()
 			cmb.setCurrentIndex(0)
 

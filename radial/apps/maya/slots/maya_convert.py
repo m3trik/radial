@@ -16,10 +16,10 @@ class Convert(Init):
 	def draggable_header(self, state=None):
 		'''Context menu
 		'''
-		draggable_header = self.convert_ui.draggable_header
+		dh = self.convert_ui.draggable_header
 
 		if state is 'setMenu':
-			draggable_header.contextMenu.add(wgts.ComboBox, setObjectName='cmb000', setToolTip='')
+			dh.contextMenu.add(wgts.ComboBox, setObjectName='cmb000', setToolTip='')
 			return
 
 
@@ -34,7 +34,8 @@ class Convert(Init):
 			return
 
 		if index>0:
-			if index==cmb.items.index(''):
+			text = cmb.items[index]
+			if text=='':
 				pass
 			cmb.setCurrentIndex(0)
 
@@ -50,45 +51,46 @@ class Convert(Init):
 			return
 
 		if index>0:
-			if index==cmb.items.index('NURBS to Polygons'): #index 1
+			text = cmb.items[index]
+			if text=='NURBS to Polygons': #index 1
 				mel.eval('performnurbsToPoly 0;')
-			elif index==cmb.items.index('NURBS to Subdiv'): #index 2
+			elif text=='NURBS to Subdiv': #index 2
 				mel.eval('performSubdivCreate 0;')
-			elif index==cmb.items.index('Polygons to Subdiv'): #index 3
+			elif text=='Polygons to Subdiv': #index 3
 				mel.eval('performSubdivCreate 0;')
-			elif index==cmb.items.index('Smooth Mesh Preview to Polygons'): #index 4
+			elif text=='Smooth Mesh Preview to Polygons': #index 4
 				mel.eval('performSmoothMeshPreviewToPolygon;')
-			elif index==cmb.items.index('Polygon Edges to Curve'): #index 5
+			elif text=='Polygon Edges to Curve': #index 5
 				mel.eval('polyToCurve -form 2 -degree 3 -conformToSmoothMeshPreview 1;')
-			elif index==cmb.items.index('Type to Curves'): #index 6
+			elif text=='Type to Curves': #index 6
 				mel.eval('convertTypeCapsToCurves;')
-			elif index==cmb.items.index('Subdiv to Polygons'): #index 7
+			elif text=='Subdiv to Polygons': #index 7
 				mel.eval('performSubdivTessellate  false;')
-			elif index==cmb.items.index('Subdiv to NURBS'): #index 8
+			elif text=='Subdiv to NURBS': #index 8
 				mel.eval('performSubdToNurbs 0;')
-			elif index==cmb.items.index('NURBS Curve to Bezier'): #index 9
+			elif text=='NURBS Curve to Bezier': #index 9
 				mel.eval('nurbsCurveToBezier;')
-			elif index==cmb.items.index('Bezier Curve to NURBS'): #index 10
+			elif text=='Bezier Curve to NURBS': #index 10
 				mel.eval('bezierCurveToNurbs;')
-			elif index==cmb.items.index('Paint Effects to NURBS'): #index 11
+			elif text=='Paint Effects to NURBS': #index 11
 				mel.eval('performPaintEffectsToNurbs  false;')
-			elif index==cmb.items.index('Paint Effects to Curves'): #index 12
+			elif text=='Paint Effects to Curves': #index 12
 				mel.eval('performPaintEffectsToCurve  false;')
-			elif index==cmb.items.index('Texture to Geometry'): #index 13
+			elif text=='Texture to Geometry': #index 13
 				mel.eval('performTextureToGeom 0;')
-			elif index==cmb.items.index('Displacement to Polygons'): #index 14
+			elif text=='Displacement to Polygons': #index 14
 				mel.eval('displacementToPoly;')
-			elif index==cmb.items.index('Displacement to Polygons with History'): #index 15
+			elif text=='Displacement to Polygons with History': #index 15
 				mel.eval('setupAnimatedDisplacement;')
-			elif index==cmb.items.index('Fluid to Polygons'): #index 16
+			elif text=='Fluid to Polygons': #index 16
 				mel.eval('fluidToPoly;')
-			elif index==cmb.items.index('nParticle to Polygons'): #index 17
+			elif text=='nParticle to Polygons': #index 17
 				mel.eval('particleToPoly;')
-			elif index==cmb.items.index('Instance to Object'): #index 18
+			elif text=='Instance to Object': #index 18
 				mel.eval('convertInstanceToObject;')
-			elif index==cmb.items.index('Geometry to Bounding Box'): #index 19
+			elif text=='Geometry to Bounding Box': #index 19
 				mel.eval('performGeomToBBox 0;')
-			elif index==cmb.items.index('Convert XGen Primitives to Polygons'): #index 20
+			elif text=='Convert XGen Primitives to Polygons': #index 20
 				import xgenm.xmaya.xgmConvertPrimToPolygon as cpp
 				cpp.convertPrimToPolygon(False)
 

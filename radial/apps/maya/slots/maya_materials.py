@@ -23,17 +23,23 @@ class Materials(Init):
 		'''Get the current material using the current index of the materials combobox.
 		'''
 		text = self.materials_ui.cmb002.currentText()
-		return self.currentMats[text] if text else None
+
+		try:
+			result = self.currentMats[text]
+		except:
+			result = None
+
+		return result
 
 
 	def draggable_header(self, state=None):
 		'''Context menu
 		'''
-		draggable_header = self.materials_ui.draggable_header
+		dh = self.materials_ui.draggable_header
 
 		if state is 'setMenu':
-			draggable_header.contextMenu.add(wgts.ComboBox, setObjectName='cmb001', setToolTip='Maya Material Editors')
-			draggable_header.contextMenu.add(wgts.Label, setText='Material Attributes', setObjectName='lbl004', setToolTip='Show the material attributes in the attribute editor.')
+			dh.contextMenu.add(wgts.ComboBox, setObjectName='cmb001', setToolTip='Maya Material Editors')
+			dh.contextMenu.add(wgts.Label, setText='Material Attributes', setObjectName='lbl004', setToolTip='Show the material attributes in the attribute editor.')
 			return
 
 
@@ -66,7 +72,8 @@ class Materials(Init):
 			return
 
 		if index>0:
-			if index==cmb.items.index('Hypershade'):
+			text = cmb.items[index]
+			if text=='Hypershade':
 				mel.eval('HypershadeWindow;')
 			cmb.setCurrentIndex(0)
 

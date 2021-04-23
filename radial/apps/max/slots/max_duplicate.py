@@ -27,10 +27,10 @@ class Duplicate(Init):
 	def draggable_header(self, state=None):
 		'''Context menu
 		'''
-		draggable_header = self.duplicate_ui.draggable_header
+		dh = self.duplicate_ui.draggable_header
 
 		if state is 'setMenu':
-			draggable_header.contextMenu.add(wgts.ComboBox, setObjectName='cmb001', setToolTip='')
+			dh.contextMenu.add(wgts.ComboBox, setObjectName='cmb001', setToolTip='')
 
 			return
 
@@ -45,10 +45,11 @@ class Duplicate(Init):
 			cmb.addItems_(files, '')
 			return
 
-		# if index>0:
-		# 	if index==cmb.items.index(''):
-		# 		pass
-		# 	cmb.setCurrentIndex(0)
+		if index>0:
+			text = cmb.items[index]
+			if text=='':
+				pass
+			cmb.setCurrentIndex(0)
 
 
 	def radialArray(self):

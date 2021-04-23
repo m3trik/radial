@@ -16,11 +16,11 @@ class Uv(Init):
 	def draggable_header(self, state=None):
 		'''Context menu
 		'''
-		draggable_header = self.uv_ui.draggable_header
+		dh = self.uv_ui.draggable_header
 
 		if state is 'setMenu':
-			draggable_header.contextMenu.add(wgts.ComboBox, setObjectName='cmb000', setToolTip='Maya UV Editors')
-			draggable_header.contextMenu.add('QPushButton', setText='Create UV Snapshot', setObjectName='b001', setToolTip='Save an image file of the current UV layout.')
+			dh.contextMenu.add(wgts.ComboBox, setObjectName='cmb000', setToolTip='Maya UV Editors')
+			dh.contextMenu.add('QPushButton', setText='Create UV Snapshot', setObjectName='b001', setToolTip='Save an image file of the current UV layout.')
 			return
 
 
@@ -35,22 +35,23 @@ class Uv(Init):
 			return
 
 		if index>0: #hide main then perform operation
+			text = cmb.items[index]
 			self.main.hide()
-			if index==1: #UV Editor
+			if text=='UV Editor':
 				mel.eval('TextureViewWindow;') 
-			elif index==2: #UV Set Editor
+			elif text=='UV Set Editor':
 				mel.eval('uvSetEditor;')
-			elif index==3: #UV Tool Kit
+			elif text=='UV Tool Kit':
 				mel.eval('toggleUVToolkit;')
-			elif index==4: #UV Linking: Texture-Centric
+			elif text=='UV Linking: Texture-Centric':
 				mel.eval('textureCentricUvLinkingEditor;')
-			elif index==5: #UV Linking: UV-Centric
+			elif text=='UV Linking: UV-Centric':
 				mel.eval('uvCentricUvLinkingEditor;')
-			elif index==6: #UV Linking: Paint Effects/UV
+			elif text=='UV Linking: Paint Effects/UV':
 				mel.eval('pfxUVLinkingEditor;')
-			elif index==7: #UV Linking: Hair/UV
+			elif text=='UV Linking: Hair/UV':
 				mel.eval('hairUVLinkingEditor;')
-			elif index==cmb.items.index('Flip UV'):
+			elif text=='Flip UV':
 				mel.eval("performPolyForceUV flip 1;")
 			cmb.setCurrentIndex(0)
 
@@ -89,24 +90,25 @@ class Uv(Init):
 			return
 
 		if index>0:
+			text = cmb.items[index]
 			self.main.hide() #hide hotbox then perform operation
-			if index==cmb.items.index('Flip U'):
+			if text=='Flip U':
 				pm.polyFlipUV(flipType=0, local=1, usePivot=1, pivotU=0, pivotV=0)
-			elif index==cmb.items.index('Flip V'):
+			elif text=='Flip V':
 				pm.polyFlipUV(flipType=1, local=1, usePivot=1, pivotU=0, pivotV=0)
-			elif index==cmb.items.index('Align U Left'):
+			elif text=='Align U Left':
 				pm.mel.performAlignUV('minU')
-			elif index==cmb.items.index('Align U Middle'):
+			elif text=='Align U Middle':
 				pm.mel.performAlignUV('avgU')
-			elif index==cmb.items.index('Align U Right'):
+			elif text=='Align U Right':
 				pm.mel.performAlignUV('maxU')
-			elif index==cmb.items.index('Align U Top'):
+			elif text=='Align U Top':
 				pm.mel.performAlignUV('maxV')
-			elif index==cmb.items.index('Align U Middle'):
+			elif text=='Align U Middle':
 				pm.mel.performAlignUV('avgV')
-			elif index==cmb.items.index('Align U Bottom'):
+			elif text=='Align U Bottom':
 				pm.mel.performAlignUV('minV')
-			elif index==cmb.items.index('Linear Align'):
+			elif text=='Linear Align':
 				pm.mel.performLinearAlignUV()
 			cmb.setCurrentIndex(0)
 
@@ -203,6 +205,8 @@ class Uv(Init):
 		sel = Uv.UvShellSelection() #assure the correct selection mask.
 		if similar > 0:
 			dissimilar = pm.polyUVStackSimilarShells(sel, tolerance=tolerance, onlyMatch=True)
+			if dissimilar==None:
+				dissimilar=[]
 			dissimilarUVs = [s.split(' ') for s in dissimilar] #
 			dissimilarFaces = pm.polyListComponentConversion(dissimilarUVs, fromUV=1, toFace=1)
 			pm.u3dLayout(dissimilarFaces, resolution=mapSize, preScaleMode=scale, preRotateMode=rotate, rotateStep=rotateStep, shellSpacing=.005, tileMargin=.005, packBox=[M-1, D, I, U]) #layoutScaleMode (int), multiObject (bool), mutations (int), packBox (float, float, float, float), preRotateMode (int), preScaleMode (int), resolution (int), rotateMax (float), rotateMin (float), rotateStep (float), shellSpacing (float), tileAssignMode (int), tileMargin (float), tileU (int), tileV (int), translate (bool)
@@ -457,8 +461,9 @@ class Uv(Init):
 		from_ = sel[0]
 		to = sel[1:]
 
-		[pm.transferAttributes(from_, i, transferUVs=2) for i in to] # 0:no UV sets, 1:single UV set (specified by sourceUVSet and targetUVSet args), and 2:all UV sets are transferred.
-		Slots.messageBox('Result: UV sets transferred from: {} to: {}.'.format(from_.name(), to.name()))
+		for i in to: # 0:no UV sets, 1:single UV set (specified by sourceUVSet and targetUVSet args), and 2:all UV sets are transferred.
+			pm.transferAttributes(from_, i, transferUVs=2)
+			print('Result: UV sets transferred from: {} to: {}.'.format(from_.name(), i.name()))
 		pm.undoInfo(closeChunk=1)
 
 

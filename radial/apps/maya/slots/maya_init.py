@@ -17,7 +17,7 @@ try:
 except ImportError as error:
 	print(error)
 
-from ui import widgets as wgts
+from radial.ui import widgets as wgts
 from slots import Slots
 
 

@@ -16,10 +16,10 @@ class Transform(Init):
 	def draggable_header(self, state=None):
 		'''Context menu
 		'''
-		draggable_header = self.transform_ui.draggable_header
+		dh = self.transform_ui.draggable_header
 
 		if state is 'setMenu':
-			draggable_header.contextMenu.add(wgts.ComboBox, setObjectName='cmb000', setToolTip='')
+			dh.contextMenu.add(wgts.ComboBox, setObjectName='cmb000', setToolTip='')
 			return
 
 
@@ -78,23 +78,24 @@ class Transform(Init):
 			return
 
 		if index>0:
-			if index==cmb.items.index('Point to Point'):
+			text = cmb.items[index]
+			if text=='Point to Point':
 				pm.mel.SnapPointToPointOptions() #performSnapPtToPt 1; Select any type of point object or component.
-			elif index==cmb.items.index('2 Points to 2 Points'):
+			elif text=='2 Points to 2 Points':
 				pm.mel.Snap2PointsTo2PointsOptions() #performSnap2PtTo2Pt 1; Select any type of point object or component.
-			elif index==cmb.items.index('3 Points to 3 Points'):
+			elif text=='3 Points to 3 Points':
 				pm.mel.Snap3PointsTo3PointsOptions() #performSnap3PtTo3Pt 1; Select any type of point object or component.
-			elif index==cmb.items.index('Align Objects'):
+			elif text=='Align Objects':
 				pm.mel.performAlignObjects(1) #Align the selected objects.
-			elif index==cmb.items.index('Position Along Curve'):
+			elif text=='Position Along Curve':
 				pm.mel.PositionAlongCurve() #Position selected objects along a selected curve.
 				# import maya.app.general.positionAlongCurve
 				# maya.app.general.positionAlongCurve.positionAlongCurve()
-			elif index==cmb.items.index('Align Tool'):
+			elif text=='Align Tool':
 				pm.mel.SetAlignTool() #setToolTo alignToolCtx; Align the selection to the last selected object.
-			elif index==cmb.items.index('Snap Together Tool'):
+			elif text=='Snap Together Tool':
 				pm.mel.SetSnapTogetherToolOptions() #setToolTo snapTogetherToolCtx; toolPropertyWindow;) Snap two objects together.
-			elif index==cmb.items.index('Orient to Vertex/Edge Tool'):
+			elif text=='Orient to Vertex/Edge Tool':
 				pm.mel.orientToTool() #Orient To Vertex/Edge
 
 
@@ -640,17 +641,18 @@ print(os.path.splitext(os.path.basename(__file__))[0])
 
 	# 	live_object = pm.ls(live=1)
 	# 	print ("live_object:", live_object)
-	# 	# if not live_object and index==cmb.items.index('Make Live'):
+	# 	# if not live_object and text=='Make Live'):
 	# 	# 	cmb.setCurrentIndex(0)
 
 	# 	if index>0:
-	# 		if index==cmb.items.index('Edge'):
+	#		text = cmb.items[index]
+	# 		if text=='Edge'):
 	# 			pm.xformConstraint(type='edge') #pm.manipMoveSetXformConstraint(edge=True);
 			
-	# 		elif index==cmb.items.index('Surface'):
+	# 		elif text=='Surface'):
 	# 			pm.xformConstraint(type='surface') #pm.manipMoveSetXformConstraint(surface=True);
 			
-	# 		elif index==cmb.items.index('Make Live'):
+	# 		elif text=='Make Live'):
 	# 			print ('3')
 	# 			selection = pm.ls(sl=1, objectsOnly=1)
 	# 			if not selection and not live_object:

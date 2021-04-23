@@ -14,13 +14,14 @@ class Display(Init):
 		super().__init__(*args, **kwargs)
 
 
+
 	def draggable_header(self, state=None):
 		'''Context menu
 		'''
-		draggable_header = self.display_ui.draggable_header
+		dh = self.display_ui.draggable_header
 
 		if state is 'setMenu':
-			draggable_header.contextMenu.add(wgts.ComboBox, setObjectName='cmb000', setToolTip='')
+			dh.contextMenu.add(wgts.ComboBox, setObjectName='cmb000', setToolTip='')
 			return
 
 
@@ -35,7 +36,8 @@ class Display(Init):
 			return
 
 		if index>0:
-			if index==cmb.items.index(''):
+			text = cmb.items[index]
+			if text=='':
 				pass
 			cmb.setCurrentIndex(0)
 
@@ -195,41 +197,6 @@ class Display(Init):
 		maxEval('actionMan.executeAction 0 "40023"')
 
 
-	def b014(self):
-		''''''
-		pass
-
-
-	def b015(self):
-		''''''
-		pass
-
-
-	def b016(self):
-		''''''
-		pass
-
-
-	def b017(self):
-		''''''
-		pass
-
-
-	def b018(self):
-		''''''
-		pass
-
-
-	def b019(self):
-		''''''
-		pass
-
-
-	def b020(self):
-		''''''
-		pass
-
-
 	def b021(self):
 		'''Template Selected
 		'''
@@ -240,16 +207,6 @@ class Display(Init):
 				obj.isFrozen = False
 			else:
 				obj.isFrozen = True
-
-
-	def b022(self):
-		''''''
-		pass
-
-
-	def b023(self):
-		''''''
-		pass
 
 
 	def b024(self):
