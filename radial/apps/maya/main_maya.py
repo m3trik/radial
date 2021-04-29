@@ -59,7 +59,7 @@ class Main_maya(Main):
 				import Pymel.Core as pm
 				pm.undo()
 
-		return QtWidgets.QStackedWidget.keyPressEvent(self, event)
+		return Main.keyPressEvent(self, event)
 
 
 	def showEvent(self, event):
@@ -68,7 +68,7 @@ class Main_maya(Main):
 			event = <QEvent>
 		'''
 
-		return Main.showEvent(self, event) #super(Main_maya, self).showEvent(event)
+		return Main.showEvent(self, event) #super().showEvent(event)
 
 
 	def hideEvent(self, event):
@@ -80,7 +80,7 @@ class Main_maya(Main):
 			self.qapp.instance().quit()
 			sys.exit() #assure that the sys processes are terminated.
 
-		return Main.hideEvent(self, event) #super(Main_maya, self).hideEvent(event)
+		return Main.hideEvent(self, event) #super().hideEvent(event)
 
 
 

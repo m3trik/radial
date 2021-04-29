@@ -13,7 +13,7 @@ class File(Init):
 		super().__init__(*args, **kwargs)
 
 		#set the text for the open last file button to the last file's name.
-		recentFiles = self.getRecentFiles()
+		recentFiles = File.getRecentFiles()
 		self.file_submenu_ui.b001.setText(self.getNameFromFullPath(recentFiles[0])) if recentFiles else self.file_submenu_ui.b001.setVisible(False)
 
 
@@ -29,6 +29,14 @@ class File(Init):
 			dh.contextMenu.add(wgts.Label, setObjectName='lbl002', setText='Maximize App', setToolTip='Restore the main application.')
 			dh.contextMenu.add(wgts.Label, setObjectName='lbl003', setText='Close App', setToolTip='Close the main application.')
 			return
+
+
+	def chk006(self, state=None):
+		'''Autosave: Enable/Disable
+		'''
+		interval = self.file_ui.cmb002.contextMenu.s001.value()
+		amount = self.file_ui.cmb002.contextMenu.s000.value()
+		pm.autoSave(enable=state, int=interval, limitBackups=True, maxBackups=amount)
 
 
 	def cmb000(self, index=None):
@@ -56,7 +64,7 @@ class File(Init):
 		if index is 'setMenu':
 			return
 
-		cmb.addItems_(self.getRecentProjects(), "Recent Projects", clear=True)
+		cmb.addItems_(File.getRecentProjects(), "Recent Projects", clear=True)
 
 		if index>0:
 			pm.mel.setProject(cmb.items[index]) #mel.eval('setProject "'+items[index]+'"')
@@ -70,9 +78,16 @@ class File(Init):
 		cmb = self.file_ui.cmb002
 
 		if index is 'setMenu':
+			cmb.contextMenu.add('QPushButton', setObjectName='b000', setText='Open Directory', setToolTip='Open the autosave directory.') #open directory
+			cmb.contextMenu.add('QPushButton', setObjectName='b002', setText='Delete All', setToolTip='Delete all autosave files.') #delete all
+			cmb.contextMenu.add('QCheckBox', setText='Autosave', setObjectName='chk006', setToolTip='Set the autosave state as active or disabled.') #toggle autosave
+			cmb.contextMenu.add('QSpinBox', setPrefix='Amount: ', setObjectName='s000', setMinMax_='1-100 step1', setValue=2, setHeight_=20, setToolTip='The number of autosave files to retain.') #autosave amount
+			cmb.contextMenu.add('QSpinBox', setPrefix='Interval: ', setObjectName='s001', setMinMax_='1-60 step1', setValue=15, setHeight_=20, setToolTip='The autosave interval in minutes.') #autosave interval
+			
+			cmb.contextMenu.chk006.setChecked(pm.autoSave(query=1, enable=1)) #set the initial autosave state.
 			return
 
-		cmb.addItems_(self.getRecentAutosave(), 'Recent Autosave', clear=True)
+		cmb.addItems_(File.getRecentAutosave(), 'Recent Autosave', clear=True)
 
 		if index>0:
 			force=True
@@ -209,6 +224,9 @@ class File(Init):
 
 		if increment:
 			pm.mel.IncrementAndSave()
+		else:
+			filetype = 'mayaAscii' #type: mayaAscii, mayaBinary, mel, OBJ, directory, plug-in, audio, move, EPS, Adobe(R) Illustrator(R)
+			pm.saveFile(force=1, preSaveScript='', postSaveScript='', type=filetype)
 
 		if quit: #quit maya
 			import time
@@ -256,6 +274,15 @@ class File(Init):
 		os.startfile(self.formatPath(dir_))
 
 
+	def b000(self):
+		'''Autosave: Open Directory
+		'''
+		dir1 = str(pm.workspace(query=1, rd=1))+'autosave' #current project path.
+		dir2 = os.environ.get('MAYA_AUTOSAVE_FOLDER').split(';')[0] #get autosave dir path from env variable.
+		os.startfile(self.formatPath(dir1))
+		os.startfile(self.formatPath(dir2))
+
+
 	def b001(self):
 		'''Recent Files: Open Last
 		'''
@@ -268,6 +295,17 @@ class File(Init):
 
 		self.cmb000(index=1)
 		self.main.hide(force=1)
+
+
+	def b002(self):
+		'''Autosave: Delete All
+		'''
+		files = File.getRecentAutosave()
+		for file in files:
+			try:
+				os.remove(file)
+			except Exception as error:
+				print (error)
 
 
 	def b007(self):
@@ -304,6 +342,48 @@ class File(Init):
 			if replace:
 				newName = obj.replace(from_, to)
 			pm.rename(obj, newName) #Rename the object with the new name
+
+
+	@staticmethod
+	def getRecentFiles():
+		'''Get a list of recently opened files.
+
+		:Return:
+			(list)
+		'''
+		files = pm.optionVar(query='RecentFilesList')
+		result = [Init.formatPath(f) for f in list(reversed(files)) if "Autosave" not in f]
+
+		return result
+
+
+	@staticmethod
+	def getRecentProjects():
+		'''Get a list of recently set projects.
+
+		:Return:
+			(list)
+		'''
+		files = pm.optionVar(query='RecentProjectsList')
+		result = [Init.formatPath(f) for f in list(reversed(files))]
+
+		return result
+
+
+	@staticmethod
+	def getRecentAutosave():
+		'''Get a list of autosave files.
+
+		:Return:
+			(list)
+		'''
+		dir1 = str(pm.workspace(query=1, rd=1))+'autosave' #current project path.
+		dir2 = os.environ.get('MAYA_AUTOSAVE_FOLDER').split(';')[0] #get autosave dir path from env variable.
+
+		files = Init.getAbsoluteFilePaths(dir1, ['mb', 'ma']) + Init.getAbsoluteFilePaths(dir2, ['mb', 'ma'])
+		result = [Init.formatPath(f) for f in list(reversed(files))]
+
+		return result
 
 
 

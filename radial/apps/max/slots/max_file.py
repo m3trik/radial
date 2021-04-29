@@ -32,6 +32,16 @@ class File(Init):
 			return
 
 
+	def chk006(self, state=None):
+		'''Autosave: Enable/Disable
+		'''
+		interval = self.file_ui.cmb002.contextMenu.s001.value()
+		amount = self.file_ui.cmb002.contextMenu.s000.value()
+		rt.autosave.Enable = state
+		rt.autosave.NumberOfFiles = amount
+		rt.autosave.Interval = interval
+
+
 	def cmb000(self, index=None):
 		'''Recent Files
 		'''
@@ -70,6 +80,15 @@ class File(Init):
 		cmb = self.file_ui.cmb002
 
 		if index is 'setMenu':
+			cmb.contextMenu.add('QPushButton', setObjectName='b000', setText='Open Directory', setToolTip='Open the autosave directory.') #open directory
+			cmb.contextMenu.add('QPushButton', setObjectName='b002', setText='Delete All', setToolTip='Delete all autosave files.') #delete all
+			cmb.contextMenu.add('QCheckBox', setText='Autosave', setObjectName='chk006', setToolTip='Set the autosave state as active or disabled.') #toggle autosave
+			cmb.contextMenu.add('QSpinBox', setPrefix='Amount: ', setObjectName='s000', setMinMax_='1-100 step1', setValue=2, setHeight_=20, setToolTip='The number of autosave files to retain.') #autosave amount
+			cmb.contextMenu.add('QSpinBox', setPrefix='Interval: ', setObjectName='s001', setMinMax_='1-60 step1', setValue=15, setHeight_=20, setToolTip='The autosave interval in minutes.') #autosave interval
+
+			cmb.contextMenu.chk006.setChecked(rt.autosave.Enable) #set the initial autosave state.
+			cmb.contextMenu.s000.valueChanged.connect(lambda v: rt.autosave.setmxsprop('NumberOfFiles', v))
+			cmb.contextMenu.s001.valueChanged.connect(lambda v: rt.autosave.setmxsprop('Interval', v))
 			return
 
 		items = cmb.addItems_(self.getRecentAutosave(), "Recent Autosave", clear=True)
@@ -190,114 +209,31 @@ class File(Init):
 		'''Save
 		'''
 		tb = self.file_ui.tb000
+
 		if state is 'setMenu':
-			tb.menu_.add('QCheckBox', setText='ASCII', setObjectName='chk003', setChecked=True, setToolTip='Toggle ASCII or binary file type.')
-			tb.menu_.add('QCheckBox', setText='Wireframe', setObjectName='chk000', setChecked=True, setToolTip='Set view to wireframe before save.')
+			tb.menu_.add('QCheckBox', setText='Wireframe', setObjectName='chk000', setToolTip='Set view to wireframe before save.')
 			tb.menu_.add('QCheckBox', setText='Increment', setObjectName='chk001', setChecked=True, setToolTip='Append and increment a unique integer value.')
 			tb.menu_.add('QCheckBox', setText='Quit', setObjectName='chk002', setToolTip='Quit after save.')
 			return
 
-		increment = tb.menu_.chk001.isChecked()
-		ASCII = tb.menu_.chk003.isChecked()
 		wireframe = tb.menu_.chk000.isChecked()
+		increment = tb.menu_.chk001.isChecked()
 		quit = tb.menu_.chk002.isChecked()
 
-		preSaveScript = ''
-		postSaveScript = ''
-
-		type_ = 'mayaBinary'
-		if ASCII: #toggle ascii/ binary
-			type_ = 'mayaAscii' #type: mayaAscii, mayaBinary, mel, OBJ, directory, plug-in, audio, move, EPS, Adobe(R) Illustrator(R)
-
 		if wireframe:
-			mel.eval('DisplayWireframe;')
+			pm.mel.DisplayWireframe()
 
-		#get scene name and file path
-		fullPath = str(mel.eval('file -query -sceneName;')) #ie. O:/Cloud/____Graphics/______project_files/elise.proj/elise.scenes/.maya/elise_mid.009.mb
-		index = fullPath.rfind('/')+1
-		curFullName = fullPath[index:] #ie. elise_mid.009.mb
-		path = fullPath[:index] #ie. O:/Cloud/____Graphics/______project_files/elise.proj/elise.scenes/.maya/
-
-		if increment: #increment filename
-			newName = self.incrementFileName(curFullName)
-			self.deletePreviousFiles(curFullName, path)
-			pm.saveAs (path+newName, force=1, preSaveScript=preSaveScript, postSaveScript=postSaveScript, type=type_)
-			print('{0} {1}'.format('Result:', path+newName))
-		else:	#save without renaming
-			pm.saveFile (force=1, preSaveScript=preSaveScript, postSaveScript=postSaveScript, type=type_)
-			print('{0} {1}'.format('Result:', path+currentName,))
+		if increment:
+			pm.mel.IncrementAndSave()
+		else:
+			rt.saveMaxFile(quiet=True)
 
 		if quit: #quit maya
 			import time
 			for timer in range(5):
 				self.viewPortMessage('Shutting Down:<hl>'+str(timer)+'</hl>')
 				time.sleep(timer)
-			mel.eval("quit;")
-			# pm.Quit()
-
-
-	@staticmethod
-	def incrementFileName(fileName):
-		'''Increment the given file name.
-
-		:Parameters:
-			fileName (str) = file name with extension. ie. elise_mid.ma
-
-		:Return:
-			(str) incremented name. ie. elise_mid.000.ma
-		'''
-		import re
-
-		#remove filetype extention
-		currentName = fileName[:fileName.rfind('.')] #name without extension ie. elise_mid.009 from elise_mid.009.mb
-		#get file number
-		numExt = re.search(r'\d+$', currentName) #check if the last chars are numberic
-		if numExt is not None:
-			name = currentName[:currentName.rfind('.')] #strip off the number ie. elise_mid from elise_mid.009
-			num = int(numExt.group())+1 #get file number and add 1 ie. 9 becomes 10
-			prefix = '000'[:-len(str(num))]+str(num) #prefix '000' removing zeros according to num length ie. 009 becomes 010
-			newName = name+'.'+prefix #ie. elise_mid.010
-			
-		else:
-			newName = currentName+'.001'
-
-		return newName
-
-
-	@staticmethod
-	def deletePreviousFiles(fileName, path, numberOfPreviousFiles=5):
-		'''Delete older files.
-
-		:Parameters:
-			fileName (str) = file name with extension. ie. elise_mid.ma
-			numberOfPreviousFiles (int) = Number of previous copies to keep.
-		'''
-		import re, os
-
-		#remove filetype extention
-		currentName = fileName[:fileName.rfind('.')] #name without extension ie. elise_mid.009 from elise_mid.009.mb
-		#get file number
-		numExt = re.search(r'\d+$', currentName) #check if the last chars are numberic
-		if numExt is not None:
-			name = currentName[:currentName.rfind('.')] #strip off the number ie. elise_mid from elise_mid.009
-			num = int(numExt.group())+1 #get file number and add 1 ie. 9 becomes 10
-
-			oldNum = num-numberOfPreviousFiles
-			oldPrefix = '000'[:-len(str(oldNum))]+str(oldNum) #prefix the appropriate amount of zeros in front of the old number
-			oldName = name+'.'+oldPrefix #ie. elise_mid.007
-			try: #search recursively through the project folder and delete any old folders with the old filename
-				dir_ =  os.path.abspath(os.path.join(path, "../.."))
-				for root, directories, files in os.walk(dir_):
-					for filename in files:
-						if all([filename==oldName+ext for ext in ('.ma','.ma.swatches','.mb','.mb.swatches')]):
-							try:
-								import os
-								os.remove(filename)
-							except:
-								pass
-			except OSError:
-				print('{0} {1}'.format('Error: Could not delete', path+oldName))
-				pass
+			pm.mel.quit() # pm.Quit()
 
 
 	def lbl000(self):
@@ -324,17 +260,13 @@ class File(Init):
 	def lbl002(self):
 		'''Restore Main Application
 		'''
-		pass
+		maxEval('actionMan.executeAction 0 "50026"') #Tools: Maximize Viewport Toggle
 
 
 	def lbl003(self):
 		'''Close Main Application
 		'''
-		# force=false #pymel has no attribute quit error.
-		# exitcode=""
-		# sceneName = str(mel.eval("file -query -sceneName -shortName;")) #if sceneName prompt user to save; else force close
-		# mel.eval("quit;") if sceneName else mel.eval("quit -f;")
-		# pm.quit (force=force, exitcode=exitcode)
+		maxEval("quitmax #noprompt") # maxEval("quitmax")
 
 
 	def lbl004(self):
@@ -345,6 +277,13 @@ class File(Init):
 		os.startfile(dir_)
 
 
+	def b000(self):
+		'''Autosave: Open Directory
+		'''
+		dir_ = MaxPlus.PathManager.GetAutobackDir()
+		os.startfile(self.formatPath(dir_))
+
+
 	def b001(self):
 		'''Recent Files: Open Last
 		'''
@@ -353,6 +292,17 @@ class File(Init):
 
 		self.cmb000(index=1)
 		self.main.hide(force=1)
+
+
+	def b002(self):
+		'''Autosave: Delete All
+		'''
+		files = File.getRecentAutosave()
+		for file in files:
+			try:
+				os.remove(file)
+			except Exception as error:
+				print (error)
 
 
 	def b007(self):
@@ -457,6 +407,69 @@ class File(Init):
 		result = sorted(list_, reverse=1)
 
 		return result
+
+
+	@staticmethod
+	def incrementFileName(fileName):
+		'''Increment the given file name.
+
+		:Parameters:
+			fileName (str) = file name with extension. ie. elise_mid.ma
+
+		:Return:
+			(str) incremented name. ie. elise_mid.000.ma
+		'''
+		import re
+
+		#remove filetype extention
+		currentName = fileName[:fileName.rfind('.')] #name without extension ie. elise_mid.009 from elise_mid.009.mb
+		#get file number
+		numExt = re.search(r'\d+$', currentName) #check if the last chars are numberic
+		if numExt is not None:
+			name = currentName[:currentName.rfind('.')] #strip off the number ie. elise_mid from elise_mid.009
+			num = int(numExt.group())+1 #get file number and add 1 ie. 9 becomes 10
+			prefix = '000'[:-len(str(num))]+str(num) #prefix '000' removing zeros according to num length ie. 009 becomes 010
+			newName = name+'.'+prefix #ie. elise_mid.010
+			
+		else:
+			newName = currentName+'.001'
+
+		return newName
+
+
+	@staticmethod
+	def deletePreviousFiles(fileName, path, numberOfPreviousFiles=5):
+		'''Delete older files.
+
+		:Parameters:
+			fileName (str) = file name with extension. ie. elise_mid.ma
+			numberOfPreviousFiles (int) = Number of previous copies to keep.
+		'''
+		import re, os
+
+		#remove filetype extention
+		currentName = fileName[:fileName.rfind('.')] #name without extension ie. elise_mid.009 from elise_mid.009.mb
+		#get file number
+		numExt = re.search(r'\d+$', currentName) #check if the last chars are numberic
+		if numExt is not None:
+			name = currentName[:currentName.rfind('.')] #strip off the number ie. elise_mid from elise_mid.009
+			num = int(numExt.group())+1 #get file number and add 1 ie. 9 becomes 10
+
+			oldNum = num-numberOfPreviousFiles
+			oldPrefix = '000'[:-len(str(oldNum))]+str(oldNum) #prefix the appropriate amount of zeros in front of the old number
+			oldName = name+'.'+oldPrefix #ie. elise_mid.007
+			try: #search recursively through the project folder and delete any old folders with the old filename
+				dir_ =  os.path.abspath(os.path.join(path, "../.."))
+				for root, directories, files in os.walk(dir_):
+					for filename in files:
+						if all([filename==oldName+ext for ext in ('.ma','.ma.swatches','.mb','.mb.swatches')]):
+							try:
+								import os
+								os.remove(filename)
+							except:
+								pass
+			except OSError:
+				print('{0} {1}'.format('Error: Could not delete', path+oldName))
 
 
 

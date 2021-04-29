@@ -248,6 +248,7 @@ class Selection(Init):
 			cmb.contextMenu.add(wgts.Label, setText='New', setObjectName='lbl000', setToolTip='Create a new selection set.')
 			cmb.contextMenu.add(wgts.Label, setText='Modify', setObjectName='lbl001', setToolTip='Modify the current set by renaming and/or changing the selection.')
 			cmb.contextMenu.add(wgts.Label, setText='Delete', setObjectName='lbl002', setToolTip='Delete the current set.')
+
 			cmb.returnPressed.connect(lambda m=cmb.contextMenu.lastActiveChild: getattr(self, m(name=1))()) #connect to the last pressed child widget's corresponding method after return pressed. ie. self.lbl000 if cmb.lbl000 was clicked last.
 			cmb.currentIndexChanged.connect(self.lbl005) #select current set on index change.
 			cmb.beforePopupShown.connect(self.cmb000) #refresh comboBox contents before showing it's popup.

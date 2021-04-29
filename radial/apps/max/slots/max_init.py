@@ -64,37 +64,38 @@ class Init(Slots):
 				elif level>0: #component level
 					obj = selection[0]
 					objType = rt.classOf(obj.baseObject)
-					if objType=='Editable_Poly' or objType=='Edit_Poly':
+
+					if objType==rt.Editable_Poly or objType==rt.Edit_Poly:
 						if level==1: #get vertex info
 							type_ = 'Verts'
-							selected = Init.bitArrayToArray(rt.polyop.getVertSelection(obj))
+							components = Init.bitArrayToArray(rt.polyop.getVertSelection(obj))
 							total_num = rt.polyop.getNumVerts(obj)
 
 						elif level==2: #get edge info
 							type_ = 'Edges'
-							selected = Init.bitArrayToArray(rt.polyop.getEdgeSelection(obj))
+							components = Init.bitArrayToArray(rt.polyop.getEdgeSelection(obj))
 							total_num = rt.polyop.getNumEdges(obj)
 
 						elif level==3: #get border info
 							type_ = 'Borders'
 							# rt.polyop.SetSelection #Edge ((polyOp.getOpenEdges $) as bitarray)
-							selected = Init.bitArrayToArray(rt.polyop.getBorderSelection(obj))
+							components = Init.bitArrayToArray(rt.polyop.getBorderSelection(obj))
 							total_num = rt.polyop.getNumBorders(obj)
 
 						elif level==4: #get face info
 							type_ = 'Faces'
-							selected = Init.bitArrayToArray(rt.polyop.getFaceSelection(obj))
+							components = Init.bitArrayToArray(rt.polyop.getFaceSelection(obj))
 							total_num = rt.polyop.getNumFaces(obj)
 
 						elif level==5: #get element info
 							type_ = 'Elements'
-							selected = Init.bitArrayToArray(rt.polyop.getElementSelection(obj))
+							components = Init.bitArrayToArray(rt.polyop.getElementSelection(obj))
 							total_num = rt.polyop.getNumElements(obj)
 
-						num_selected = len(selected)
-						if all((type_, num_selected, total_num)):
-							hud.insertText('Selected {}: <font style="color: Yellow;">{} <font style="color: LightGray;">/{}'.format(type_, num_selected, total_num)) #selected components
-
+						try:
+							hud.insertText('Selected {}: <font style="color: Yellow;">{} <font style="color: LightGray;">/{}'.format(type_, len(components), total_num)) #selected components
+						except NameError:
+							pass
 
 		prevCommand = self.sb.prevCommand(docString=True)
 		if prevCommand:

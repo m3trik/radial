@@ -57,7 +57,7 @@ class Main_max(Main):
 				import pymxs
 				pymxs.undo(True)
 
-		return QtWidgets.QStackedWidget.keyPressEvent(self, event)
+		return Main.keyPressEvent(self, event)
 
 
 	def showEvent(self, event):
@@ -71,7 +71,7 @@ class Main_max(Main):
 		except Exception as error:
 			print(error)
 
-		return Main.showEvent(self, event) #super(Main_max, self).showEvent(event)
+		return Main.showEvent(self, event) #super().showEvent(event)
 
 
 	def hideEvent(self, event):
@@ -89,7 +89,7 @@ class Main_max(Main):
 			self.qapp.instance().quit()
 			sys.exit() #assure that the sys processes are terminated.
 
-		return Main.hideEvent(self, event) #super(Main_max, self).hideEvent(event)
+		return Main.hideEvent(self, event) #super().hideEvent(event)
 
 
 	# import contextlib
@@ -151,6 +151,11 @@ class Instance():
 		'''
 		instance = self._getInstance()
 		instance.show()
+		from PySide2 import QtGui
+		# forward the keyPress event
+		event = QtGui.QKeyEvent(QtCore.QEvent.KeyPress, instance.key_show, QtCore.Qt.NoModifier)
+		instance.qapp.postEvent(instance, event)
+		# instance.keyPressEvent(keyEvent)
 
 
 

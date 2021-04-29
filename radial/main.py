@@ -34,8 +34,8 @@ class Main(QtWidgets.QStackedWidget):
 		self.key_show = key_show
 		self.key_undo = QtCore.Qt.Key_Z
 		self.key_close = QtCore.Qt.Key_Escape
-		self.qapp.setDoubleClickInterval(400)
-		self.qapp.setKeyboardInputInterval(400)
+		# self.qapp.setDoubleClickInterval(400)
+		# self.qapp.setKeyboardInputInterval(400)
 
 		self.setWindowFlags(QtCore.Qt.Tool|QtCore.Qt.FramelessWindowHint)
 		self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
@@ -180,31 +180,36 @@ class Main(QtWidgets.QStackedWidget):
 
 
 	# ------------------------------------------------
-	# 	QStackedWidget events
+	# 	Main widget events
 	# ------------------------------------------------
 	def keyPressEvent(self, event):
-		'''
+		'''A widget must call setFocusPolicy() to accept focus initially, and have focus, in order to receive a key press event.
+
 		:Parameters:
 			event = <QEvent>
 		'''
 		if not event.isAutoRepeat():
+			print ('keyPressEvent:', event.key()==self.key_show)
 			modifiers = self.qapp.keyboardModifiers()
 
-			if event.key()==self.key_close:
+			if event.key()==self.key_show:
+				self.show()
+
+			elif event.key()==self.key_close:
 				self.close()
-				sys.exit()
 
 		return QtWidgets.QStackedWidget.keyPressEvent(self, event)
 
 
 	def keyReleaseEvent(self, event):
-		'''
+		'''A widget must accept focus initially, and have focus, in order to receive a key release event.
+
 		:Parameters:
 			event = <QEvent>
 		'''
 		if not event.isAutoRepeat():
 			modifiers = self.qapp.keyboardModifiers()
-
+			print ('keyReleaseEvent:', event.key()==self.key_show)
 			if event.key()==self.key_show and not modifiers==QtCore.Qt.ControlModifier:
 				self.hide()
 
@@ -236,7 +241,10 @@ class Main(QtWidgets.QStackedWidget):
 
 
 	def mouseMoveEvent(self, event):
-		'''
+		'''If mouse tracking is switched off, mouse move events only occur if 
+		a mouse button is pressed while the mouse is being moved. If mouse tracking 
+		is switched on, mouse move events occur even if no mouse button is pressed.
+
 		:Parameters:
 			event = <QEvent>
 		'''
@@ -258,7 +266,11 @@ class Main(QtWidgets.QStackedWidget):
 
 
 	def mouseDoubleClickEvent(self, event):
-		'''
+		'''The widget will also receive mouse press and mouse release events 
+		in addition to the double click event. If another widget that overlaps 
+		this widget disappears in response to press or release events, 
+		then this widget will only receive the double click event.
+
 		:Parameters:
 			event = <QEvent>
 		'''
@@ -289,49 +301,62 @@ class Main(QtWidgets.QStackedWidget):
 			new (obj) = The current widget with focus.
 		'''
 		if not self.isActiveWindow():
-
 			self.hide()
 
 
+	def show(self, active=True):
+		'''Sets the widget as visible.
+		
+		:Parameters:
+			active (bool) = Set as the active window.
+		'''
+		super().show()
+		if active:
+			self.activateWindow()
+
+
+	def showEvent(self, event):
+		'''Non-spontaneous show events are sent to widgets immediately before they are shown.
+
+		:Parameters:
+			event = <QEvent>
+		'''
+		self.setUi('init')
+
+		self.move(self.centerPos())
+
+		return QtWidgets.QStackedWidget.showEvent(self, event)
+
+
 	def hide(self, force=False):
-		'''Prevents hide event under certain circumstances.
+		'''Sets the widget as invisible.
+		Prevents hide event under certain circumstances.
 
 		:Parameters:
 			force (bool) = override preventHide.
 		'''
 		if force or not self.preventHide:
-			super(Main, self).hide()
+			super().hide()
 
 
 	def hideEvent(self, event):
-		'''
+		'''Hide events are sent to widgets immediately after they have been hidden.
+
 		:Parameters:
 			event = <QEvent>
 		'''
+		self.sb.gcProtect(clear=True) #clear any garbage protected items.
+
 		if __name__ == "__main__":
 			sys.exit() #assure that the sys processes are terminated.
 
 		return QtWidgets.QStackedWidget.hideEvent(self, event)
 
 
-	def showEvent(self, event):
-		'''
-		:Parameters:
-			event = <QEvent>
-		'''
-		self.sb.gcProtect(clear=True) #clear any garbage protected items.
 
-		self.setUi('init')
-		# 	method = self.sb.getMethod(self.sb.name, 'hud') #run once on launch. update the hud textEdit in the init module.
-		# 	method()
-
-		self.move(self.centerPos())
-		# self.sb.ui.staticWindow.move(self.sb.ui.staticWindow.pos()+QtGui.QCursor.pos())
-		self.activateWindow()
-
-		return QtWidgets.QStackedWidget.showEvent(self, event)
-
-
+	# ------------------------------------------------
+	# 	
+	# ------------------------------------------------
 	def repeatLastCommand(self):
 		'''Repeat the last stored command.
 		'''
@@ -339,7 +364,6 @@ class Main(QtWidgets.QStackedWidget):
 		if callable(method):
 			name = self.sb.getUiNameFromMethod(method)
 			self.setUi(name)
-			# print (self.sb.getUiName(), name, method)
 			method()
 		else:
 			print('# Warning: No recent commands in history. #')
