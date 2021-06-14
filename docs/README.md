@@ -55,17 +55,16 @@ The default hotkey for launching the menu set is f12. (I remap f12 to the window
 This can be changed by passing the desired key value to the 'key_show" argument when calling an instance of the main module:
 ex. call:
 ```
-	from PySide2 import QtCore
 	def hk_main_show():
 		'''
 		hk_main_show
-		Display main marking menu.
+		Display the radial marking menu.
 		'''
-		if 'main' not in locals() and 'main' not in globals():
+		if 'radial' not in locals() and 'radial' not in globals():
 			from main_maya import Instance
-			main = Instance(key_show=QtCore.Qt.Key_Z) #holding the Z key will show the menu.
+			radial = Instance(key_show='Key_Z') #holding the Z key will show the menu.
 
-		main.show_()
+		radial.show_()
 ```
 
 Adding additional ui's:
