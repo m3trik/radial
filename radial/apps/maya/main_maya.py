@@ -5,6 +5,7 @@ from builtins import super
 import sys
 
 from PySide2 import QtWidgets, QtCore
+
 try: import shiboken2
 except: from PySide2 import shiboken2
 
@@ -20,7 +21,7 @@ class Main_maya(Main):
 	'''
 	qapp = QtWidgets.QApplication
 
-	def __init__(self, parent=None, preventHide=False, key_show=QtCore.Qt.Key_F12):
+	def __init__(self, parent=None, preventHide=False, key_show='Key_F12'):
 		'''
 		'''
 		if not parent:

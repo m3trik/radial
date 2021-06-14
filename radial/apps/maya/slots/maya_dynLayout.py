@@ -24,7 +24,7 @@ class DynLayout(Init):
 			return
 
 
-	def cmb000(self, index=None):
+	def cmb000(self, index=-1):
 		'''Editors
 		'''
 		cmb = self.dynLayout_ui.cmb000

@@ -21,8 +21,9 @@ class Main_max(Main):
 	'''
 	qapp = QtWidgets.QApplication
 
-	def __init__(self, parent=None, preventHide=False, key_show=QtCore.Qt.Key_F12):
-
+	def __init__(self, parent=None, preventHide=False, key_show='Key_F12'):
+		'''
+		'''
 		if not parent:
 			try:
 				parent = self.getMainWindow()

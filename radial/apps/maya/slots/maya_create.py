@@ -38,7 +38,7 @@ class Create(Init):
 			return
 
 
-	def cmb003(self, index=None):
+	def cmb003(self, index=-1):
 		'''Editors
 		'''
 		cmb = self.create_ui.cmb003
@@ -161,7 +161,7 @@ class Create(Init):
 		self.create_ui.s002.setValue(self.point[2])
 
 
-	def cmb000(self, index=None):
+	def cmb000(self, index=-1):
 		''''''
 		cmb = self.create_ui.cmb000
 
@@ -180,7 +180,7 @@ class Create(Init):
 			self.cmb001(2)
 
 
-	def cmb001(self, index=None):
+	def cmb001(self, index=-1):
 		''''''
 		cmb = self.create_ui.cmb001
 

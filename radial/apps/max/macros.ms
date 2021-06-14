@@ -26,7 +26,7 @@ category: "_macros.ui"
 silentErrors: false
 autoUndoEnabled: false
 (
-	python.Execute "if 'radial' not in locals() and 'radial' not in globals(): from main_max import Instance; radial = Instance()" --create an instance
+	python.Execute "if 'radial' not in locals() and 'radial' not in globals(): from main_max import Instance; radial = Instance(key_show=key_F12)" --create an instance
 	python.Execute "radial.show_();"
 )
 

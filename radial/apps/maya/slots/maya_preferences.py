@@ -25,7 +25,7 @@ class Preferences(Init):
 			return
 
 
-	def cmb000(self, index=None):
+	def cmb000(self, index=-1):
 		'''Ui Style: Set main ui style using QStyleFactory
 		'''
 		cmb = self.preferences_ui.cmb000
@@ -45,7 +45,7 @@ class Preferences(Init):
 			QtGui.qApp.setStyle(cmb.items[index])
 
 
-	def cmb001(self, index=None):
+	def cmb001(self, index=-1):
 		'''Set Working Units: Linear
 		'''
 		cmb = self.preferences_ui.cmb001
@@ -64,7 +64,7 @@ class Preferences(Init):
 			pm.currentUnit(linear=cmb.items[index]) #millimeter | centimeter | meter | kilometer | inch | foot | yard | mile
 
 
-	def cmb002(self, index=None):
+	def cmb002(self, index=-1):
 		'''Set Working Units: Time
 		'''
 		cmb = self.preferences_ui.cmb002
@@ -86,7 +86,7 @@ class Preferences(Init):
 			pm.currentUnit(time=cmb.items[index]) #game | film | pal | ntsc | show | palf | ntscf
 
 
-	def cmb003(self, index=None):
+	def cmb003(self, index=-1):
 		'''Editors
 		'''
 		cmb = self.preferences_ui.cmb003

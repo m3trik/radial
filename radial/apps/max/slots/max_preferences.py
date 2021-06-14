@@ -25,7 +25,7 @@ class Preferences(Init):
 			return
 
 
-	def cmb003(self, index=None):
+	def cmb003(self, index=-1):
 		'''Editors
 		'''
 		cmb = self.preferences_ui.cmb003
@@ -41,7 +41,7 @@ class Preferences(Init):
 			cmb.setCurrentIndex(0)
 
 
-	def cmb000(self, index=None):
+	def cmb000(self, index=-1):
 		'''Ui Style: Set main ui style using QStyleFactory
 		'''
 		cmb = self.preferences_ui.cmb000
@@ -61,7 +61,7 @@ class Preferences(Init):
 			QtGui.qApp.setStyle(cmb.items[index])
 
 
-	def cmb001(self, index=None):
+	def cmb001(self, index=-1):
 		'''Preferences:App - Set Working Units: Linear
 		'''
 		cmb = self.preferences_ui.cmb001
@@ -93,7 +93,7 @@ class Preferences(Init):
 				maxEval('units.SystemType = #Miles')
 
 
-	def cmb002(self, index=None):
+	def cmb002(self, index=-1):
 		'''Preferences:App - Set Working Units: Time
 		'''
 		cmb = self.preferences_ui.cmb002
@@ -153,7 +153,7 @@ print(os.path.splitext(os.path.basename(__file__))[0])
 # -----------------------------------------------
 
 
-	# def cmb000(self, index=None):
+	# def cmb000(self, index=-1):
 	# 	'''
 	# 	Custom Menu Set
 	# 	'''

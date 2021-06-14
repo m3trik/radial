@@ -23,7 +23,7 @@ class Transform(Init):
 			return
 
 
-	def cmb000(self, index=None):
+	def cmb000(self, index=-1):
 		'''Editors
 		'''
 		cmb = self.transform_ui.cmb000
@@ -39,7 +39,7 @@ class Transform(Init):
 			cmb.setCurrentIndex(0)
 
 
-	def cmb001(self, index=None):
+	def cmb001(self, index=-1):
 		'''Transform Constraints
 
 		constrain along normals #checkbox option for edge amd surface constaints
@@ -67,7 +67,7 @@ class Transform(Init):
 			return
 
 
-	def cmb002(self, index=None):
+	def cmb002(self, index=-1):
 		'''Align To
 		'''
 		cmb = self.transform_ui.cmb002
@@ -99,7 +99,7 @@ class Transform(Init):
 				pm.mel.orientToTool() #Orient To Vertex/Edge
 
 
-	def cmb003(self, index=None):
+	def cmb003(self, index=-1):
 		'''Transform Tool Snapping
 		'''
 		cmb = self.transform_ui.cmb003
@@ -623,7 +623,7 @@ print(os.path.splitext(os.path.basename(__file__))[0])
 
 
 	# @Slots.message
-	# def cmb001(self, index=None):
+	# def cmb002(self, index=-1):
 	# 	'''
 	# 	Transform Contraints
 

@@ -23,7 +23,7 @@ class Transform(Init):
 			return
 
 
-	def cmb000(self, index=None):
+	def cmb000(self, index=-1):
 		'''Editors
 		'''
 		cmb = self.transform_ui.cmb000
@@ -40,7 +40,7 @@ class Transform(Init):
 			cmb.setCurrentIndex(0)
 
 
-	def cmb001(self, index=None):
+	def cmb001(self, index=-1):
 		'''Transform Contraints
 
 		constrain along normals #checkbox option for edge amd surface constaints
@@ -82,7 +82,7 @@ class Transform(Init):
 			w.toggled.connect(lambda state, widget=w: self.chkxxx(state=state, widget=widget))
 
 
-	def cmb002(self, index=None):
+	def cmb002(self, index=-1):
 		'''Align To
 		'''
 		cmb = self.transform_ui.cmb002
@@ -112,7 +112,7 @@ class Transform(Init):
 				mel.eval('SetSnapTogetherToolOptions;') #setToolTo snapTogetherToolCtx; toolPropertyWindow;) Snap two objects together.
 
 
-	def cmb003(self, index=None):
+	def cmb003(self, index=-1):
 		'''Transform Tool Snapping
 		'''
 		cmb = self.transform_ui.cmb003

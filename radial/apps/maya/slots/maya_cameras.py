@@ -420,7 +420,7 @@ print(os.path.splitext(os.path.basename(__file__))[0])
 
 
 
-	# def cmb000(self, index=None):
+	# def cmb000(self, index=-1):
 	# 	'''
 	# 	Camera Editors
 
@@ -440,7 +440,7 @@ print(os.path.splitext(os.path.basename(__file__))[0])
 	# 		cmb.setCurrentIndex(0)
 
 
-	# def cmb001(self, index=None):
+	# def cmb001(self, index=-1):
 	# 	'''
 	# 	Additional Cameras
 
@@ -468,7 +468,7 @@ print(os.path.splitext(os.path.basename(__file__))[0])
 	# 		cmb.setCurrentIndex(0)
 
 
-	# def cmb002(self, index=None):
+	# def cmb002(self, index=-1):
 	# 	'''
 	# 	Create
 
@@ -490,7 +490,7 @@ print(os.path.splitext(os.path.basename(__file__))[0])
 	# 		cmb.setCurrentIndex(0)
 
 
-	# def cmb003(self, index=None):
+	# def cmb003(self, index=-1):
 	# 	'''
 	# 	Options
 

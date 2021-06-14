@@ -23,7 +23,7 @@ class Nurbs(Init):
 			return
 
 
-	def cmb000(self, index=None):
+	def cmb000(self, index=-1):
 		'''Maya Curve Operations
 		'''
 		cmb = self.nurbs_ui.cmb000
@@ -72,7 +72,7 @@ class Nurbs(Init):
 			cmb.setCurrentIndex(0)
 
 
-	def cmb001(self, index=None):
+	def cmb001(self, index=-1):
 		'''Create: Curve
 		'''
 		cmb = self.nurbs_ui.cmb001

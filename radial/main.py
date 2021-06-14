@@ -27,11 +27,11 @@ class Main(QtWidgets.QStackedWidget):
 	'''
 	qapp = QtWidgets.QApplication
 
-	def __init__(self, parent=None, preventHide=False, key_show=QtCore.Qt.Key_F12):
+	def __init__(self, parent=None, preventHide=False, key_show='Key_F12'):
 		super().__init__(parent)
 
 		self.preventHide = preventHide
-		self.key_show = key_show
+		self.key_show = getattr(QtCore.Qt, key_show)
 		self.key_undo = QtCore.Qt.Key_Z
 		self.key_close = QtCore.Qt.Key_Escape
 		# self.qapp.setDoubleClickInterval(400)
@@ -67,7 +67,7 @@ class Main(QtWidgets.QStackedWidget):
 		ui = self.sb.getUi(name, level=level) #get the parent ui.
 		name = self.sb.getUiName(name, level=level) #get the parent ui's name.
 
-		if self.indexOf(ui) is -1: #if the given widget is not a child of the QStackedWidget.
+		if self.indexOf(ui)==-1: #if the given widget is not a child of the QStackedWidget.
 			self.addWidget(ui) #add the ui to the stackedLayout.
 			self.childEvents.initWidgets(name)
 

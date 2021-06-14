@@ -69,7 +69,7 @@ class ComboBox(QtWidgets.QComboBox, MenuInstance, Attributes):
 		'''
 		self.blockSignals(True) #to keep clear from triggering currentIndexChanged
 		index = self.currentIndex() if self.currentIndex()>0 else 0 #get the current index before refreshing list. avoid negative values.
-	
+
 		if clear:
 			self.clear()
 

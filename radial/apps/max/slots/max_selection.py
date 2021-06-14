@@ -238,7 +238,7 @@ class Selection(Init):
 			return 'Soft Select <hl>Off</hl>.'
 
 
-	def cmb000(self, index=None):
+	def cmb000(self, index=-1):
 		'''Selection Sets
 		'''
 		cmb = self.selection_ui.cmb000
@@ -258,7 +258,7 @@ class Selection(Init):
 		cmb.addItems_([s for s in sets_], clear=True)
 
 
-	def cmb001(self, index=None):
+	def cmb001(self, index=-1):
 		'''Editors
 		'''
 		cmb = self.selection_ui.cmb001
@@ -275,7 +275,7 @@ class Selection(Init):
 			cmb.setCurrentIndex(0)
 
 
-	def cmb002(self, index=None):
+	def cmb002(self, index=-1):
 		'''Select All Of Type
 		'''
 		cmb = self.selection_ui.cmb002
@@ -307,7 +307,7 @@ class Selection(Init):
 			cmb.setCurrentIndex(0)
 
 
-	def cmb003(self, index=None):
+	def cmb003(self, index=-1):
 		'''Convert To
 		'''
 		cmb = self.selection_ui.cmb003
@@ -328,7 +328,7 @@ class Selection(Init):
 			cmb.setCurrentIndex(0)
 
 
-	def cmb004(self, index=None):
+	def cmb004(self, index=-1):
 		'''Select Style: Set Context
 		'''
 		cmb = self.selection_ui.cmb004
@@ -353,7 +353,7 @@ class Selection(Init):
 			cmb.setCurrentIndex(0)
 
 
-	def cmb005(self, index=None):
+	def cmb005(self, index=-1):
 		'''Selection Contraints
 		'''
 		cmb = self.selection_ui.cmb005
@@ -381,7 +381,7 @@ class Selection(Init):
 			mel.eval('dR_selConstraintOff;') #dR_DoCmd("selConstraintOff");
 
 
-	def cmb006(self, index=None):
+	def cmb006(self, index=-1):
 		'''Currently Selected Objects
 		'''
 		cmb = self.selection_ui.cmb006

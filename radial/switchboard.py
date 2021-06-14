@@ -1259,15 +1259,15 @@ class Switchboard(QtCore.QObject):
 			_nested_dict = self.sbDict
 
 		for k,v in _nested_dict.items():
-			if type_ is 'valuesFromKey': 
+			if type_=='valuesFromKey': 
 				if k==obj: #found key
 					_nested_list.append(v)
 
-			elif type_ is 'keysFromValue':
+			elif type_=='keysFromValue':
 				if v==obj: #found value
 					_nested_list.append(k)
 
-			elif type_ is 'namesFromValue':
+			elif type_=='namesFromValue':
 				if v==obj: #found value
 					_nested_list.append(self.getParentKeys(v)[0])
 

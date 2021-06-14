@@ -612,7 +612,7 @@ class Macros(Init):
 		'''
 		if 'radial' not in locals() and 'radial' not in globals():
 			from main_maya import Instance
-			radial = Instance()
+			radial = Instance(key_show='key_F12')
 
 		radial.show_()
 		# import cProfile

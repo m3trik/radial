@@ -30,7 +30,7 @@ class Rendering(Init):
 			return
 
 
-	def cmb001(self, index=None):
+	def cmb001(self, index=-1):
 		'''Editors
 		'''
 		cmb = self.rendering_ui.cmb001
@@ -47,7 +47,7 @@ class Rendering(Init):
 			cmb.setCurrentIndex(0)
 
 
-	def cmb000(self, index=None):
+	def cmb000(self, index=-1):
 		'''Render: camera
 		'''
 		cmb = self.rendering_ui.cmb000

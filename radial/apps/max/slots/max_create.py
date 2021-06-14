@@ -42,7 +42,7 @@ class Create(Init):
 			return
 
 
-	def cmb003(self, index=None):
+	def cmb003(self, index=-1):
 		'''Editors
 		'''
 		cmb = self.create_ui.cmb000
@@ -182,7 +182,7 @@ class Create(Init):
 			return 'Error: Nothing selected. Point set to origin [0,0,0].'
 
 
-	def cmb000(self, index=None):
+	def cmb000(self, index=-1):
 		'''Create: Select Base Type
 		'''
 		cmb = self.create_ui.cmb000
@@ -202,7 +202,7 @@ class Create(Init):
 			self.cmb001(5)
 
 
-	def cmb001(self, index=None):
+	def cmb001(self, index=-1):
 		''''''
 		cmb = self.create_ui.cmb001
 

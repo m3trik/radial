@@ -23,7 +23,7 @@ class Scripting(Init):
 			return
 
 
-	def cmb000(self, index=None):
+	def cmb000(self, index=-1):
 		'''Editors
 		'''
 		cmb = self.scripting_ui.cmb000

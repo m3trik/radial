@@ -23,7 +23,7 @@ class Convert(Init):
 			return
 
 
-	def cmb000(self, index=None):
+	def cmb000(self, index=-1):
 		'''Editors
 		'''
 		cmb = self.convert_ui.cmb000
@@ -40,7 +40,7 @@ class Convert(Init):
 			cmb.setCurrentIndex(0)
 
 
-	def cmb001(self, index=None):
+	def cmb001(self, index=-1):
 		'''Convert To
 		'''
 		cmb = self.convert_ui.cmb001

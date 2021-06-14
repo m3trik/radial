@@ -42,7 +42,7 @@ class Polygons(Init):
 			return
 
 
-	def cmb000(self, index=None):
+	def cmb000(self, index=-1):
 		'''3dsMax Polygon Operations
 		'''
 		cmb = self.polygons_ui.draggable_header.contextMenu.cmb000

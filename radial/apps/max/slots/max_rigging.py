@@ -23,7 +23,7 @@ class Rigging(Init):
 			return
 
 
-	def cmb000(self, index=None):
+	def cmb000(self, index=-1):
 		'''Editors
 		'''
 		cmb = self.rigging_ui.cmb000
@@ -46,7 +46,7 @@ class Rigging(Init):
 			cmb.setCurrentIndex(0)
 
 
-	def cmb001(self, index=None):
+	def cmb001(self, index=-1):
 		'''Create
 		'''
 		cmb = self.rigging_ui.cmb001

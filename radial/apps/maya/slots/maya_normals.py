@@ -23,7 +23,7 @@ class Normals(Init):
 			return
 
 
-	def cmb000(self, index=None):
+	def cmb000(self, index=-1):
 		'''Editors
 		'''
 		cmb = self.normals_ui.cmb000
