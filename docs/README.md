@@ -1,4 +1,4 @@
-###### *PySide marking menu style layered ui and toolkit for maya, max, and blender (when I get around to it).
+###### *A PySide marking menu for 3ds Max, Maya, and (in the future) Blender. Currently in the process of porting everything to Python 3.
 *work in progress..*
 
 ## Design:
