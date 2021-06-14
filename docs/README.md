@@ -1,4 +1,4 @@
-###### *PySide marking menu style layered ui and toolkit for maya and max.
+###### *PySide marking menu style layered ui and toolkit for maya, max, and blender (when I get around to it).
 *work in progress..*
 
 ## Design:
