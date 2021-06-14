@@ -80,6 +80,7 @@ class Scene(Init):
 
 
 	@staticmethod
+	@Init.undoChunk
 	def rename(frm, to, regEx=False, ignoreCase=False):
 		'''Rename scene objects.
 
@@ -103,7 +104,7 @@ class Scene(Init):
 		ex. rename(r'Cube', '*001', regEx=True) #replace chars after frm on any object with a name that contains 'Cube'. ie. 'polyCube001' from 'polyCube'
 		ex. rename(r'Cube', '**001', regEx=True) #append chars on any object with a name that contains 'Cube'. ie. 'polyCube1001' from 'polyCube1'
 		'''
-		pm.undoInfo (openChunk=1)
+		# pm.undoInfo (openChunk=1)
 		names = Init.findStrAndFormat(frm, to, [obj.name() for obj in pm.ls()], regEx=regEx, ignoreCase=ignoreCase)
 		print ('# Rename: Found {} matches. #'.format(len(names)))
 
@@ -118,7 +119,7 @@ class Scene(Init):
 
 			except Exception as e:
 				print ('# Error: Attempt to rename "{}" to "{}" failed. {} #'.format(oldName, newName, str(e).rstrip()))
-		pm.undoInfo (closeChunk=1)
+		# pm.undoInfo (closeChunk=1)
 
 
 

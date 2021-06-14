@@ -113,7 +113,7 @@ class TreeWidgetExpandableList(QtWidgets.QTreeWidget, Attributes):
 			options = tree.add('QPushButton', create, childHeader='Options', setText='Options')
 			tree.add('QPushButton', options, setText='Opt1')
 		'''
-		if not isinstance(header, (str, unicode)): #if the header is passed in as a widget:
+		if not isinstance(header, (str)): #if the header is passed in as a widget:
 			header = self.getChildHeaderFromWidget(header)
 
 		#if header doesn't contain the refresh column flag: return the child header.
@@ -579,7 +579,7 @@ class TreeWidgetExpandableList(QtWidgets.QTreeWidget, Attributes):
 		:Return:
 			(list) All Top level QTreeWidgetItems
 		'''
-		return [self.topLevelItem(i) for i in xrange(self.topLevelItemCount())]
+		return [self.topLevelItem(i) for i in range(self.topLevelItemCount())]
 
 
 	def getWItemFromWidget(self, widget):

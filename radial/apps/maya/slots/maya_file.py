@@ -352,7 +352,8 @@ class File(Init):
 			(list)
 		'''
 		files = pm.optionVar(query='RecentFilesList')
-		result = [Init.formatPath(f) for f in list(reversed(files)) if "Autosave" not in f]
+		result = [Init.formatPath(f) for f in list(reversed(files)) 
+					if "Autosave" not in f] if files else []
 
 		return result
 

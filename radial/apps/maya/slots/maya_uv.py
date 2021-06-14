@@ -359,18 +359,16 @@ class Uv(Init):
 		tb = self.current_ui.tb004
 		if state is 'setMenu':
 			tb.menu_.add('QCheckBox', setText='Optimize', setObjectName='chk017', setToolTip='The Optimize UV Tool evens out the spacing between UVs on a mesh, fixing areas of distortion (overlapping UVs).')
-			tb.menu_.add('QSpinBox', setPrefix='Optimize Amount: ', setObjectName='s008', setMinMax_='0-100 step1', setValue=25, setToolTip='The number of times to run optimize on the unfolded mesh.')
+			# tb.menu_.add('QSpinBox', setPrefix='Optimize Amount: ', setObjectName='s008', setMinMax_='0-100 step1', setValue=25, setToolTip='The number of times to run optimize on the unfolded mesh.')
 			return
 
 		optimize = tb.menu_.chk017.isChecked()
-		amount = tb.menu_.s008.value()
+		amount = 1#tb.menu_.s008.value()
 
-		pm.undoInfo(openChunk=1)
 		pm.u3dUnfold(iterations=1, pack=0, borderintersection=1, triangleflip=1, mapsize=2048, roomspace=0) #pm.mel.performUnfold(0)
 
 		if optimize:
 			pm.u3dOptimize(iterations=amount, power=1, surfangle=1, borderintersection=0, triangleflip=1, mapsize=2048, roomspace=0) #pm.mel.performPolyOptimizeUV(0)
-		pm.undoInfo(closeChunk=1)
 
 
 	def tb005(self, state=None):
@@ -448,6 +446,7 @@ class Uv(Init):
 		pm.mel.UVCreateSnapshot()
 
 
+	@Init.undoChunk
 	def b002(self):
 		'''Transfer Uv's
 		'''
@@ -455,14 +454,14 @@ class Uv(Init):
 		if len(sel)<2:
 			Slots.messageBox('Error: The operation requires the selection of two polygon objects.')
 
-		pm.undoInfo(openChunk=1)
+		# pm.undoInfo(openChunk=1)
 		from_ = sel[0]
 		to = sel[1:]
 
 		for i in to: # 0:no UV sets, 1:single UV set (specified by sourceUVSet and targetUVSet args), and 2:all UV sets are transferred.
 			pm.transferAttributes(from_, i, transferUVs=2)
 			print('Result: UV sets transferred from: {} to: {}.'.format(from_.name(), i.name()))
-		pm.undoInfo(closeChunk=1)
+		# pm.undoInfo(closeChunk=1)
 
 
 	def b005(self):

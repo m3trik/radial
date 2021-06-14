@@ -193,6 +193,7 @@ class Crease(Init):
 			self.crease_ui.b000.setText("Crease Set")
 
 
+	@Init.undoChunk
 	def b002(self):
 		'''Transfer Crease Edges
 		'''
@@ -211,7 +212,7 @@ class Crease(Init):
 			setArray.append(name)
 		print(setArray)
 
-		pm.undoInfo (openChunk=1)
+		# pm.undoInfo (openChunk=1)
 		for set_ in setArray:
 			oldObject = ''.join(set_.partition('.')[:1]) #ex. pSphereShape1 from pSphereShape1.e[260:299]
 			pm.select (set_, replace=1)
@@ -220,7 +221,7 @@ class Crease(Init):
 			pm.select (name, replace=1)
 			pm.polyCrease (value=value, vertexValue=value, createHistory=True)
 			# print("crease:", name)
-		pm.undoInfo (closeChunk=1)
+		# pm.undoInfo (closeChunk=1)
 
 		self.toggleWidgets(setDisabled='b052', setUnChecked='b000')#,self.crease_ui.b001])
 		self.crease_ui.b000.setText("Crease Set")

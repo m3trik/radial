@@ -220,7 +220,7 @@ class WidgetMultiWidget(QtWidgets.QWidget, Attributes):
 	def set_by_value(self, values):
 		''''''
 		for v in values:
-			if isinstance(v, (str, unicode)):
+			if isinstance(v, (str)):
 				self.add(QtWidgets.QLabel(v))
 
 			elif isinstance(v, bool):

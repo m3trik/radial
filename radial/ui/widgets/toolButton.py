@@ -36,8 +36,8 @@ class ToolButton(QtWidgets.QToolButton, MenuInstance, Attributes, RichText):
 
 		self.menu_.position = 'topRight'
 		self.setMenu(self.menu_)
- 
- 		self.setArrowType(QtCore.Qt.RightArrow) #DownArrow,LeftArrow,NoArrow,RightArrow,UpArrow
+
+		self.setArrowType(QtCore.Qt.RightArrow) #DownArrow,LeftArrow,NoArrow,RightArrow,UpArrow
 		self.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly) #ToolButtonIconOnly,ToolButtonTextBesideIcon,ToolButtonTextOnly,ToolButtonTextUnderIcon
 		self.setPopupMode(self.MenuButtonPopup) #DelayedPopup (default), MenuButtonPopup, InstantPopup
 

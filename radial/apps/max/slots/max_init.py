@@ -8,15 +8,11 @@ from PySide2 import QtGui, QtWidgets, QtCore
 
 # 3ds Max dependancies
 try:
-	import MaxPlus
 	from pymxs import runtime as rt
-	maxEval = MaxPlus.Core.EvalMAXScript
+	maxEval = rt.executeScriptFile
 
 except ImportError as error:
-	print(error)
-	def p(s): pass
-	maxEval = p
-	rt = None
+	print(error); rt=None; maxEval=lambda s: None
 
 from radial.ui import widgets as wgts
 from slots import Slots
@@ -58,7 +54,7 @@ class Init(Slots):
 				level = rt.subObjectLevel
 				if level==0: #object level
 					name_and_type = ['<font style="color: Yellow;">{0}<font style="color: LightGray;">:{1}'.format(obj.name, rt.classOf(obj.baseObject)) for obj in selection]
-					name_and_type_str = str(name_and_type).translate(None, '[]\'') #format as single string.
+					name_and_type_str = str(name_and_type).translate(str.maketrans('', '', '[]\'')) #format as single string.
 					hud.insertText('Selected: <font style="color: Yellow;">{}'.format(name_and_type_str)) #currently selected objects
 
 				elif level>0: #component level
@@ -867,7 +863,7 @@ class Init(Slots):
 		:Parameters:
 			array (list) = The array that will be converted to a bitArray.
 		'''
-		MaxPlus.Core.EvalMAXScript("fn _arrayToBitArray a = (return a as bitArray)")
+		maxEval("fn _arrayToBitArray a = (return a as bitArray)")
 		result = rt._arrayToBitArray(array)
 
 		return result
@@ -880,7 +876,7 @@ class Init(Slots):
 		:Parameters:
 			bitArray (list) = The bitArray that will be converted to a standard array.
 		'''
-		MaxPlus.Core.EvalMAXScript("fn _bitArrayToArray b = (return b as array)")
+		maxEval("fn _bitArrayToArray b = (return b as array)")
 		result = rt._bitArrayToArray(bitArray)
 
 		return result
@@ -958,7 +954,6 @@ class Init(Slots):
 			MaxPlus.ViewportManager.SetActiveViewportShowEdgeFaces(state)
 		else:
 			MaxPlus.ViewportManager.SetActiveViewportShowEdgeFaces(not currentState)
-
 
 
 	previousSmoothPreviewLevel=int

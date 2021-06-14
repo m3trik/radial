@@ -79,29 +79,8 @@ class Normals(Init):
 			tb.menu_.add('QCheckBox', setText='Soften non-creased', setObjectName='chk000', setToolTip='Soften all non-creased edges.')
 			return
 
-		soften = tb.menu_.chk000.isChecked()
-
-		mel.eval("PolySelectConvert 2")
-		edges = pm.polyListComponentConversion(toEdge=1)
-		edges = pm.ls(edges, flatten=1)
-
-		pm.undoInfo(openChunk=1)
-		self.mainProgressBar(len(edges))
-
-		for edge in edges:
-			pm.progressBar("progressBar_", edit=1, step=1)
-			if pm.progressBar("progressBar_", query=1, isCancelled=1):
-				break
-
-			crease = pm.polyCrease (edge, query=1, value=1)
-			# print(edge, crease[0])
-			if crease[0]>0:
-				pm.polySoftEdge (edge, angle=30)
-			elif soften:
-				pm.polySoftEdge (edge, angle=180)
-
-		pm.progressBar("progressBar_", edit=1, endProgress=1)
-		pm.undoInfo(closeChunk=1)
+		softenOther = tb.menu_.chk000.isChecked()
+		Normals.hardenCreasedEdges(softenOther)
 
 
 	@Init.attr
@@ -119,8 +98,10 @@ class Normals(Init):
 		for obj in objects:
 			sel = pm.ls(obj, sl=1)
 			pm.polySetToFaceNormal(sel, setUserNormal=1) #reset to face
-			polySoftEdge = pm.polySoftEdge(sel, angle=normalAngle) #smooth if angle is lower than specified amount. default 30
-			return polySoftEdge if len(objects)==1 else polySoftEdge
+			# polySoftEdge = pm.polySoftEdge(sel, angle=normalAngle) #smooth if angle is lower than specified amount. default:30
+			polySoftEdge = mel.eval('polyPerformAction "polySoftEdge -a {}" e 0;'.format(normalAngle))
+			if len(objects)==1:
+				return polySoftEdge
 
 
 	@Slots.message
@@ -142,7 +123,7 @@ class Normals(Init):
 			if (all_ and maskVertex) or maskObject:
 				for obj in selection:
 					count = pm.polyEvaluate(obj, vertex=1) #get number of vertices
-					vertices = [vertices.append(str(obj) + ".vtx ["+str(num)+"]") for num in xrange(count)] #geometry.vtx[0]
+					vertices = [vertices.append(str(obj) + ".vtx ["+str(num)+"]") for num in range(count)] #geometry.vtx[0]
 					for vertex in vertices:
 						if state:
 							pm.polyNormalPerVertex(vertex, unFreezeNormal=1)
@@ -174,26 +155,7 @@ class Normals(Init):
 			return
 
 		byUvShell = tb.menu_.chk003.isChecked()
-
-		pm.undoInfo(openChunk=1)
-
-		objects = pm.ls(selection=1, objectsOnly=1, flatten=1)
-		for obj in objects:
-
-			if byUvShell:
-				obj = pm.ls(obj, transforms=1)
-				sets_ = Init.getUvShellSets(obj)
-				for set_ in sets_:
-					pm.polySetToFaceNormal(set_)
-					pm.polyAverageNormal(set_)
-			else:
-				sel = pm.ls(obj, sl=1)
-				if not sel:
-					sel = obj
-				pm.polySetToFaceNormal(sel)
-				pm.polyAverageNormal(sel)
-
-		pm.undoInfo(closeChunk=1)
+		Normals.averageNormals(byUvShell)
 
 
 	def b001(self):
@@ -248,9 +210,69 @@ class Normals(Init):
 		pm.polyNormal(sel, normalMode=3, userNormalMode=1) #3: reverse and cut a new shell on selected face(s). 4: reverse and propagate; Reverse the normal(s) and propagate this direction to all other faces in the shell.
 
 
+	@staticmethod
+	@Init.undoChunk
+	def averageNormals(byUvShell=False):
+		'''Average Normals
+
+		:Parameters:
+			byUvShell (bool) = Average each UV shell individually.
+		'''
+		# pm.undoInfo(openChunk=1)
+
+		objects = pm.ls(selection=1, objectsOnly=1, flatten=1)
+		for obj in objects:
+
+			if byUvShell:
+				obj = pm.ls(obj, transforms=1)
+				sets_ = Init.getUvShellSets(obj)
+				for set_ in sets_:
+					pm.polySetToFaceNormal(set_)
+					pm.polyAverageNormal(set_)
+			else:
+				sel = pm.ls(obj, sl=1)
+				if not sel:
+					sel = obj
+				pm.polySetToFaceNormal(sel)
+				pm.polyAverageNormal(sel)
+
+		# pm.undoInfo(closeChunk=1)
+
+
+	@staticmethod
+	@Init.undoChunk
+	def hardenCreasedEdges(softenOther=False):
+		'''Harden Creased Edges
+
+		:Parameters:
+			softenOther (bool) = Soften all non-creased edges.
+		'''
+		mel.eval("PolySelectConvert 2")
+		edges = pm.polyListComponentConversion(toEdge=1)
+		edges = pm.ls(edges, flatten=1)
+
+		# pm.undoInfo(openChunk=1)
+		self.mainProgressBar(len(edges))
+
+		for edge in edges:
+			pm.progressBar("progressBar_", edit=1, step=1)
+			if pm.progressBar("progressBar_", query=1, isCancelled=1):
+				break
+
+			crease = pm.polyCrease (edge, query=1, value=1)
+			# print(edge, crease[0])
+			if crease[0]>0:
+				pm.polySoftEdge (edge, angle=30)
+			elif soften:
+				pm.polySoftEdge (edge, angle=180)
+
+		pm.progressBar("progressBar_", edit=1, endProgress=1)
+		# pm.undoInfo(closeChunk=1)
+
 
 
 		
+
 
 
 

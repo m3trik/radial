@@ -126,6 +126,7 @@ class Duplicate(Init):
 	global radialArrayObjList
 	radialArrayObjList=[]
 	@Slots.message
+	@Init.undoChunk
 	def chk015(self, create=False):
 		'''Radial Array: Preview
 		'''
@@ -156,8 +157,8 @@ class Duplicate(Init):
 					if self.duplicate_ui.chk013.isChecked(): y = angle
 					if self.duplicate_ui.chk014.isChecked(): z = angle
 
-					pm.undoInfo (openChunk=1)
-					for i in xrange(1,numDuplicates):
+					# pm.undoInfo (openChunk=1)
+					for i in range(1,numDuplicates):
 						if instance:
 							name = objectName+"_ins"+str(i)
 							pm.instance (name=name)
@@ -179,7 +180,7 @@ class Duplicate(Init):
 							pm.isolateSelect (currentPanel, addDagObject=obj_)
 					#re-select the original selected object
 					pm.select(objectName)
-					pm.undoInfo (closeChunk=1)
+					# pm.undoInfo (closeChunk=1)
 			else: #if both lists objects are empty:
 				self.toggleWidgets(setDisabled='b003', setUnChecked='chk015')
 				return 'Error: Nothing selected.'
@@ -203,6 +204,7 @@ class Duplicate(Init):
 	global duplicateObjList
 	duplicateObjList=[]
 	@Slots.message
+	@Init.undoChunk
 	def chk016(self, create=False):
 		'''Duplicate: Preview
 		'''
@@ -235,7 +237,7 @@ class Duplicate(Init):
 			else:
 				return 'Error: Nothing selected.'
 
-			pm.undoInfo (openChunk=1)
+			# pm.undoInfo (openChunk=1)
 			if translateToComponent:
 				if componentList:
 					for num, component in componentList.iteritems():
@@ -253,7 +255,7 @@ class Duplicate(Init):
 				else:
 					return 'Error: Component list empty.'
 			else:
-				for _ in xrange(numOfDuplicates):
+				for _ in range(numOfDuplicates):
 					if ".f" in str(obj): #face
 						duplicatedObject = pm.duplicate(name="pExtract1")[0]
 
@@ -278,7 +280,7 @@ class Duplicate(Init):
 
 					duplicateObjList.append(duplicatedObject) #append duplicated object to list
 					pm.select(duplicatedObject)
-			pm.undoInfo (closeChunk=1)
+			# pm.undoInfo (closeChunk=1)
 
 		else: #if chk016 is unchecked by user or by create button
 			if create:

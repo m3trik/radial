@@ -110,7 +110,7 @@ class Slots(QtCore.QObject):
 
 		ex call: self.connect_('chk000-2', 'toggled', self.cmb002, tb.menu_) *or self.connect_([tb.menu_.chk000, tb.menu_.chk001], 'toggled', self.cmb002)
 		'''
-		if isinstance(widgets, (str,unicode)):
+		if isinstance(widgets, (str)):
 			try:
 				widgets = Slots.getObjects(class_, widgets, showError_=True) #getObjects returns a widget list from a string of objectNames.
 			except:
@@ -130,7 +130,7 @@ class Slots(QtCore.QObject):
 
 	# @classmethod
 	def hideMain(fn):
-		'''Decorator that hides the stacked widget main window.
+		'''A decorator that hides the stacked widget main window.
 		'''
 		def wrapper(self, *args, **kwargs):
 			fn(self, *args, **kwargs) #execute the method normally.
@@ -164,7 +164,7 @@ class Slots(QtCore.QObject):
 
 	@classmethod
 	def sync(cls, fn):
-		'''Decorator for syncWidgets.
+		'''A decorator for syncWidgets.
 		'''
 		def wrapper(self, *args, **kwargs):
 			fn(self, *args, **kwargs) #execute the method normally.
@@ -197,7 +197,7 @@ class Slots(QtCore.QObject):
 		to_ui = self.sb.getUi(from_ui, level=2) if self.sb.getUiLevel(from_ui)==3 else self.sb.getUi(from_ui, level=3)#get either it's parent or submenu, depending on the given ui.
 
 		if op in (0, 1): #
-			if isinstance(widgets, (str, unicode)):
+			if isinstance(widgets, (str)):
 				from_widgets = Slots.getObjects(from_ui, widgets) #returns a list of widget objects from a string of objectNames.  ie. [<b000>, <b001>, ..] from 'b000-12,b022'
 				to_widgets = Slots.getObjects(to_ui, widgets)
 			else: #if list of widget objects:
@@ -284,7 +284,7 @@ class Slots(QtCore.QObject):
 
 		ex call: self.setAxisForCheckBoxes('chk000-3', '-X') #optional ui arg for the checkboxes
 		'''
-		if isinstance(checkboxes, (str, unicode)):
+		if isinstance(checkboxes, (str)):
 			if ui is None:
 				ui = self.currentUi
 			checkboxes = Slots.getObjects(ui, checkboxes)
@@ -298,14 +298,17 @@ class Slots(QtCore.QObject):
 
 
 	def getAxisFromCheckBoxes(self, checkboxes, ui=None):
-		'''Get the intended axis value as a string from the given checkbox's check states.
+		'''Get the intended axis value as a string by reading the multiple checkbox's check states.
 
 		:Parameters:
 			checkboxes (str)(list) = 3 or 4 (or six with explicit negative values) checkboxes. Valid text: '-','X','Y','Z','-X','-Y','-Z' ('-' indicates a negative axis in a four checkbox setup)
 
+		:Return:
+			(str) axis value. ie. '-X'		
+
 		ex call: self.getAxisFromCheckBoxes('chk000-3')
 		'''
-		if isinstance(checkboxes, (str, unicode)):
+		if isinstance(checkboxes, (str)):
 			if ui is None:
 				ui = self.currentUi
 			checkboxes = Slots.getObjects(ui, checkboxes, showError_=1)
@@ -317,7 +320,7 @@ class Slots(QtCore.QObject):
 					prefix = '-'
 				else:
 					axis = chk.text()
-
+		# print ('prefix:', prefix, 'axis:', axis) #debug
 		return prefix+axis #ie. '-X'
 
 
@@ -423,8 +426,7 @@ class Slots(QtCore.QObject):
 
 	# @classmethod
 	# def progress(cls, fn):
-	# 	'''
-	# 	Decorator for progressBar.
+	# 	'''A decorator for progressBar.
 	# 	'''
 	# 	def wrapper(self, *args, **kwargs):
 	# 		self.progressBar(fn(self, *args, **kwargs))
@@ -449,7 +451,7 @@ class Slots(QtCore.QObject):
 
 	@classmethod
 	def message(cls, fn):
-		'''Decorator for messageBox.
+		'''A decorator for messageBox.
 		'''
 		def wrapper(self, *args, **kwargs):
 			self.messageBox(fn(self, *args, **kwargs))
@@ -471,7 +473,7 @@ class Slots(QtCore.QObject):
 		self._messageBox.location = location
 		self._messageBox.timeout = timeout
 
-		if isinstance(string, (str, unicode)):
+		if isinstance(string, (str)):
 			from re import sub
 			print(''+sub('<.*?>', '', string)+'') #strip everything between '<' and '>' (html tags)
 
@@ -1071,7 +1073,7 @@ print (os.path.splitext(os.path.basename(__file__))[0])
 	# 	ex. self.setSpinboxes (self.ui, spinboxNames='s000-15', attributes={'width':1, 'length ratio':1, 'patches U':1, 'patches V':1})
 	# 	ex. self.setSpinboxes (self.ui, spinboxNames='s000', attributes={'size':5} #explicit;  set single s000 with a label 'size' and value of 5
 	# 	'''
-	# 	if isinstance(spinboxes, (str, unicode)):
+	# 	if isinstance(spinboxes, (str)):
 	# 		spinboxes = Slots.getObjects(ui, spinboxes) #get spinbox objects
 
 	# 	#set values

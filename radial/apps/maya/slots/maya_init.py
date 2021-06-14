@@ -62,7 +62,7 @@ class Init(Slots):
 
 					selectedObjects = pm.ls(selection=1, objectsOnly=1)
 					name_and_type = ['<font style="color: Yellow;">{0}<font style="color: LightGray;">:{1}'.format(i.name(), pm.objectType(i)) for i in selectedObjects] #ie. ['pCube1:transform', 'pSphere1:transform']
-					name_and_type_str = str(name_and_type).translate(None, '[]\'') #format as single string.
+					name_and_type_str = str(name_and_type).translate(str.maketrans('', '', '[]\'')) #format as single string.
 					hud.insertText('Selected: {}'.format(name_and_type_str)) #currently selected objects by name and type.
 
 					objectFaces = pm.polyEvaluate(selectedObjects, face=True)
@@ -127,6 +127,20 @@ class Init(Slots):
 		not pm.pluginInfo(plugin, query=True, loaded=True) and pm.loadPlugin(plugin)
 
 
+	def undoChunk(fn):
+		'''A decorator to place a function into Maya's undo chunk.
+		Prevents the undo queue from breaking entirely if an exception is raised within the given function.
+
+		:Parameters:
+			fn (obj) = The decorated python function that will be placed into the undo que as a single entry.
+		'''
+		def wrapper(*args, **kwargs):
+			pm.undoInfo(openChunk=True)
+			fn(*args, **kwargs)
+			pm.undoInfo(closeChunk=True)
+		return wrapper
+
+
 
 
 
@@ -136,21 +150,21 @@ class Init(Slots):
 	# ------------------------------------------------
 
 	@staticmethod
-	def getComponents(objects=None, componentType=None, selection=False, returnType=unicode, returnNodeType='shape', flatten=False):
+	def getComponents(objects=None, componentType=None, selection=False, returnType='unicode', returnNodeType='shape', flatten=False):
 		'''Get the components of the given type.
 
 		:Parameters:
 			objects (str)(obj)(list) = The object(s) to get the components of.
 			componentType (str)(int) = The desired component mask. (valid: 'vtx','vertex','vertices','Polygon Vertex',31(vertices), 'e','edge','edges','Polygon Edge',32(edges), 'f','face','faces','Polygon Face',34(faces), 'cv','control vertex','control vertices','Control Vertex',28(control vertices) (default:None).
 			selection (bool) = Filter to currently selected objects.
-			returnType (type) = The desired returned object type. (valid: unicode(default, str, int, object)
+			returnType (str) = The desired returned object type. (valid: 'unicode'(default), 'str', 'int', 'object')
 			returnNodeType (str) = Specify whether the components are returned with the transform or shape nodes (valid only with str and unicode returnTypes). (valid: 'transform', 'shape'(default)) ex. 'pCylinder1.f[0]' or 'pCylinderShape1.f[0]'
 			flatten (bool) = Flattens the returned list of objects so that each component is identified individually.
 
 		:Return:
 			(list)(dict) Dependant on flags.
 
-		ex. getComponents(objects, 'faces' returnType=object)
+		ex. getComponents(objects, 'faces' returnType='object')
 		'''
 		if not componentType: #get component type from the current selection.
 			if selection:
@@ -201,19 +215,19 @@ class Init(Slots):
 		if not components:
 			components=[]
 
-		if returnType is unicode:
+		if returnType is 'unicode':
 			if returnNodeType=='transform':
-				result = [unicode(''.join(c.rsplit('Shape', 1))) for c in components]
+				result = [''.join(c.rsplit('Shape', 1)).decode('utf-8') for c in components]
 			else:
-				result = [unicode(c) for c in components]
+				result = [c.decode('utf-8') for c in components]
 
-		elif returnType is str:
+		elif returnType is 'str':
 			if returnNodeType=='transform':
 				result = [str(''.join(c.rsplit('Shape', 1))) for c in components]
 			else:
 				result = [str(c) for c in components]
 
-		elif returnType is int:
+		elif returnType is 'int':
 			result={}
 			for c in components:
 				obj = pm.ls(c, objectsOnly=1)[0]
@@ -230,21 +244,21 @@ class Init(Slots):
 				else:
 					result[obj] = [componentNum]
 
-		elif returnType is object:
+		elif returnType is 'object':
 			result = pm.ls(components)
 
 		return result
 
 
 	@staticmethod
-	def getRandomComponents(objects, componentType='vertex', randomRatio=0.5, returnType=unicode, flatten=False):
+	def getRandomComponents(objects, componentType='vertex', randomRatio=0.5, returnType='unicode', flatten=False):
 		'''Get a list of random components from the given object(s) using maya's polySelectConstraint.
 
 		:Parameters:
 			objects (str)(list)(obj) = The object(s) to get random components of.
 			componentType (str)(int) = The desired component mask. (valid: 'vtx','vertex','vertices','Polygon Vertex',31,0x0001(vertices), 'e','edge','edges','Polygon Edge',32,0x8000(edges), 'f','face','faces','Polygon Face',34,0x0008(faces), 'uv','texture','texture coordinates','Polygon UV',35,0x0010(texture coordiantes).
 			randomRatio (float) = Randomize amount in range 0-1.
-			returnNodeType (str) = Specify whether the components are returned with the transform or shape nodes (valid only with str and unicode returnTypes). (valid: 'transform', 'shape'(default)) ex. 'pCylinder1.f[0]' or 'pCylinderShape1.f[0]'
+			returnType (str) = The desired returned object type. (valid: 'unicode'(default), 'str', 'int', 'object')
 			flatten (bool) = Flattens the returned list of objects so that each component is identified individually.
 
 		:Return:
@@ -572,6 +586,7 @@ class Init(Slots):
 
 
 	@staticmethod
+	@undoChunk
 	def getClosestCV(x, curves, tolerance=0.0):
 		'''Find the closest control vertex between the given vertices, CVs, or objects and each of the given curves.
 
@@ -586,7 +601,7 @@ class Init(Slots):
 		ex. vertices = Init.getComponents(objects, 'vertices')
 			closestVerts = getClosestCV(curve0, curves)
 		'''
-		pm.undoInfo(openChunk=True)
+		# pm.undoInfo(openChunk=True)
 		x = pm.ls(x, flatten=1) #assure x arg is a list (if given as str or single object).
 
 		npcNode = pm.ls(pm.createNode('nearestPointOnCurve'))[0] #create a nearestPointOnCurve node.
@@ -611,8 +626,7 @@ class Init(Slots):
 					result[i] = p
 
 		pm.delete(npcNode)
-
-		pm.undoInfo(closeChunk=True)
+		# pm.undoInfo(closeChunk=True)
 
 		return result
 
@@ -694,7 +708,7 @@ class Init(Slots):
 		if len(result) is 1:
 			try:
 				result = result.values()[0]
-			except AttributeError, TypeError:
+			except (AttributeError, TypeError):
 				result = result[0]
 
 		return result
@@ -716,7 +730,7 @@ class Init(Slots):
 		for curve in pm.ls(curves):
 			p0 = pm.objectCenter(curve)
 
-			cvs = Init.getComponents(curve, 'cv', returnType=object, flatten=1)
+			cvs = Init.getComponents(curve, 'cv', returnType='object', flatten=1)
 			cvPos = Init.getCvInfo(curve, 'position')
 			p1 = cvPos[cvs[0]]
 			p2 = cvPos[cvs[(len(cvs)/2)]]
@@ -764,6 +778,7 @@ class Init(Slots):
 
 
 	@staticmethod
+	@undoChunk
 	def getClosestVertex(vertices, obj, tolerance=0.0, freezeTransforms=False):
 		'''Find the closest vertex of the given object for each vertex in the list of given vertices.
 
@@ -780,7 +795,7 @@ class Init(Slots):
 			vertices = Init.getComponents(obj1, 'vertices')
 			closestVerts = getClosestVertex(vertices, obj2, tolerance=10)
 		'''
-		pm.undoInfo(openChunk=True)
+		# pm.undoInfo(openChunk=True)
 		if freezeTransforms:
 			pm.makeIdentity(obj, apply=True)
 
@@ -806,12 +821,13 @@ class Init(Slots):
 				closestVerts[v1] = v2
 
 		pm.delete(cpmNode)
-		pm.undoInfo(closeChunk=True)
+		# pm.undoInfo(closeChunk=True)
 
 		return closestVerts
 
 
 	@staticmethod
+	@undoChunk
 	def snapClosestVerts(obj1, obj2, tolerance=10.0, freezeTransforms=False):
 		'''Snap the vertices from object one to the closest verts on object two.
 
@@ -827,7 +843,7 @@ class Init(Slots):
 		progressBar = mel.eval("$container=$gMainProgressBar");
 		pm.progressBar(progressBar, edit=True, beginProgress=True, isInterruptable=True, status="Snapping Vertices ...", maxValue=len(closestVerts)) 
 
-		pm.undoInfo(openChunk=True)
+		# pm.undoInfo(openChunk=True)
 		for v1, v2 in closestVerts.items():
 			if pm.progressBar(progressBar, query=True, isCancelled=True):
 				break
@@ -836,12 +852,13 @@ class Init(Slots):
 			pm.xform(v1, translation=v2Pos, worldSpace=True)
 
 			pm.progressBar(progressBar, edit=True, step=1)
-		pm.undoInfo(closeChunk=True)
+		# pm.undoInfo(closeChunk=True)
 
 		pm.progressBar(progressBar, edit=True, endProgress=True)
 
 
 	@staticmethod
+	@undoChunk
 	def alignVertices (mode, average=False, edgeloop=False):
 		'''Align vertices.
 
@@ -852,7 +869,7 @@ class Init(Slots):
 
 		ex. self.alignVertices(mode=3, average=True, edgeloop=True)
 		'''
-		pm.undoInfo (openChunk=True)
+		# pm.undoInfo (openChunk=True)
 		selectTypeEdge = pm.selectType (query=True, edge=True)
 
 		if edgeloop:
@@ -901,10 +918,11 @@ class Init(Slots):
 
 		if selectTypeEdge:
 			pm.selectType (edge=True)
-		pm.undoInfo (closeChunk=True)
+		# pm.undoInfo (closeChunk=True)
 
 
 	@staticmethod
+	@undoChunk
 	def findNonManifoldVertex(objects, select=True):
 		'''Locate a connected vertex of non-manifold geometry where the faces share a single vertex.
 
@@ -915,8 +933,7 @@ class Init(Slots):
 		:Return:
 			(list) any found non-manifold verts.
 		'''
-		pm.undoInfo(openChunk=True)
-
+		# pm.undoInfo(openChunk=True)
 		nonManifoldVerts=set()
 
 		vertices = Init.getComponents(objects, 'vertices')
@@ -957,8 +974,7 @@ class Init(Slots):
 
 			if len(out)>1:
 				nonManifoldVerts.add(vertex)
-
-		pm.undoInfo(closeChunk=True)
+		# pm.undoInfo(closeChunk=True)
 
 		if select:
 			pm.select(nonManifoldVerts, add=1)
@@ -966,6 +982,7 @@ class Init(Slots):
 
 
 	@staticmethod
+	@undoChunk
 	def splitNonManifoldVertex(vertex, select=True):
 		'''Separate a connected vertex of non-manifold geometry where the faces share a single vertex.
 
@@ -973,8 +990,7 @@ class Init(Slots):
 			vertex (str)(obj) = A single polygon vertex.
 			select (bool) = Select the vertex after the operation. (default is True)
 		'''
-		pm.undoInfo(openChunk=True)
-
+		# pm.undoInfo(openChunk=True)
 		connected_faces = pm.polyListComponentConversion(vertex, fromVertex=1, toFace=1) #pm.mel.PolySelectConvert(1) #convert to faces
 		connected_faces_flat = pm.ls(connected_faces, flatten=1) #selectedFaces = pm.ls(sl=1, flatten=1)
 
@@ -1017,8 +1033,7 @@ class Init(Slots):
 		pm.select(vertex_set, deselect=1) #deselect the vertices that were selected during the polyMergeVertex operation.
 		if select:
 			pm.select(vertex, add=1)
-
-		pm.undoInfo(closeChunk=True)
+		# pm.undoInfo(closeChunk=True)
 
 
 	@staticmethod
@@ -1034,7 +1049,7 @@ class Init(Slots):
 		'''
 		components = pm.ls(components, flatten=1)
 		obj = set(pm.ls(components, objectsOnly=1))
-		componentNumbers = Init.getComponents(obj, 'edges', returnType=int, flatten=1).values()[0] #get the vertex numbers as integer values. ie. [818, 1380]
+		componentNumbers = Init.getComponents(obj, 'edges', returnType='int', flatten=1).values()[0] #get the vertex numbers as integer values. ie. [818, 1380]
 
 		edgesLong=None
 		if returnType=='shortestEdgePath':
@@ -1203,14 +1218,14 @@ class Init(Slots):
 
 
 	@staticmethod
-	def getEdgesByNormalAngle(objects, lowAngle=50, highAngle=130, returnType=unicode, flatten=False):
+	def getEdgesByNormalAngle(objects, lowAngle=50, highAngle=130, returnType='unicode', flatten=False):
 		'''Get a list of edges having normals between the given high and low angles using maya's polySelectConstraint.
 
 		:Parameters:
 			objects (str)(list)(obj) = The object(s) to get edges of.
 			lowAngle (int) = Normal angle low range.
 			highAngle (int) = Normal angle high range.
-			returnNodeType (str) = Specify whether the components are returned with the transform or shape nodes (valid only with str and unicode returnTypes). (valid: 'transform', 'shape'(default)) ex. 'pCylinder1.f[0]' or 'pCylinderShape1.f[0]'
+			returnType (str) = The desired returned object type. (valid: 'unicode'(default), 'str', 'int', 'object')
 			flatten (bool) = Flattens the returned list of objects so that each component is identified individually.
 
 		:Return:
@@ -1229,14 +1244,14 @@ class Init(Slots):
 
 
 	@staticmethod
-	def getComponentsByNumberOfConnected(components, num_of_connected=(0,2), connectedType=None, returnType=unicode, flatten=False):
+	def getComponentsByNumberOfConnected(components, num_of_connected=(0,2), connectedType=None, returnType='unicode', flatten=False):
 		'''Get a list of components filtered by the number of their connected components.
 
 		:Parameters:
 			components (str)(list)(obj) = The components to filter.
 			num_of_connected (int)(tuple) = The number of connected components. Can be given as a range. (Default: (0,2))
 			connectedType (str)(int) = The desired component mask. (valid: 'vtx','vertex','vertices','Polygon Vertex',31,0x0001(vertices), 'e','edge','edges','Polygon Edge',32,0x8000(edges), 'f','face','faces','Polygon Face',34,0x0008(faces), 'uv','texture','texture coordinates','Polygon UV',35,0x0010(texture coordiantes).
-			returnNodeType (str) = Specify whether the components are returned with the transform or shape nodes (valid only with str and unicode returnTypes). (valid: 'transform', 'shape'(default)) ex. 'pCylinder1.f[0]' or 'pCylinderShape1.f[0]'
+			returnType (str) = The desired returned object type. (valid: 'unicode'(default), 'str', 'int', 'object')
 			flatten (bool) = Flattens the returned list of objects so that each component is identified individually.
 
 		:Return:
@@ -1328,6 +1343,7 @@ class Init(Slots):
 
 
 	@staticmethod
+	@undoChunk
 	def createCircle(axis='y', numPoints=5, radius=5, center=[0,0,0], mode=0):
 		'''Create a circular polygon plane.
 
@@ -1363,14 +1379,14 @@ class Init(Slots):
 			radian = radian+math.radians(degree) #increment by original radian value that was converted from degrees
 			#print(x,y,"\n")
 			
-		pm.undoInfo (openChunk=True)
+		# pm.undoInfo (openChunk=True)
 		node = pm.polyCreateFacet (point=vertexPoints, name='pCircle')
 		pm.polyNormal (node, normalMode=4) #4=reverse and propagate
 		if mode==1:
 			pm.polySubdivideFacet (divisions=1, mode=1)
 		if mode==2:
 			pm.polySubdivideFacet (divisions=1, mode=0)
-		pm.undoInfo (closeChunk=True)
+		# pm.undoInfo (closeChunk=True)
 
 		return node
 
@@ -1438,7 +1454,7 @@ class Init(Slots):
 
 
 	@staticmethod
-	def getFacesWithSimilarNormals(faces, transforms=[], similarFaces=[], rangeX=0.1, rangeY=0.1, rangeZ=0.1, returnType=unicode, returnNodeType='transform'):
+	def getFacesWithSimilarNormals(faces, transforms=[], similarFaces=[], rangeX=0.1, rangeY=0.1, rangeZ=0.1, returnType='unicode', returnNodeType='transform'):
 		'''Filter for faces with normals that fall within an X,Y,Z tolerance.
 
 		:Parameters:
@@ -1448,7 +1464,7 @@ class Init(Slots):
 			rangeX = float - x axis tolerance
 			rangeY = float - y axis tolerance
 			rangeZ = float - z axis tolerance
-			returnType (type) = The desired returned object type. (valid: unicode(default, str, int, object)
+			returnType (str) = The desired returned object type. (valid: 'unicode'(default), 'str', 'int', 'object')
 			returnNodeType (str) = Specify whether the components are returned with the transform or shape nodes (valid only with str and unicode returnTypes). (valid: 'transform', 'shape'(default)) ex. 'pCylinder1.f[0]' or 'pCylinderShape1.f[0]'
 
 		:Return:
@@ -1576,6 +1592,7 @@ class Init(Slots):
 
 
 	@staticmethod
+	@undoChunk
 	def dropToGrid(objects, align='Mid', origin=False, centerPivot=False):
 		'''Align objects to Y origin on the grid using a helper plane.
 
@@ -1587,8 +1604,7 @@ class Init(Slots):
 
 		ex. dropToGrid(obj, align='Min') #set the object onto the grid.
 		'''
-		pm.undoInfo(openChunk=1)
-
+		# pm.undoInfo(openChunk=1)
 		for obj in pm.ls(objects, transforms=1):
 			osPivot = pm.xform(obj, query=1, rotatePivot=1, objectSpace=1) #save the object space obj pivot.
 			wsPivot = pm.xform(obj, query=1, rotatePivot=1, worldSpace=1) #save the world space obj pivot.
@@ -1604,29 +1620,28 @@ class Init(Slots):
 
 			if not centerPivot:
 				pm.xform(obj, rotatePivot=osPivot, objectSpace=1) #return pivot to orig position.
-
-		pm.undoInfo (closeChunk=1)
+		# pm.undoInfo (closeChunk=1)
 
 
 	@staticmethod
+	@undoChunk
 	def resetXform(objects):
 		'''Reset the transformations on the given object(s).
 
 		:Parameters:
 			objects (str)(obj)(list) = The object(s) to reset transforms for.
 		'''
-		pm.undoInfo(openChunk=1)
-
+		# pm.undoInfo(openChunk=1)
 		for obj in pm.ls(objects):
 			pos = pm.objectCenter(obj) #get the object's current position.
 			Init.dropToGrid(obj, origin=1, centerPivot=1) #move to origin and center pivot.
 			pm.makeIdentity(obj, apply=1, t=1, r=1, s=1, n=0, pn=1) #bake transforms
 			pm.xform(obj, translation=pos) #move the object back to it's original position.
-
-		pm.undoInfo(closeChunk=1)
+		# pm.undoInfo(closeChunk=1)
 
 
 	@staticmethod
+	@undoChunk
 	def createCurveBetweenTwoObjects(start, end):
 		'''Create a bezier curve between starting and end object(s).
 
@@ -1637,8 +1652,7 @@ class Init(Slots):
 		:Return:
 			(obj) Bezier curve. 
 		'''
-		pm.undoInfo(openChunk=1)
-
+		# pm.undoInfo(openChunk=1)
 		p1 = pm.objectCenter(start)
 		p2 = pm.objectCenter(end)
 		hypotenuse = Init.getDistanceBetweenTwoPoints(p1, p2)
@@ -1680,13 +1694,13 @@ class Init(Slots):
 		]
 
 		result = pm.curve(pw=[p1w, p3w, p4w, p2w], k=[0,0,0,1,1,1], bezier=1)
-
-		pm.undoInfo(closeChunk=1)
+		# pm.undoInfo(closeChunk=1)
 
 		return result
 
 
 	@staticmethod
+	@undoChunk
 	def duplicateAlongCurve(path, start, count=6, geometry='Instancer'):
 		'''Duplicate objects along a given curve using MASH.
 
@@ -1699,8 +1713,7 @@ class Init(Slots):
 		:Return:
 			(list) The duplicated objects in order of start to end.
 		'''
-		pm.undoInfo(openChunk=1)
-
+		# pm.undoInfo(openChunk=1)
 		#create a MASH network
 		import MASH_tools, MASH.api as mapi
 		mashNW = mapi.Network()
@@ -1728,12 +1741,13 @@ class Init(Slots):
 			result.append(curve)
 
 		pm.delete(mashNW.waiter.name()) #delete the MASH network.
-		pm.undoInfo(closeChunk=1)
+		# pm.undoInfo(closeChunk=1)
 
 		return result
 
 
 	@staticmethod
+	@undoChunk
 	def angleLoftBetweenTwoCurves(start, end, count=6, cleanup=False, 
 		uniform=1, close=0, autoReverse=0, degree=3, sectionSpans=1, range=0, polygon=1, reverseSurfaceNormals=0):
 		'''Perform a loft between two nurbs curves or polygon sets of edges (that will be extracted as curves).
@@ -1747,8 +1761,7 @@ class Init(Slots):
 		:Return:
 			(list) Loft object name and node name.
 		'''
-		pm.undoInfo(openChunk=1)
-
+		# pm.undoInfo(openChunk=1)
 		if pm.objectType(start)=='mesh': #vs. 'nurbsCurve'
 			start, startNode = pm.polyToCurve(start, form=2, degree=3, conformToSmoothMeshPreview=1) #extract curve from mesh
 		Init.resetXform(start) #reset the transforms to world origin.
@@ -1777,8 +1790,7 @@ class Init(Slots):
 				pm.delete(start)
 			except Exception as e:
 				print(e)
-
-		pm.undoInfo(closeChunk=1)
+		# pm.undoInfo(closeChunk=1)
 
 		return result
 
@@ -2632,7 +2644,7 @@ print(os.path.splitext(os.path.basename(__file__))[0])
 	# 		pm.selectType (edge=True)
 
 	# 	paths=[]
-	# 	for index in xrange(3): #get edge path between vertList[0],[1] [1],[2] [2],[3] to make sure everything is selected between the original four vertices/two edges
+	# 	for index in range(3): #get edge path between vertList[0],[1] [1],[2] [2],[3] to make sure everything is selected between the original four vertices/two edges
 	# 		edgePath = pm.polySelect(object_, shortestEdgePath=(int(vertList[index]), int(vertList[index+1])))
 	# 		paths.append(edgePath)
 

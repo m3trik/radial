@@ -158,29 +158,7 @@ class Nurbs(Init):
 		angleLoftBetweenTwoCurves = tb.menu_.chk010.isChecked()
 		angleLoftSpans = tb.menu_.s007.value()
 
-		pm.undoInfo(openChunk=1)
-
-		sel = pm.ls(sl=1)
-		if len(sel)>1:
-			if angleLoftBetweenTwoCurves:
-				start, end = sel[:2] #get the first two selected edge loops or curves.
-				result = Init.angleLoftBetweenTwoCurves(start, end, count=angleLoftSpans, cleanup=True, uniform=uniform, close=close, autoReverse=autoReverse, degree=degree, sectionSpans=sectionSpans, range=range_, polygon=0, reverseSurfaceNormals=reverseSurfaceNormals)
-			else:
-				result = pm.loft(sel, u=uniform, c=close, ar=autoReverse, d=degree, ss=sectionSpans, rn=range_, po=0, rsn=reverseSurfaceNormals)
-		else:
-			print('# Error: Operation requires the selection of two curves or polygon edge sets. #')
-
-		if polygon: #convert nurb surface to polygon.
-			converted = pm.nurbsToPoly(result[0], mnd=1,  f=3, pt=1, pc=200, chr=0.1, ft=0.01, mel=0.001, d=0.1, ut=1, un=3, vt=1, vn=3, uch=0, ucr=0, cht=0.2, es=0, ntr=0, mrt=0, uss=1)
-			for obj in result:
-				try:
-					pm.delete(obj)
-				except:
-					pass
-			result=converted
-
-		pm.undoInfo(closeChunk=1)
-		return result
+		Nurbs.loft(uniform=uniform, close=close, degree=degree, autoReverse=autoReverse, sectionSpans=sectionSpans, range_=range_, polygon=polygon, reverseSurfaceNormals=reverseSurfaceNormals, angleLoftBetweenTwoCurves=angleLoftBetweenTwoCurves, angleLoftSpans=angleLoftSpans)
 
 
 	def b012(self):
@@ -328,6 +306,51 @@ class Nurbs(Init):
 		'''Extend On Surface
 		'''
 		pm.mel.ExtendCurveOnSurface()
+
+
+	@staticmethod
+	@Init.undoChunk
+	def loft(uniform=True, close=False, degree=3, autoReverse=False, sectionSpans=1, range_=False, polygon=True, reverseSurfaceNormals=True, angleLoftBetweenTwoCurves=False, angleLoftSpans=6):
+		'''Create a loft between two selections.
+
+		:Parameters:
+			uniform (bool) = The resulting surface will have uniform parameterization in the loft direction. If set to false, the parameterization will be chord length.
+			close (bool) = The resulting surface will be closed (periodic) with the start (end) at the first curve. If set to false, the surface will remain open.
+			degree (int) = The degree of the resulting surface.
+			autoReverse (bool) = The direction of the curves for the loft is computed automatically. If set to false, the values of the multi-use reverse flag are used instead.
+			sectionSpans (int) = The number of surface spans between consecutive curves in the loft.
+			range_ (bool) = Force a curve range on complete input curve.
+			polygon (bool) = The object created by this operation.
+			reverseSurfaceNormals (bool) = The surface normals on the output NURBS surface will be reversed. This is accomplished by swapping the U and V parametric directions.
+			angleLoftBetweenTwoCurves (bool) = Perform a loft at an angle between two selected curves or polygon edges (that will be extracted as curves).
+			angleLoftSpans (int) = Angle loft: Number of duplicated points (spans).
+
+		:Return:
+			(obj) nurbsToPoly history node.
+		'''
+		# pm.undoInfo(openChunk=1)
+
+		sel = pm.ls(sl=1)
+		if len(sel)>1:
+			if angleLoftBetweenTwoCurves:
+				start, end = sel[:2] #get the first two selected edge loops or curves.
+				result = Init.angleLoftBetweenTwoCurves(start, end, count=angleLoftSpans, cleanup=True, uniform=uniform, close=close, autoReverse=autoReverse, degree=degree, sectionSpans=sectionSpans, range=range_, polygon=0, reverseSurfaceNormals=reverseSurfaceNormals)
+			else:
+				result = pm.loft(sel, u=uniform, c=close, ar=autoReverse, d=degree, ss=sectionSpans, rn=range_, po=0, rsn=reverseSurfaceNormals)
+		else:
+			return '# Error: Operation requires the selection of two curves or polygon edge sets. #'
+
+		if polygon: #convert nurb surface to polygon.
+			converted = pm.nurbsToPoly(result[0], mnd=1,  f=3, pt=1, pc=200, chr=0.1, ft=0.01, mel=0.001, d=0.1, ut=1, un=3, vt=1, vn=3, uch=0, ucr=0, cht=0.2, es=0, ntr=0, mrt=0, uss=1)
+			for obj in result:
+				try:
+					pm.delete(obj)
+				except:
+					pass
+			result=converted
+
+		# pm.undoInfo(closeChunk=1)
+		return result
 
 
 

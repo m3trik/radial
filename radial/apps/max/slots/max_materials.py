@@ -138,7 +138,7 @@ class Materials(Init):
 			(obj) pixmap icon.
 		'''
 		try:
-			mat = next(m for m in Materials.getSceneMaterials() if m.name==mat) if isinstance(mat, (str, unicode)) else mat #get the mat object if a string name is given.
+			mat = next(m for m in Materials.getSceneMaterials() if m.name==mat) if isinstance(mat, (str)) else mat #get the mat object if a string name is given.
 			r = int(mat.diffuse.r) #convert from float value
 			g = int(mat.diffuse.g)
 			b = int(mat.diffuse.b)
@@ -569,7 +569,7 @@ class Materials(Init):
 		
 		#create shader
 		mat = rt.StandardMaterial()
- 		mat.name = name
+		mat.name = name
 		mat.diffuse = rt.color(rgb[0], rgb[1], rgb[2])
 
 		return mat

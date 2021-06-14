@@ -316,7 +316,7 @@ class Create(Init):
 
 
 		#set name
-		if isinstance(node, (str,unicode)): #is type of:
+		if isinstance(node, (str)): #is type of:
 			self.create_ui.txt003.setText(node)
 		else:
 			self.create_ui.txt003.setText(node.name)

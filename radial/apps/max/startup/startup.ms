@@ -40,23 +40,6 @@
 --------------------------------------------------------------------------------
 
 
--- initalize python
-python.Init()
-python.Execute("import sys, os")
-
--- get directory paths
-file_path = getSourceFileName() --ie. "C:\__portable\_scripts\apps\max\startup\startup.ms"
-startup_dir = getFilenamePath(file_path) --ie. "C:\__portable\_scripts\apps\max\startup"
-
-root_dir = substring startup_dir 1 (findString startup_dir ("apps")-2) --take substring from index 1 to the index of max in file string. ie. "O:\Cloud\Code\_scripts\radial\radial"
-
-app_scripts_dir	= root_dir+"/apps/max" --ie. "O:\Cloud\Code\_scripts\radial\radial/apps/max"
-app_slots_dir = app_scripts_dir+"/slots" --ie. "O:\Cloud\Code\_scripts\radial\radial/apps/max/slots"
-
-
--- exec userSetup.py
-python.ExecuteFile(startup_dir+"/userSetup.py") --3ds Max looks for the Python script under: User Scripts directory, User Startup Scripts directory, Scripts directory, Startup Scripts, Windows paths specified by the Path environment variable.
-
 
 -- -----------------------------------------------------------------------------
 
@@ -94,8 +77,7 @@ function PerformDelayedTasks sender evt = (
 
 	-- commands --
 
-	-- user macros:
-	FileIn (app_scripts_dir+"/macros.ms")
+
 
 	-- statusPanel
 	statusPanel.visible = true
@@ -116,6 +98,27 @@ function PerformDelayedTasks sender evt = (
 	kbdx = actionMan.getKeyboardFile()	--get current keyboard file
 	actionMan.loadKeyboardFile (kbdx)		--loadKeyboardFile()
 	-- actionMan.saveKeyboardFile		--saveKeyboardFile()
+
+
+	-- initalize python
+	python.Init()
+	python.Execute("import sys, os")
+
+	-- get directory paths
+	file_name = getSourceFileName() --ie. "C:\__portable\_scripts\apps\max\startup\startup.ms"
+	file_path = getFilenamePath(file_name) --ie. "C:\__portable\_scripts\apps\max\startup"
+
+	root_dir = substring file_path 1 (findString file_path ("apps")-2) --take substring from index 1 to the index of max in file string. ie. "O:\Cloud\Code\_scripts\radial\radial"
+	app_scripts_dir	= root_dir+"/apps/max" --ie. "O:\Cloud\Code\_scripts\radial\radial/apps/max"
+	app_slots_dir = app_scripts_dir+"/slots" --ie. "O:\Cloud\Code\_scripts\radial\radial/apps/max/slots"
+
+	-- exec userSetup.py
+	python.ExecuteFile(file_path+"/userSetup.py") --3ds Max looks for the Python script under: User Scripts directory, User Startup Scripts directory, Scripts directory, Startup Scripts, Windows paths specified by the Path environment variable.
+
+	-- user macros:
+	FileIn(app_scripts_dir+"/macros.ms")
+
+
 )
 
 
@@ -188,11 +191,8 @@ delayTimer.enabled = true
 -- # ------------------------------------------------
 -- # Get the main Max window as a QtGui.QMainWindow instance.
 -- # ------------------------------------------------
--- # mainWindow = MaxPlus.GetQMaxMainWindow()
-
-
--- # ------------------------------------------------
--- # MaxPlus.FileManager.Reset(True)
+-- # import qtmax
+-- # mainWindow = qtmax.GetQMaxMainWindow()
 
 
 

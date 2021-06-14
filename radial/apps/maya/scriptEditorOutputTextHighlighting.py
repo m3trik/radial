@@ -50,7 +50,7 @@ def wrap():
 	i=1
 	while i:
 		try:
-			se_edit = wrapInstance(long(MQtUtil.findControl('cmdScrollFieldReporter%i' %i)), QtWidgets.QTextEdit)
+			se_edit = wrapInstance(int(MQtUtil.findControl('cmdScrollFieldReporter%i' %i)), QtWidgets.QTextEdit)
 			break
 		except TypeError:
 			i+=1

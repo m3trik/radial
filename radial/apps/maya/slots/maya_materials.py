@@ -116,7 +116,7 @@ class Materials(Init):
 
 
 		self.currentMats = {mat.name():mat for mat in sorted(list(set(materials))) if hasattr(mat,'name')} if not favoriteMaterials else self.currentMats
-		cmb.addItems_(self.currentMats.keys(), clear=True)
+		cmb.addItems_(list(self.currentMats.keys()), clear=True)
 
 		#create and set icons with color swatch
 		for i, mat in enumerate(self.currentMats.keys()):
@@ -348,7 +348,7 @@ class Materials(Init):
 			(obj) pixmap icon.
 		'''
 		try:
-			matName = mat.name() if not isinstance(mat, (str, unicode)) else mat #get the string name if a mat object is given.
+			matName = mat.name() if not isinstance(mat, (str)) else mat #get the string name if a mat object is given.
 			r = int(pm.getAttr(matName+'.colorR')*255) #convert from 0-1 to 0-255 value and then to an integer
 			g = int(pm.getAttr(matName+'.colorG')*255)
 			b = int(pm.getAttr(matName+'.colorB')*255)
@@ -497,6 +497,7 @@ class Materials(Init):
 
 
 	@Slots.message
+	@Init.undoChunk
 	def assignMaterial(self, objects, mat):
 		'''Assign Material
 
@@ -511,11 +512,11 @@ class Materials(Init):
 		except:
 			mat = pm.shadingNode(mat, asShader=1)
 
-		pm.undoInfo(openChunk=1)
+		# pm.undoInfo(openChunk=1)
 		for obj in objects:
 			pm.select(obj) #hyperShade works more reliably with an explicit selection.
 			pm.hyperShade(obj, assign=mat)
-		pm.undoInfo(closeChunk=1)
+		# pm.undoInfo(closeChunk=1)
 
 
 

@@ -455,7 +455,7 @@ class Switchboard(QtCore.QObject):
 		'''
 		if name is None:
 			name = self.getUiName(camelCase=True)
-		elif not isinstance(name, (str, unicode)): #name as ui object
+		elif not isinstance(name, (str)): #name as ui object
 			name = self.getUiName(name, camelCase=True)
 		if name is None:
 				return None
@@ -535,7 +535,7 @@ class Switchboard(QtCore.QObject):
 				name = self.sbDict['name'][-1]
 			except IndexError: #if index out of range (no value exists): return None
 				return None
-		elif isinstance(ui, (str, unicode)):
+		elif isinstance(ui, (str)):
 			name = ui
 		else: #get the ui name string key from the ui value in uiList.
 			name = next(k for k, v in self.uiList().items() if v==ui)
@@ -800,7 +800,7 @@ class Switchboard(QtCore.QObject):
 		:Return:
 			class object.
 		'''
-		if isinstance(class_, (str, unicode)): #if arg given as string or unicode:
+		if isinstance(class_, (str)): #if arg given as string or unicode:
 			name = class_.split('_')[-1].split('.')[-1] #get key from the class_ string ie. 'class' from 'module.Class'
 			class_ = locate(class_)
 		elif not name:
@@ -831,7 +831,7 @@ class Switchboard(QtCore.QObject):
 		:Return:
 			class object.
 		'''
-		if isinstance(class_, (str, unicode)): #if arg given as string or unicode:
+		if isinstance(class_, (str)): #if arg given as string or unicode:
 			name = class_.split('_')[-1].split('.')[-1] #get key from class_ string ie. 'class' from 'module.Class'#class_.lower()
 		else: #if arg as <object>:
 			if not callable(class_):
@@ -866,7 +866,7 @@ class Switchboard(QtCore.QObject):
 		'''
 		if not name:
 			name = self.getUiName()
-		if not isinstance(str, unicode):
+		if not isinstance(name, str):
 			name = self.getUiName(name)
 
 		if not 'widgets' in self.sbDict[name]:
@@ -921,7 +921,7 @@ class Switchboard(QtCore.QObject):
 		:Return:
 			'string' - the corresponding widget class name
 		'''
-		if isinstance(widget, (str, unicode)):
+		if isinstance(widget, (str)):
 			objectName = self.sbDict[name]['widgets'][widget] #use the stored objectName as a more reliable key.
 			widget = self.getWidget(objectName, name) #use the objectName to get a string key for 'widget'
 
@@ -968,7 +968,7 @@ class Switchboard(QtCore.QObject):
 		:Return:
 			(string) base class name. ie. 'QPushButton' from a custom widget with class name: 'PushButton'
 		'''
-		if isinstance(widget, (str, unicode)):
+		if isinstance(widget, (str)):
 			objectName = self.sbDict[name]['widgets'][widget] #use the stored objectName as a more reliable key.
 			widget = self.getWidget(objectName, name) #use the objectName to get a string key for 'widget'
 
@@ -1321,7 +1321,7 @@ class Switchboard(QtCore.QObject):
 		if not name:
 			name = self.getUiName()
 			name = name[0].lower()+name[1:] #lowercase the first letter of name.
-		elif not isinstance(name, (str, unicode)):
+		elif not isinstance(name, (str)):
 			name = self.getUiName(name)
 
 		try:
@@ -1355,7 +1355,7 @@ class Switchboard(QtCore.QObject):
 			name = self.getUiName()
 			for p in prefix:
 				try:
-					if isinstance(widget, (str, unicode)): #get the prefix using the widget's objectName.
+					if isinstance(widget, (str)): #get the prefix using the widget's objectName.
 						prefix_ = next(w['prefix'] for w in self.sbDict[name]['widgets'].values() if w['widgetName']==widget)
 					else:
 						prefix_ = self.sbDict[name]['widgets'][widget]['prefix']
@@ -1363,7 +1363,7 @@ class Switchboard(QtCore.QObject):
 						return True
 
 				except:
-					if not isinstance(widget, (str, unicode)):
+					if not isinstance(widget, (str)):
 						widget = widget.objectName()
 					if widget.startswith(p):
 						i = len(p)
@@ -1374,7 +1374,7 @@ class Switchboard(QtCore.QObject):
 
 		else: #return prefix.
 			prefix=''
-			if not isinstance(widget, (str, unicode)):
+			if not isinstance(widget, (str)):
 				widget = widget.objectName()
 			for char in widget:
 				if not char.isdigit():

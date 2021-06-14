@@ -6,7 +6,7 @@ import sys
 
 from PySide2 import QtCore, QtWidgets
 
-try: import MaxPlus
+try: from pymxs import runtime as rt
 except ImportError as e: print(e)
 
 from radial import Main
@@ -26,7 +26,6 @@ class Main_max(Main):
 		if not parent:
 			try:
 				parent = self.getMainWindow()
-				parent.setObjectName('MaxWindow')
 
 			except Exception as error:
 				print(self.__class__.__name__, error)
@@ -35,12 +34,21 @@ class Main_max(Main):
 
 
 	def getMainWindow(self):
-		'''Get maya's main window object.
+		'''Get the 3DS MAX main window.
 
-		:Return:
-			(QWidget)
+		Returns:
+			PySide2.QtWidgets.QMainWindow: 'QMainWindow' 3DS MAX main window.
 		'''
-		main_window = MaxPlus.GetQMaxMainWindow()
+		# import qtmax
+		# main_window = qtmax.GetQMaxMainWindow()
+
+		main_window = next((w.window() for w in self.qapp.instance().topLevelWidgets()
+			if w.inherits('QMainWindow') and w.metaObject().className()=='QmaxApplicationWindow'), 
+				lambda: (_ for _ in ()).throw(RuntimeError('Count not find QmaxApplicationWindow instance.'))
+			)
+
+		if not main_window.objectName():
+			main_window.setObjectName('MaxWindow')
 
 		return main_window
 
@@ -66,7 +74,7 @@ class Main_max(Main):
 			event = <QEvent>
 		'''
 		try:
-			MaxPlus.CUI.DisableAccelerators()
+			rt.enableAccelerators = False
 
 		except Exception as error:
 			print(error)
@@ -80,7 +88,7 @@ class Main_max(Main):
 			event = <QEvent>
 		'''
 		try:
-			MaxPlus.CUI.EnableAccelerators()
+			rt.enableAccelerators = True
 
 		except Exception as error:
 			print(error)

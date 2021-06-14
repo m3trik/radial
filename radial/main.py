@@ -189,7 +189,7 @@ class Main(QtWidgets.QStackedWidget):
 			event = <QEvent>
 		'''
 		if not event.isAutoRepeat():
-			print ('keyPressEvent:', event.key()==self.key_show)
+			# print ('keyPressEvent:', event.key()==self.key_show)
 			modifiers = self.qapp.keyboardModifiers()
 
 			if event.key()==self.key_show:
@@ -209,7 +209,7 @@ class Main(QtWidgets.QStackedWidget):
 		'''
 		if not event.isAutoRepeat():
 			modifiers = self.qapp.keyboardModifiers()
-			print ('keyReleaseEvent:', event.key()==self.key_show)
+			# print ('keyReleaseEvent:', event.key()==self.key_show)
 			if event.key()==self.key_show and not modifiers==QtCore.Qt.ControlModifier:
 				self.hide()
 

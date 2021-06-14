@@ -159,7 +159,7 @@ class Normals(Init):
 		# 	if (all_ and maskVertex) or maskObject:
 		# 		for obj in selection:
 		# 			count = pm.polyEvaluate(obj, vertex=1) #get number of vertices
-		# 			vertices = [vertices.append(str(obj) + ".vtx ["+str(num)+"]") for num in xrange(count)] #geometry.vtx[0]
+		# 			vertices = [vertices.append(str(obj) + ".vtx ["+str(num)+"]") for num in range(count)] #geometry.vtx[0]
 		# 			for vertex in vertices:
 		# 				if state:
 		# 					pm.polyNormalPerVertex(vertex, unFreezeNormal=1)

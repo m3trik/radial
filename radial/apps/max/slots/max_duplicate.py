@@ -159,7 +159,7 @@ class Duplicate(Init):
 					if self.duplicate_ui.chk014.isChecked(): z = angle
 
 					pm.undoInfo (openChunk=1)
-					for i in xrange(1,numDuplicates):
+					for i in range(1,numDuplicates):
 						if instance:
 							name = objectName+"_ins"+str(i)
 							pm.instance (name=name)
@@ -299,7 +299,7 @@ class Duplicate(Init):
 				else:
 					return '# Warning: Component list empty. #'
 			else:
-				for _ in xrange(numOfDuplicates):
+				for _ in range(numOfDuplicates):
 					if ".f" in str(obj): #face
 						duplicatedObject = pm.duplicate(name="pExtract1")[0]
 

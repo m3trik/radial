@@ -126,10 +126,8 @@ class Edit(Init):
 				if not nonManifoldVerts:
 					nonManifoldVerts = Init.findNonManifoldVertex(objects, select=select) # vertices = Init.getComponents('vtx', objects, flatten=True)
 
-				pm.undoInfo(openChunk=1)
 				for vertex in nonManifoldVerts:
 					Init.splitNonManifoldVertex(vertex, select=select)
-				pm.undoInfo(closeChunk=1)
 
 
 	def tb001(self, state=None):

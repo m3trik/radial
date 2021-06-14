@@ -34,10 +34,10 @@ class Mirror(Init):
 			cmb.addItems_(list_, '')
 			return
 
-		# if index>0:
-		# 	if index==cmd.items.index(''):
-		# 		pass
-		# 	cmb.setCurrentIndex(0)
+		if index>0:
+			if index==cmd.items.index(''):
+				pass
+			cmb.setCurrentIndex(0)
 
 
 	def chk000_3(self):
@@ -71,7 +71,7 @@ class Mirror(Init):
 			tb.menu_.add('QRadioButton', setText='X', setObjectName='chk001', setChecked=True, setToolTip='Perform mirror along X axis.')
 			tb.menu_.add('QRadioButton', setText='Y', setObjectName='chk002', setToolTip='Perform mirror along Y axis.')
 			tb.menu_.add('QRadioButton', setText='Z', setObjectName='chk003', setToolTip='Perform mirror along Z axis.')
-			tb.menu_.add('QCheckBox', setText='Instance', setObjectName='chk004', setToolTip='Instance object.')
+			tb.menu_.add('QCheckBox', setText='Instance', setObjectName='chk004', setToolTip='Instance the mirrored object(s).')
 			tb.menu_.add('QCheckBox', setText='Cut', setObjectName='chk005', setChecked=True, setToolTip='Perform a delete along specified axis before mirror.')
 			tb.menu_.add('QDoubleSpinBox', setPrefix='Merge Threshold: ', setObjectName='s000', setMinMax_='0.000-10 step.001', setValue=0.005, setToolTip='Merge vertex distance.')
 			tb.menu_.add('QCheckBox', setText='Delete History', setObjectName='chk006', setChecked=True, setToolTip='Delete non-deformer history on the object before performing the operation.')
@@ -85,6 +85,25 @@ class Mirror(Init):
 		mergeThreshold = tb.menu_.s000.value()
 		deleteHistory = tb.menu_.chk006.isChecked() #delete the object's non-deformer history.
 
+		Mirror.mirrorGeometry(axis=axis, cutMesh=cutMesh, instance=instance, mergeThreshold=mergeThreshold, deleteHistory=deleteHistory)
+
+
+	@staticmethod
+	@Init.undoChunk
+	def mirrorGeometry(objects=None, axis='-X', cutMesh=False, instance=False, mergeThreshold=0.005, deleteHistory=True):
+		'''Mirror geometry across a given axis.
+
+		:Parameters:
+			objects (obj) = The objects to mirror. If None; any currently selected objects will be used.
+			axis = The axis in which to perform the mirror along.
+			cutMesh = Perform a delete along specified axis before mirror.
+			instance = Instance the mirrored object(s).
+			mergeThreshold = Merge vertex distance.
+			deleteHistory = Delete non-deformer history on the object before performing the operation.
+
+		:Return:
+			(obj) The polyMirrorFace history node.
+		'''
 		direction = {
 			 'X': (0, 0,-1, 1, 1),
 			'-X': (1, 1,-1, 1, 1),
@@ -93,22 +112,22 @@ class Mirror(Init):
 			 'Z': (0, 4, 1, 1,-1),
 			'-Z': (1, 5, 1, 1,-1)
 		}
+		print (axis, type(axis))
+		axisDirection, axis_as_int, x, y, z = direction[str(axis)] #ex. axisDirection=1, axis_as_int=5, x=1; y=1; z=-1
 
-		axisDirection, axis_as_int, x, y, z = direction[axis] #ex. axisDirection=1, axis_as_int=5, x=1; y=1; z=-1
+		pm.ls(objects, objectsOnly=1)
+		if not objects:
+			objects = pm.ls(sl=1, objectsOnly=1)
+			if not objects:
+				return 'Warning: No object(s) given, or nothing selected.'
 
-		selection = pm.ls(sl=1, objectsOnly=1)
-		if not selection:
-			return 'Warning: Nothing Selected.'
-
-		pm.undoInfo(openChunk=1)
-		objects = pm.ls(sl=1, objectsOnly=1)#[n for n in pm.listRelatives(selection, allDescendents=1) if pm.objectType(n, isType='mesh')] #get any mesh type child nodes of obj.
-
+		# pm.undoInfo(openChunk=1)
 		for obj in objects:
 			if deleteHistory:
 				pm.mel.BakeNonDefHistory(obj)
 
 			if cutMesh:
-				self.deleteAlongAxis(obj, axis) #delete mesh faces that fall inside the specified axis.
+				Init.deleteAlongAxis(obj, axis) #delete mesh faces that fall inside the specified axis.
 
 			if instance: #create instance and scale negatively
 				inst = pm.instance(obj) # bt_convertToMirrorInstanceMesh(0); #x=0, y=1, z=2, -x=3, -y=4, -z=5
@@ -118,8 +137,7 @@ class Mirror(Init):
 			else: #mirror
 				polyMirrorFace = pm.polyMirrorFace(obj, mirrorAxis=axisDirection, direction=axis_as_int, mergeMode=1, mergeThresholdType=1, mergeThreshold=mergeThreshold, worldSpace=0, smoothingAngle=30, flipUVs=0, ch=1) #mirrorPosition x, y, z - This flag specifies the position of the custom mirror axis plane
 				return polyMirrorFace if len(objects)==1 else polyMirrorFace
-
-		pm.undoInfo(closeChunk=1)
+		# pm.undoInfo(closeChunk=1)
 
 
 

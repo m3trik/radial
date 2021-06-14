@@ -245,7 +245,7 @@ class Menu(QtWidgets.QMenu, Attributes):
 			pos = QtGui.QCursor.pos() #global position
 			self.move(pos.x()-self.width()/4-10, pos.y()-20) #move to cursor position and offset slightly.
 
-		elif not isinstance(self.position, (type(None), str, unicode)): #if self.position is a widget:
+		elif not isinstance(self.position, (type(None), str)): #if self.position is a widget:
 			pos = getattr(self.positionRelativeTo.rect(), self.position)
 			self.move(self.positionRelativeTo.mapToGlobal(pos()))
 
