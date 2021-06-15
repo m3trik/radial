@@ -124,7 +124,7 @@ if __name__ == "__main__":
 	# dummyParent.setObjectName('BlenderWindow')
 
 	import cProfile
-	cProfile.run('Instance(dummyParent).show_()')
+	cProfile.run("Instance(dummyParent).show_('init')")
 	# Instance(dummyParent).show_() #Main_maya(dummyParent).show()
 	sys.exit(app.exec_())
 

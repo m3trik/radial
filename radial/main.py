@@ -93,20 +93,25 @@ class Main(QtWidgets.QStackedWidget):
 		# print('keyboardGrabber:', self.keyboardGrabber())
 
 		self.setCurrentWidget(ui) #set the stacked widget to the given ui.
+
 		return ui
 
 
 	def setPrevUi(self):
 		'''Return the stacked widget to it's starting index.
 		'''
+		self.hide()
+
 		previous = self.sb.previousName(omitLevel=[2,3])
 		self.setUi(previous) #return the stacked widget to it's previous ui.
+
+		self.move(self.drawPath[0] - self.rect().center())
 
 		#Reset the lists that make up the draw and widget paths.
 		del self.drawPath[1:] #clear the draw path, while leaving the starting point.
 		del self.widgetPath[:] #clear the list of previous widgets.
 
-		self.move(self.drawPath[0] - self.rect().center())
+		self.show()
 
 
 	def setSubUi(self, widget, name):
@@ -117,6 +122,8 @@ class Main(QtWidgets.QStackedWidget):
 			widget (QWidget) = The widget that called this method.
 			name (str) = The name of the ui to set.
 		'''
+		self.hide()
+
 		p1 = widget.mapToGlobal(widget.rect().center()) #widget position before submenu change.
 
 		try: #set the ui to the submenu (if it exists).
@@ -137,10 +144,13 @@ class Main(QtWidgets.QStackedWidget):
 
 		p2 = w.mapToGlobal(w.rect().center()) #widget position after submenu change.
 		currentPos = self.mapToGlobal(self.pos())
+
 		self.move(self.mapFromGlobal(currentPos +(p1 - p2))) #currentPos + difference
 
+		self.show() #show before cloning widget operation as a hidden window will not register mouse events.
+
 		if name not in self.sb.previousName(as_list=1): #if the submenu ui called for the first time:
-			self.clonePathWidgets(name) #re-construct any widgets from the previous ui that fall along the plotted path.
+			self.cloneWidgetsAlongPath(name) #re-construct any widgets from the previous ui that fall along the plotted path.
 
 
 	def removeFromPath(self, name):
@@ -157,7 +167,7 @@ class Main(QtWidgets.QStackedWidget):
 			del self.widgetPath[-2:]
 
 
-	def clonePathWidgets(self, name):
+	def cloneWidgetsAlongPath(self, name):
 		'''Re-constructs the relevant buttons from the previous ui for the new ui, and positions them.
 		Initializes the new buttons by adding them to the switchboard dict, setting connections, event filters, and stylesheets.
 		The previous widget information is derived from the widget and draw paths.
@@ -304,12 +314,16 @@ class Main(QtWidgets.QStackedWidget):
 			self.hide()
 
 
-	def show(self, active=True):
+	def show(self, name=None, active=True):
 		'''Sets the widget as visible.
-		
+
 		:Parameters:
+			name (str) = Show the ui of the given name.
 			active (bool) = Set as the active window.
 		'''
+		if name:
+			self.setUi(name)
+
 		super().show()
 		if active:
 			self.activateWindow()
@@ -321,9 +335,8 @@ class Main(QtWidgets.QStackedWidget):
 		:Parameters:
 			event = <QEvent>
 		'''
-		self.setUi('init')
-
-		self.move(self.centerPos())
+		if self.sb.uiLevel==0:
+			self.move(self.centerPos())
 
 		return QtWidgets.QStackedWidget.showEvent(self, event)
 
@@ -345,10 +358,10 @@ class Main(QtWidgets.QStackedWidget):
 		:Parameters:
 			event = <QEvent>
 		'''
-		self.sb.gcProtect(clear=True) #clear any garbage protected items.
+		# self.sb.gcProtect(clear=True) #clear any garbage protected items.
 
-		if __name__ == "__main__":
-			sys.exit() #assure that the sys processes are terminated.
+		# if __name__ == "__main__":
+		# 	sys.exit() #assure that the sys processes are terminated during testing.
 
 		return QtWidgets.QStackedWidget.hideEvent(self, event)
 
@@ -405,7 +418,7 @@ if __name__ == '__main__':
 	if not app:
 		app = QtWidgets.QApplication(sys.argv)
 
-	Main().show()
+	Main().show('init')
 	sys.exit(app.exec_())
 
 

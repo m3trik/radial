@@ -22,11 +22,12 @@ class Overlay(QtWidgets.QWidget):
 	blackPen = QtGui.QPen(QtGui.QColor(0, 0, 0), 1, QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin)
 
 
-	def __init__(self, parent=None):
+	def __init__(self, parent=None, antialiasing=False):
 		super(Overlay, self).__init__(parent)
 
 		if parent:
 			self.parent = parent
+			self.antialiasing = antialiasing
 
 			self.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
 			self.setAttribute(QtCore.Qt.WA_NoSystemBackground) #takes a single arg
@@ -64,7 +65,7 @@ class Overlay(QtWidgets.QWidget):
 		path.addEllipse(QtCore.QPointF(start_point), 7, 7)
 
 		self.painter.fillRect(self.rect(), QtGui.QColor(127, 127, 127, 0)) #transparent overlay background.
-		self.painter.setRenderHint(QtGui.QPainter.Antialiasing, True)
+		self.painter.setRenderHint(QtGui.QPainter.Antialiasing, self.antialiasing)
 		self.painter.setBrush(QtGui.QColor(115, 115, 115))
 		self.painter.fillPath(path, QtGui.QColor(115, 115, 115))
 		self.painter.setPen(self.blackPen)

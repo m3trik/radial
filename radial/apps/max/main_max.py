@@ -184,7 +184,7 @@ if __name__ == "__main__":
 	dummyParent.setObjectName('MaxWindow')
 
 	import cProfile
-	cProfile.run('Instance(dummyParent).show_()')
+	cProfile.run("Instance(dummyParent).show_('init')")
 	# Instance(dummyParent).show_() #Main_max(p).show()
 	sys.exit(app.exec_())
 

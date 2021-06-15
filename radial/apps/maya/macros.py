@@ -614,7 +614,7 @@ class Macros(Init):
 			from main_maya import Instance
 			radial = Instance(key_show='key_F12')
 
-		radial.show_()
+		radial.show_('init')
 		# import cProfile
 		# cProfile.run('main.show_()')
 

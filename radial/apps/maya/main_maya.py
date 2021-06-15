@@ -139,7 +139,7 @@ if __name__ == "__main__":
 
 	# import cProfile
 	# cProfile.run('Instance(dummyParent).show_()')
-	Instance(dummyParent).show_() #Main_maya(dummyParent).show()
+	Instance(dummyParent).show_('init') #Main_maya(dummyParent).show()
 	sys.exit(app.exec_())
 
 
