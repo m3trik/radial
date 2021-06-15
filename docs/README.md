@@ -64,7 +64,7 @@ ex. call:
 			from main_maya import Instance
 			radial = Instance(key_show='Key_Z') #holding the Z key will show the menu.
 
-		radial.show_()
+		radial.show_('init') #shows and sets the ui to init.
 ```
 
 Adding additional ui's:
