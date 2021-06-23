@@ -1,6 +1,6 @@
 ###### A PySide marking menu for 3ds Max, Maya, and (in the future) Blender.
-Currently in the process of porting everything to Python 3.
-A work in progress ..
+
+A work in progress ..  Currently in the process of porting everything to Python 3.
 
 ## Design:
 ######
