@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1200</width>
-    <height>1200</height>
+    <width>600</width>
+    <height>400</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -62,80 +62,41 @@
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
      <widget class="QWidget" name="staticWindow" native="true">
+      <widget class="QWidget" name="w003" native="true">
+       <property name="geometry">
+        <rect>
+         <x>35</x>
+         <y>10</y>
+         <width>101</width>
+         <height>351</height>
+        </rect>
+       </property>
+      </widget>
       <widget class="QWidget" name="w000" native="true">
        <property name="geometry">
         <rect>
-         <x>295</x>
-         <y>180</y>
-         <width>601</width>
-         <height>311</height>
+         <x>140</x>
+         <y>10</y>
+         <width>301</width>
+         <height>71</height>
         </rect>
        </property>
       </widget>
       <widget class="QWidget" name="w001" native="true">
        <property name="geometry">
         <rect>
-         <x>285</x>
-         <y>680</y>
-         <width>601</width>
-         <height>521</height>
+         <x>445</x>
+         <y>10</y>
+         <width>101</width>
+         <height>351</height>
         </rect>
        </property>
-       <widget class="TreeWidgetExpandableList" name="tree000">
-        <property name="geometry">
-         <rect>
-          <x>245</x>
-          <y>0</y>
-          <width>111</width>
-          <height>371</height>
-         </rect>
-        </property>
-        <property name="layoutDirection">
-         <enum>Qt::LeftToRight</enum>
-        </property>
-        <property name="frameShape">
-         <enum>QFrame::NoFrame</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Plain</enum>
-        </property>
-        <property name="verticalScrollBarPolicy">
-         <enum>Qt::ScrollBarAlwaysOff</enum>
-        </property>
-        <property name="horizontalScrollBarPolicy">
-         <enum>Qt::ScrollBarAlwaysOff</enum>
-        </property>
-        <property name="sizeAdjustPolicy">
-         <enum>QAbstractScrollArea::AdjustToContents</enum>
-        </property>
-        <property name="selectionMode">
-         <enum>QAbstractItemView::NoSelection</enum>
-        </property>
-        <property name="indentation">
-         <number>0</number>
-        </property>
-        <property name="itemsExpandable">
-         <bool>false</bool>
-        </property>
-        <property name="headerHidden">
-         <bool>true</bool>
-        </property>
-        <property name="expandsOnDoubleClick">
-         <bool>false</bool>
-        </property>
-        <property name="columnCount">
-         <number>0</number>
-        </property>
-        <attribute name="headerVisible">
-         <bool>false</bool>
-        </attribute>
-       </widget>
       </widget>
       <widget class="QWidget" name="widget" native="true">
        <property name="geometry">
         <rect>
-         <x>440</x>
-         <y>500</y>
+         <x>140</x>
+         <y>90</y>
          <width>300</width>
          <height>181</height>
         </rect>
@@ -358,18 +319,55 @@
         </property>
        </widget>
       </widget>
+      <widget class="QWidget" name="w002" native="true">
+       <property name="geometry">
+        <rect>
+         <x>140</x>
+         <y>280</y>
+         <width>301</width>
+         <height>81</height>
+        </rect>
+       </property>
+       <property name="whatsThis">
+        <string/>
+       </property>
+       <widget class="QPushButton" name="i000">
+        <property name="geometry">
+         <rect>
+          <x>105</x>
+          <y>30</y>
+          <width>91</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>21</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>21</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string/>
+        </property>
+        <property name="whatsThis">
+         <string>editors_lower</string>
+        </property>
+        <property name="text">
+         <string>All Editors</string>
+        </property>
+       </widget>
+      </widget>
      </widget>
     </item>
    </layout>
   </widget>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>TreeWidgetExpandableList</class>
-   <extends>QTreeWidget</extends>
-   <header>qtreewidget_expandablelist.h</header>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
  <designerdata>

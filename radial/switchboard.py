@@ -1,7 +1,7 @@
 # !/usr/bin/python
 # coding=utf-8
-from __future__ import print_function, absolute_import
-from builtins import super
+# from __future__ import print_function, absolute_import
+# from builtins import super
 import os.path
 
 from pydoc import locate
@@ -441,7 +441,7 @@ class Switchboard(QtCore.QObject):
 
 	#Property
 	def getUi(self, name=None, setAsCurrent=False, level=None):
-		'''Get the dynamic ui using its string name, or if no argument is given, return the current ui.
+		'''Get a dynamic ui using its string name, or if no argument is given, return the current ui.
 
 		:Parameters:
 			name (str)(obj) = Name of class. ie. 'polygons' (by default getUi returns the current ui)

@@ -1,7 +1,7 @@
 # !/usr/bin/python
 # coding=utf-8
-from __future__ import print_function, absolute_import
-from builtins import super
+# from __future__ import print_function, absolute_import
+# from builtins import super
 import sys
 
 from PySide2 import QtCore, QtWidgets
@@ -155,16 +155,21 @@ class Instance():
 		return self.activeWindow_
 
 
-	def show_(self):
+	def show(self, name=None, active=True):
+		'''Sets the widget as visible.
+
+		:Parameters:
+			name (str) = Show the ui of the given name.
+			active (bool) = Set as the active window.
 		'''
-		'''
-		instance = self._getInstance()
-		instance.show()
-		from PySide2 import QtGui
-		# forward the keyPress event
-		event = QtGui.QKeyEvent(QtCore.QEvent.KeyPress, instance.key_show, QtCore.Qt.NoModifier)
-		instance.qapp.postEvent(instance, event)
-		# instance.keyPressEvent(keyEvent)
+		inst = self._getInstance()
+		inst.show(name=name, active=active)
+
+		# from PySide2 import QtGui
+		# # forward the keyPress event
+		# event = QtGui.QKeyEvent(QtCore.QEvent.KeyPress, instance.key_show, QtCore.Qt.NoModifier)
+		# instance.qapp.postEvent(instance, event)
+		# # instance.keyPressEvent(keyEvent)
 
 
 
@@ -184,7 +189,7 @@ if __name__ == "__main__":
 	dummyParent.setObjectName('MaxWindow')
 
 	import cProfile
-	cProfile.run("Instance(dummyParent).show_('init')")
+	cProfile.run("Instance(dummyParent).show('init')")
 	# Instance(dummyParent).show_() #Main_max(p).show()
 	sys.exit(app.exec_())
 

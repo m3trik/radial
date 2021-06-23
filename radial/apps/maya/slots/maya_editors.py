@@ -1,7 +1,7 @@
 # !/usr/bin/python
 # coding=utf-8
-from __future__ import print_function, absolute_import
-from builtins import super
+# from __future__ import print_function, absolute_import
+# from builtins import super
 import os.path
 
 from maya_init import *
@@ -28,7 +28,7 @@ class Editors(Init):
 
 	def tree000(self, wItem=None, column=None):
 		''''''
-		tree = self.editors_ui.tree000
+		tree = self.current_ui.tree000
 
 		if wItem is 'setMenu':
 			tree.expandOnHover = True
@@ -283,7 +283,8 @@ class Editors(Init):
 		'''
 		# e = mel.eval('$tmp=$gLayerEditorForm')
 		# self.showEditor(e, 320, 480)
-		pm.mel.OpenLayerEditor()
+		# pm.mel.OpenLayerEditor()
+		pm.mel.OpenChannelsLayers()
 
 
 	def v004(self):
@@ -291,7 +292,8 @@ class Editors(Init):
 		'''
 		# e = mel.eval('$tmp=$gChannelsForm')
 		# self.showEditor(e, 320, 640)
-		pm.mel.OpenChannelBox()
+		# pm.mel.OpenChannelBox()
+		pm.mel.OpenChannelsLayers()
 
 
 	def v005(self):

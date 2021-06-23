@@ -1,7 +1,7 @@
 # !/usr/bin/python
 # coding=utf-8
-from __future__ import print_function, absolute_import
-from builtins import super
+# from __future__ import print_function, absolute_import
+# from builtins import super
 import os.path
 
 from maya_init import *

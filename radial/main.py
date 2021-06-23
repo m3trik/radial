@@ -1,7 +1,7 @@
 # !/usr/bin/python
 # coding=utf-8
-from __future__ import print_function, absolute_import
-from builtins import super
+# from __future__ import print_function, absolute_import
+# from builtins import super
 import sys, os.path
 
 from PySide2 import QtCore, QtGui, QtWidgets
@@ -100,8 +100,7 @@ class Main(QtWidgets.QStackedWidget):
 	def setPrevUi(self):
 		'''Return the stacked widget to it's starting index.
 		'''
-		self.hide()
-
+		# self.setWindowOpacity(0.0)
 		previous = self.sb.previousName(omitLevel=[2,3])
 		self.setUi(previous) #return the stacked widget to it's previous ui.
 
@@ -110,8 +109,7 @@ class Main(QtWidgets.QStackedWidget):
 		#Reset the lists that make up the draw and widget paths.
 		del self.drawPath[1:] #clear the draw path, while leaving the starting point.
 		del self.widgetPath[:] #clear the list of previous widgets.
-
-		self.show()
+		# self.setWindowOpacity(1.0)
 
 
 	def setSubUi(self, widget, name):
@@ -122,8 +120,7 @@ class Main(QtWidgets.QStackedWidget):
 			widget (QWidget) = The widget that called this method.
 			name (str) = The name of the ui to set.
 		'''
-		self.hide()
-
+		# self.setWindowOpacity(0.0)
 		p1 = widget.mapToGlobal(widget.rect().center()) #widget position before submenu change.
 
 		try: #set the ui to the submenu (if it exists).
@@ -144,13 +141,14 @@ class Main(QtWidgets.QStackedWidget):
 
 		p2 = w.mapToGlobal(w.rect().center()) #widget position after submenu change.
 		currentPos = self.mapToGlobal(self.pos())
-
+		self.resize(1, 1)
 		self.move(self.mapFromGlobal(currentPos +(p1 - p2))) #currentPos + difference
-
-		self.show() #show before cloning widget operation as a hidden window will not register mouse events.
 
 		if name not in self.sb.previousName(as_list=1): #if the submenu ui called for the first time:
 			self.cloneWidgetsAlongPath(name) #re-construct any widgets from the previous ui that fall along the plotted path.
+
+		self.resize(self.sb.sizeX, self.sb.sizeY)
+		# self.setWindowOpacity(1.0)
 
 
 	def removeFromPath(self, name):

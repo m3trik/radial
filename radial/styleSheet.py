@@ -1,6 +1,6 @@
 # !/usr/bin/python
 # coding=utf-8
-from __future__ import print_function, absolute_import
+# from __future__ import print_function, absolute_import
 import os.path
 
 from PySide2 import QtCore
@@ -31,7 +31,7 @@ class StyleSheet(QtCore.QObject):
 		'standard': {
 			'BACKGROUND'		: 'rgb(100,100,100)',
 			'PRESSED'			: 'rgb(125,125,125)',
-			'HOVER'				: 'rgba(82,133,166,175)',
+			'HOVER'				: 'rgb(82,133,166)',
 			'TEXT'				: 'white',
 			'TEXT_CHECKED'		: 'black',
 			'TEXT_DISABLED'		: 'grey',
@@ -42,7 +42,7 @@ class StyleSheet(QtCore.QObject):
 		'dark': {
 			'BACKGROUND'		: 'rgb(50,50,50)',
 			'PRESSED'			: 'rgb(125,125,125)',
-			'HOVER'				: 'rgba(82,133,166,175)',
+			'HOVER'				: 'rgb(82,133,166)',
 			'TEXT'				: 'grey',
 			'TEXT_CHECKED'		: 'black',
 			'TEXT_DISABLED'		: 'darkGray',

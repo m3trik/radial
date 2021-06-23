@@ -1,8 +1,8 @@
 # !/usr/bin/python
 # coding=utf-8
-from __future__ import print_function, absolute_import
-from __future__ import print_function, absolute_import
-from builtins import super
+# from __future__ import print_function, absolute_import
+# from __future__ import print_function, absolute_import
+# from builtins import super
 
 import pymel.core as pm
 import maya.mel as mel
@@ -614,7 +614,7 @@ class Macros(Init):
 			from main_maya import Instance
 			radial = Instance(key_show='key_F12')
 
-		radial.show_('init')
+		radial.show('init')
 		# import cProfile
 		# cProfile.run('main.show_()')
 

@@ -1,7 +1,7 @@
 # !/usr/bin/python
 # coding=utf-8
-from __future__ import print_function, absolute_import
-from builtins import super
+# from __future__ import print_function, absolute_import
+# from builtins import super
 import sys
 
 from PySide2 import QtWidgets, QtCore
@@ -114,11 +114,15 @@ class Instance():
 		return self.activeWindow_
 
 
-	def show_(self):
+	def show(self, name=None, active=True):
+		'''Sets the widget as visible.
+
+		:Parameters:
+			name (str) = Show the ui of the given name.
+			active (bool) = Set as the active window.
 		'''
-		'''
-		instance = self._getInstance()
-		instance.show()
+		inst = self._getInstance()
+		inst.show(name=name, active=active)
 
 
 
@@ -133,13 +137,31 @@ if __name__ == "__main__":
 	if not app:
 		app = QtWidgets.QApplication(sys.argv)
 
+	# import os, sys
+	# VERSION = '2022'
+
+	# os.environ["MAYA_LOCATION"] = "C:\\Program Files\\Autodesk\\Maya{}".format(VERSION)
+	# os.environ["PYTHONHOME"]    = "C:\\Program Files\\Autodesk\\Maya{}\\Python37".format(VERSION)
+	# os.environ["PATH"] = "C:\\Program Files\\Autodesk\\Maya{}\\bin;{}".format(VERSION, os.environ["PATH"])
+
+	# path = "C:\\Program Files\\Autodesk\\Maya{}\\Python37".format(VERSION)
+
+	# for root, subdirs, files in os.walk(path):
+	# 	for subdir in subdirs:
+	# 		path_ = os.path.join(root, subdir)
+	# 		sys.path.append(path_)
+	# 		# print (path_)
+
+	# import maya.standalone as standalone
+	# standalone.initialize(name="python")
+
 	#create a generic parent object to run the code outside of maya.
 	dummyParent = QtWidgets.QWidget()
 	dummyParent.setObjectName('MayaWindow')
 
 	# import cProfile
 	# cProfile.run('Instance(dummyParent).show_()')
-	Instance(dummyParent).show_('init') #Main_maya(dummyParent).show()
+	Instance(dummyParent).show('init') #Main_maya(dummyParent).show()
 	sys.exit(app.exec_())
 
 

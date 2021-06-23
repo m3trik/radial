@@ -1,6 +1,6 @@
 # !/usr/bin/python
 # coding=utf-8
-from __future__ import print_function, absolute_import
+# from __future__ import print_function, absolute_import
 from PySide2 import QtCore, QtGui, QtWidgets
 
 import os.path
@@ -82,7 +82,7 @@ class EventFactoryFilter(QtCore.QObject):
 						EventFactoryFilter.resizeAndCenterWidget(widget)
 
 				elif derivedType=='QWidget': #widget types to set an initial state as hidden.
-					if self.sb.prefix(widget, 'w') and uiLevel is 1: #prefix returns True if widgetName startswith the given prefix, and is followed by three integers.
+					if self.sb.prefix(widget, 'w') and uiLevel==1: #prefix returns True if widgetName startswith the given prefix, and is followed by three integers.
 						widget.setVisible(False)
 
 			#finally, add any of the widget's children.

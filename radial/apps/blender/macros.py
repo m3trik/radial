@@ -2,153 +2,136 @@
 # coding=utf-8
 import bpy
 
+from blender_init import Init
+
+
+bl_info = {
+	"name": "Macros",
+	"category": "UI",
+}
+
 
 class Macros(Init):
-    '''Custom scripts with assigned hotkeys.
-    '''
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        '''
-        '''
+	'''Custom scripts with assigned hotkeys.
+	'''
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
+		'''
+		'''
 
 
-    def setMacros(self, macros=[]):
-        '''Extends setMacro to accept a list of tuples.
-        '''
-        if not macros:
-            macros = [
-                ('hk_back_face_culling', '1', 'Display', 'Toggle back-face culling.'),
-                ('hk_smooth_preview', '2', 'Display', 'Toggle smooth mesh preview.'),
-                ('hk_isolate_selected', 'F2', 'Display', 'Isolate current selection.'),
-                ('hk_grid_and_image_planes', 'F1', 'Display', 'Toggle grid and image plane visibility.'),
-                ('hk_frame_selected', 'f', 'Display', 'Frame selected by a set amount.'),
-                ('hk_wireframe_on_shaded', '3', 'Display', 'Toggle wireframe on shaded.'),
-                ('hk_xray', 'F3', 'Display', 'Toggle xRay all.'),
-                ('hk_wireframe', '5', 'Display', 'Toggle wireframe/shaded/shaded w/texture display.'),
-                ('hk_shading', '6', 'Display', 'Toggle viewport shading.'),
-                ('hk_selection_mode', 'sht+q', 'Edit', 'Toggle between object selection & last component selection.'),
-                ('hk_paste_and_rename', 'ctl+v', 'Edit', 'Paste and rename removing keyword \'paste\'.'),
-                ('hk_multi_component', 'F5', 'Edit', 'Multi-Component Selection.'),
-                ('hk_toggle_component_mask', 'F4', 'Edit', 'Toggle Component Selection Mask.'),
-                ('hk_main_show', 'F12', 'UI', 'Display main marking menu.'),
-                ('hk_hotbox_full', 'sht+z', 'UI', 'Display the full version of the hotbox.'),
-                ('hk_toggle_panels', '9', 'UI', 'Toggle UI toolbars.'),
-                ('hk_toggle_UV_select_type', 'sht+t', 'Edit', 'Toggle UV / UV shell component selection.'),
-                ('hk_merge_vertices', 'ctl+m', 'Edit', 'Merge vertices on selection.'),
-            ]
-
-        for m in macros:
-            self.setMacro(*m)
+	def setMacros(self):
+		'''Extends setMacro to accept a list of tuples.
+		'''
 
 
-    def setMacro(self, name=None, k=None, cat=None, ann=None):
-        '''Sets a default runtime command with a keyboard shotcut.
+	def execute(self, context):
+		'''
+		'''
+		macros = [
+				('hk_back_face_culling', '1', 'Display', 'Toggle back-face culling.'),
+				('hk_smooth_preview', '2', 'Display', 'Toggle smooth mesh preview.'),
+				('hk_isolate_selected', 'F2', 'Display', 'Isolate current selection.'),
+				('hk_grid_and_image_planes', 'F1', 'Display', 'Toggle grid and image plane visibility.'),
+				('hk_frame_selected', 'f', 'Display', 'Frame selected by a set amount.'),
+				('hk_wireframe_on_shaded', '3', 'Display', 'Toggle wireframe on shaded.'),
+				('hk_xray', 'F3', 'Display', 'Toggle xRay all.'),
+				('hk_wireframe', '5', 'Display', 'Toggle wireframe/shaded/shaded w/texture display.'),
+				('hk_shading', '6', 'Display', 'Toggle viewport shading.'),
+				('hk_selection_mode', 'sht+q', 'Edit', 'Toggle between object selection & last component selection.'),
+				('hk_paste_and_rename', 'ctl+v', 'Edit', 'Paste and rename removing keyword \'paste\'.'),
+				('hk_multi_component', 'F5', 'Edit', 'Multi-Component Selection.'),
+				('hk_toggle_component_mask', 'F4', 'Edit', 'Toggle Component Selection Mask.'),
+				('hk_main_show', 'F12', 'UI', 'Display main marking menu.'),
+				('hk_hotbox_full', 'sht+z', 'UI', 'Display the full version of the hotbox.'),
+				('hk_toggle_panels', '9', 'UI', 'Toggle UI toolbars.'),
+				('hk_toggle_UV_select_type', 'sht+t', 'Edit', 'Toggle UV / UV shell component selection.'),
+				('hk_merge_vertices', 'ctl+m', 'Edit', 'Merge vertices on selection.'),
+			]
 
-        :Parameters:
-            name (str) = The command name you provide must be unique. The name itself must begin with an alphabetic character or underscore followed by alphanumeric characters or underscores.
-            cat (str) = catagory - Category for the command.
-            ann (str) = annotation - Description of the command.
-            k (str) = keyShortcut - Specify what key is being set.
-                        key modifier values are set by adding a '+' between chars. ie. 'sht+z'.
-                        modifiers:
-                            alt, ctl, sht
-                        additional valid keywords are:
-                            Up, Down, Right, Left,
-                            Home, End, Page_Up, Page_Down, Insert
-                            Return, Space
-                            F1 to F12
-                            Tab (Will only work when modifiers are specified)
-                            Delete, Backspace (Will only work when modifiers are specified)
-        '''
-        command = self.formatSource(name, removeTabs=2)
+		for m in macros:
+			self.setMacro(*m)
 
-        #set runTimeCommand
-        pm.runTimeCommand(
-                name,
-                annotation=ann,
-                category=cat,
-                command=command,
-                default=True,
-        )
-
-        #set command
-        nameCommand = pm.nameCommand(
-                '{0}Command'.format(name),
-                annotation=ann,
-                command=name,
-        )
-
-        #set hotkey
-        #modifiers
-        ctl=False; alt=False; sht=False
-        for char in k.split('+'):
-            if char=='ctl':
-                ctl = True
-            elif char=='alt':
-                alt = True
-            elif char=='sht':
-                sht = True
-            else:
-                key = char
-
-        # print(name, char, ctl, alt, sht)
-        pm.hotkey(keyShortcut=key, name=nameCommand, ctl=ctl, alt=alt, sht=sht) #set only the key press.
+		return {'FINISHED'}
 
 
-    def formatSource(self, cmd, removeTabs=0):
-        '''Return the text of the source code for an object.
-        The source code is returned as a single string.
-        Removes lines containing '@' or 'def ' ie. @staticmethod.
+	def setMacro(self, name=None, k=None, cat=None, ann=None):
+		'''Sets a default runtime command with a keyboard shotcut.
 
-        :Parameters:
-            cmd = module, class, method, function, traceback, frame, or code object.
-            removeTabs (int) = remove x instances of '\t' from each line.
+		:Parameters:
+			name (str) = The command name you provide must be unique. The name itself must begin with an alphabetic character or underscore followed by alphanumeric characters or underscores.
+			cat (str) = catagory - Category for the command.
+			ann (str) = annotation - Description of the command.
+			k (str) = keyShortcut - Specify what key is being set.
+						key modifier values are set by adding a '+' between chars. ie. 'sht+z'.
+						modifiers:
+							alt, ctl, sht
+						additional valid keywords are:
+							Up, Down, Right, Left,
+							Home, End, Page_Up, Page_Down, Insert
+							Return, Space
+							F1 to F12
+							Tab (Will only work when modifiers are specified)
+							Delete, Backspace (Will only work when modifiers are specified)
+		'''
+		#set runTimeCommand
+		bl_idname = '{}.{}'.format(cat, name)
+		bl_label = name
+		bl_options = {'REGISTER', 'UNDO'}
 
-        :Return:
-            A Multi-line string.
-        '''
-        from inspect import getsource
-        source = getsource(getattr(Macros, cmd))
+		#set hotkey
+		#modifiers
+		ctl=False; alt=False; sht=False
+		for char in k.split('+'):
+			if char=='ctl':
+				ctl = True
+			elif char=='alt':
+				alt = True
+			elif char=='sht':
+				sht = True
+			else:
+				key = char
 
-        l = [s.replace('\t', '', removeTabs) for s in source.split('\n') if s and not '@' in s and not 'def ' in s]
-        return '\n'.join(l)
+		# print(name, char, ctl, alt, sht)
+		pm.hotkey(keyShortcut=key, name=nameCommand, ctl=ctl, alt=alt, sht=sht) #set only the key press.
+
 
 
 
 addon_keymaps=[]
 
 def register():
-    bpy.utils.register_class(Macros)
-    
-    wm = bpy.context.window_manager
-    kc = wm.keyconfigs.addon
-    if kc:
-        km = kc.keymaps.new(name='hk_', space_type='hk_') #(name, space_type='EMPTY', region_type='WINDOW', modal=False) #Returns the Added key map.
-        kmi = km.keymap_items.new('', type='', value='PRESS', shift=True) #(idname, type, value, any=False, shift=False, ctrl=False, alt=False, oskey=False, key_modifier='NONE', repeat=True, head=False) #Returns the added key map item.
+	bpy.utils.register_class(Macros)
+	
+	wm = bpy.context.window_manager
+	kc = wm.keyconfigs.addon
+	if kc:
+		km = kc.keymaps.new(name='hk_', space_type='hk_') #(name, space_type='EMPTY', region_type='WINDOW', modal=False) #Returns the Added key map.
+		kmi = km.keymap_items.new('', type='', value='PRESS', shift=True) #(idname, type, value, any=False, shift=False, ctrl=False, alt=False, oskey=False, key_modifier='NONE', repeat=True, head=False) #Returns the added key map item.
 
-        addon_keymaps.append((km, kmi))
-        
-        
-        
+		addon_keymaps.append((km, kmi))
+		
+		
+		
 def unregister():
-    for km, kmi in addon_keymaps:
-        km.kwyaps_items.remove(kmi)
-    addon_keymaps.clear()
-    
-    bpy.utils.unregister_class(Macros)
+	for km, kmi in addon_keymaps:
+		km.kwyaps_items.remove(kmi)
+	addon_keymaps.clear()
+	
+	bpy.utils.unregister_class(Macros)
 
 
 
-    # Display --------------------------------------------------------------------------------------------------------------------------------
+	# Display --------------------------------------------------------------------------------------------------------------------------------
 
 
-    # Edit -----------------------------------------------------------------------------------------------------------------------------------
+	# Edit -----------------------------------------------------------------------------------------------------------------------------------
 
 
-    # Selection ------------------------------------------------------------------------------------------------------------------------------
+	# Selection ------------------------------------------------------------------------------------------------------------------------------
 
 
-    # UI -------------------------------------------------------------------------------------------------------------------------------------
+	# UI -------------------------------------------------------------------------------------------------------------------------------------
 
 
 

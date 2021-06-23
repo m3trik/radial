@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>288</width>
-    <height>278</height>
+    <height>222</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -44,41 +44,13 @@
       <x>10</x>
       <y>10</y>
       <width>264</width>
-      <height>262</height>
+      <height>181</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout_2">
      <property name="spacing">
       <number>0</number>
      </property>
-     <item row="0" column="1" colspan="2">
-      <widget class="ProgressBar" name="progressBar">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>10</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>16777215</width>
-         <height>10</height>
-        </size>
-       </property>
-       <property name="value">
-        <number>0</number>
-       </property>
-       <property name="textVisible">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
      <item row="1" column="1" colspan="2">
       <widget class="PushButtonDraggable" name="draggable_header">
        <property name="minimumSize">
@@ -108,7 +80,10 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
+     <item row="2" column="1" colspan="2">
+      <layout class="QGridLayout" name="gridLayout"/>
+     </item>
+     <item row="3" column="1" colspan="2">
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
         <layout class="QVBoxLayout" name="verticalLayout">
@@ -116,7 +91,7 @@
           <number>0</number>
          </property>
          <item>
-          <widget class="QGroupBox" name="groupBox_5">
+          <widget class="QGroupBox" name="Transform">
            <property name="minimumSize">
             <size>
              <width>125</width>
@@ -125,14 +100,14 @@
            </property>
            <property name="maximumSize">
             <size>
-             <width>999</width>
+             <width>125</width>
              <height>999</height>
             </size>
            </property>
            <property name="title">
             <string>Transform</string>
            </property>
-           <layout class="QVBoxLayout" name="verticalLayout_7">
+           <layout class="QVBoxLayout" name="verticalLayout_3">
             <property name="spacing">
              <number>0</number>
             </property>
@@ -149,9 +124,49 @@
              <number>0</number>
             </property>
             <item>
+             <widget class="ToolButton" name="tb000">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>999</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Move selected object to grid.</string>
+              </property>
+              <property name="layoutDirection">
+               <enum>Qt::LeftToRight</enum>
+              </property>
+              <property name="text">
+               <string>Drop to Grid</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QPushButton" name="b005">
               <property name="enabled">
                <bool>true</bool>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
               </property>
               <property name="minimumSize">
                <size>
@@ -189,37 +204,15 @@
              </widget>
             </item>
             <item>
-             <widget class="ToolButton" name="tb000">
-              <property name="enabled">
-               <bool>true</bool>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>20</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>999</width>
-                <height>20</height>
-               </size>
-              </property>
-              <property name="toolTip">
-               <string>Move selected object to grid.</string>
-              </property>
-              <property name="layoutDirection">
-               <enum>Qt::LeftToRight</enum>
-              </property>
-              <property name="text">
-               <string>Drop to Grid</string>
-              </property>
-             </widget>
-            </item>
-            <item>
              <widget class="QPushButton" name="b002">
               <property name="enabled">
                <bool>true</bool>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
               </property>
               <property name="minimumSize">
                <size>
@@ -292,7 +285,7 @@
            </property>
            <property name="maximumSize">
             <size>
-             <width>999</width>
+             <width>125</width>
              <height>999</height>
             </size>
            </property>
@@ -350,6 +343,12 @@
               <property name="enabled">
                <bool>true</bool>
               </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="minimumSize">
                <size>
                 <width>0</width>
@@ -389,7 +388,7 @@
            </property>
            <property name="maximumSize">
             <size>
-             <width>999</width>
+             <width>125</width>
              <height>999</height>
             </size>
            </property>
@@ -455,7 +454,7 @@
            </property>
            <property name="maximumSize">
             <size>
-             <width>999</width>
+             <width>125</width>
              <height>999</height>
             </size>
            </property>
@@ -527,6 +526,34 @@
         </layout>
        </item>
       </layout>
+     </item>
+     <item row="0" column="1" colspan="2">
+      <widget class="ProgressBar" name="progressBar_2">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>10</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>10</height>
+        </size>
+       </property>
+       <property name="value">
+        <number>0</number>
+       </property>
+       <property name="textVisible">
+        <bool>false</bool>
+       </property>
+      </widget>
      </item>
     </layout>
    </widget>

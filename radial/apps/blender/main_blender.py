@@ -1,7 +1,7 @@
 # !/usr/bin/python
 # coding=utf-8
-from __future__ import print_function, absolute_import
-from builtins import super
+# from __future__ import print_function, absolute_import
+# from builtins import super
 import sys
 
 from PySide2 import QtWidgets, QtCore
@@ -13,7 +13,7 @@ from radial import Main
 
 
 
-class Main_maya(Main):
+class Main_blender(Main):
 	'''Main class overridden for use with Blender.
 
 	:Parameters:
@@ -93,18 +93,22 @@ class Instance():
 
 		if self.activeWindow_ is None or self.activeWindow_.isVisible():
 			name = 'main'+str(len(self.instances))
-			setattr(self, name, Main_maya(self.parent, self.preventHide, self.key_show))
+			setattr(self, name, Main_blender(self.parent, self.preventHide, self.key_show))
 			self.activeWindow_ = getattr(self, name)
 			self.instances[name] = self.activeWindow_
 
 		return self.activeWindow_
 
 
-	def show_(self):
+	def show(self, name=None, active=True):
+		'''Sets the widget as visible.
+
+		:Parameters:
+			name (str) = Show the ui of the given name.
+			active (bool) = Set as the active window.
 		'''
-		'''
-		instance = self._getInstance()
-		instance.show()
+		inst = self._getInstance()
+		inst.show(name=name, active=active)
 
 
 
@@ -121,10 +125,10 @@ if __name__ == "__main__":
 
 	#create a generic parent object to run the code outside of blender.
 	dummyParent = QtWidgets.QWidget()
-	# dummyParent.setObjectName('BlenderWindow')
+	dummyParent.setObjectName('BlenderWindow')
 
 	import cProfile
-	cProfile.run("Instance(dummyParent).show_('init')")
+	cProfile.run("Instance(dummyParent).show('init')")
 	# Instance(dummyParent).show_() #Main_maya(dummyParent).show()
 	sys.exit(app.exec_())
 
