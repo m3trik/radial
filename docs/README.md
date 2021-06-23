@@ -1,5 +1,6 @@
-###### *A PySide marking menu for 3ds Max, Maya, and (in the future) Blender. Currently in the process of porting everything to Python 3.
-*work in progress..*
+###### A PySide marking menu for 3ds Max, Maya, and (in the future) Blender.
+
+A work in progress ..  Currently in the process of porting everything to Python 3.
 
 ## Design:
 ######
@@ -64,7 +65,7 @@ ex. call:
 			from main_maya import Instance
 			radial = Instance(key_show='Key_Z') #holding the Z key will show the menu.
 
-		radial.show_('init') #shows and sets the ui to init.
+		radial.show('init') #shows and sets the ui to init.
 ```
 
 Adding additional ui's:
