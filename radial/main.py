@@ -82,7 +82,7 @@ class Main(QtWidgets.QStackedWidget):
 		'''
 		ui = self.sb.getUi(name, setAsCurrent=True) #Get the ui of the given name, and set it as the current ui in the switchboard module, which amoung other things, sets connections.
 
-		self.initUi(name) #add the ui to the stackedLayout (if it has not already been set).
+		self.initUi(name) #add the ui to the stackedLayout (if it hasn't already been added).
 
 		self.resize(self.sb.sizeX, self.sb.sizeY) #The ui sizes for individual ui's are stored in sizeX and sizeY properties. Otherwise size would be constrained to the largest widget in the stack)
 

@@ -14,8 +14,9 @@ class Main(Init):
 
 
 	def tree000(self, wItem=None, column=None):
-		''''''
-		tree = self.main_ui.tree000
+		'''
+		'''
+		tree = self.current_ui.tree000
 
 		if wItem is 'setMenu':
 			tree.expandOnHover = True
@@ -40,19 +41,19 @@ class Main(Init):
 						for k, v in attributes.items() 
 							if isinstance(v, (float, int, bool))]
 
-					#set signal/slot connections:
-					# wgts.= [tree.add(wgts.MultiWidget, parent, refresh=1, set_by_value=[k, v])
-					# 	for k, v in attributes.items() 
-					# 		if isinstance(v, (float, int, bool))]
+					set signal/slot connections:
+					wgts.= [tree.add(wgts.MultiWidget, parent, refresh=1, set_by_value=[k, v])
+						for k, v in attributes.items() 
+							if isinstance(v, (float, int, bool))]
 
-					# for multiWidget in wgts.
-					# 	attr = multiWidget.children_(index=0).text()
-					# 	w = multiWidget.children_(index=1)
-					# 	type_ = w.__class__.__name__
+					for multiWidget in wgts.
+						attr = multiWidget.children_(index=0).text()
+						w = multiWidget.children_(index=1)
+						type_ = w.__class__.__name__
 
-					# 	if type_ in ['QSpinBox', 'QDoubleSpinBox']:
-					# 		w.valueChanged.connect(
-					# 			lambda value, widget=w, node=node: self.setAttributesMEL(node, {attr:w.value()}))
+						if type_ in ['QSpinBox', 'QDoubleSpinBox']:
+							w.valueChanged.connect(
+								lambda value, widget=w, node=node: self.setAttributesMEL(node, {attr:w.value()}))
 
 					[w.valueChanged.connect(
 						lambda value, widget=w, node=node: self.setAttributesMEL(node, {widget.prefix().rstrip(': '):value})) 
@@ -79,7 +80,6 @@ class Main(Init):
 
 	def v013(self):
 		'''Minimize Main Application
-
 		'''
 		self.sb.getMethod('file', 'b005')()
 

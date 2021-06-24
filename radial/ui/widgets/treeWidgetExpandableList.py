@@ -996,11 +996,11 @@ if __name__ == '__main__':
 	# 	# 	# 	shiboken2.delete(widget)
 
 
-			# className = self.window().sb.getUiName(pascalCase=True)
+			# className = self.window().sb.getUiName(case='pascalCase')
 			# class_ = self.window().sb.getClassInstance(className)
 			# self.classMethod = getattr(class_, str(self.objectName()))
 
-	# className = self.window().sb.getUiName(pascalCase=True)
+	# className = self.window().sb.getUiName(case='pascalCase')
 	# class_ = self.window().sb.getClassInstance(className)
 	# try:
 		# self.classMethod = getattr(class_, str(self.objectName()))

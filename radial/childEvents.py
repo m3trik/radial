@@ -293,7 +293,7 @@ class EventFactoryFilter(QtCore.QObject):
 		elif self.derivedType=='QPushButton':
 			if self.sb.prefix(self.widget, 'i'): #set the stacked widget.
 				submenu = self.sb.getUiName(self.widget.whatsThis(), level=2)
-				if not self.name==submenu: #do not reopen the submenu if it is already open.
+				if submenu and not self.name==submenu: #do not reopen the submenu if it is already open.
 					self.name = self.main.setSubUi(self.widget, submenu)
 
 			elif self.widgetName=='return_area':

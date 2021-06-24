@@ -27,7 +27,8 @@ class Editors(Init):
 
 
 	def tree000(self, wItem=None, column=None):
-		''''''
+		'''
+		'''
 		tree = self.current_ui.tree000
 
 		if wItem is 'setMenu':

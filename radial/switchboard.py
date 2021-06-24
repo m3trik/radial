@@ -454,19 +454,18 @@ class Switchboard(QtCore.QObject):
 			else: current dynamic ui object
 		'''
 		if name is None:
-			name = self.getUiName(camelCase=True)
+			name = self.getUiName(case='camelCase')
 		elif not isinstance(name, (str)): #name as ui object
-			name = self.getUiName(name, camelCase=True)
-		if name is None:
-				return None
+			name = self.getUiName(name, case='camelCase')
+		if not name:
+			return None
 
 		if level==2: #submenu
 			if 'submenu' not in name:
 				name = self.getUiName(name, level=2) #ie. polygons_submenu
-
-		if level==3: #main menu
+		elif level==3: #main menu
 			name = name.split('_')[0] #ie. 'polygons' from 'polygons_component_submenu'
-
+		#print ('3:', name, print(sys._getframe().f_back.f_code.co_name))
 		if setAsCurrent:
 			self.name = name #set the property for the current ui name.
 			self.setConnections(name) #connect signal/slot connections for the current ui, while disconnecting any previous.
@@ -513,15 +512,14 @@ class Switchboard(QtCore.QObject):
 		return self.sbDict['name'][-1]
 
 	#Property
-	def getUiName(self, ui=None, camelCase=False, pascalCase=False, level=None):
+	def getUiName(self, ui=None, case=None, level=None):
 		'''Get the ui name as a string.
 		If no argument is given, the name for the current ui will be returned.
 
 		:Parameters:
 			ui (obj)(str) = Use ui object to get its corresponding name. (the default behavior is to return the current ui name)
 						also supports passing in a string value of a known name to use with the camelCase, pascalCase, and level parameters.
-			camelCase (bool) = Return name with first letter lowercase. (default: False)
-			pascalCase (bool) = Return name with first letter capitalized. (default: False)
+			case (str) = define the returned name's case structure. valid: 'camelCase'=first letter lowercase, 'pascalCase'=first letter capitalized. (default: None)
 			level (int) = Get the ui of the given level. (2:submenu, 3:main_menu)
 
 		:Return:
@@ -540,17 +538,19 @@ class Switchboard(QtCore.QObject):
 		else: #get the ui name string key from the ui value in uiList.
 			name = next(k for k, v in self.uiList().items() if v==ui)
 
-		if level==2: #submenu
-			if 'submenu' not in name:
-				name = '{}_submenu'.format(name)
+		if name:
+			if level==2: #submenu
+				if 'submenu' not in name:
+					name = '{}_submenu'.format(name)
+			elif level==3: #main menu
+				name = name.split('_')[0] #polygons from polygons_component_submenu
 
-		if level==3: #main menu
-			name = name.split('_')[0] #polygons from polygons_component_submenu
-
-		if pascalCase:
-			name = name[:1].capitalize()+name[1:] #capitalize the first letter
-		if camelCase:
-			name = name[0].lower()+name[1:] #lowercase the first letter
+			if case=='pascalCase':
+				name = name[:1].capitalize()+name[1:] #capitalize the first letter
+			elif case=='camelCase':
+				name = name[0].lower()+name[1:] #lowercase the first letter
+		else:
+			name = None
 
 		return name
 
