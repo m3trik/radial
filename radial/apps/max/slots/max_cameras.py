@@ -94,9 +94,9 @@ class Cameras(Init):
 	def tree000(self, wItem=None, column=None):
 		'''Camera Menu
 		'''
-		tree = self.cameras_ui.tree000
+		tree = self.current_ui.tree000
 
-		if wItem is 'setMenu':
+		if wItem=='setMenu':
 			tree.expandOnHover = True
 			tree.convert(tree.getTopLevelItems(), 'QLabel') #convert any existing contents.
 

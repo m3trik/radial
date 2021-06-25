@@ -29,6 +29,34 @@ class EventFactoryFilter(QtCore.QObject):
 		self.sb = self.main.sb
 		self.sb.setClassInstance(self)
 
+		self.widgetTypes = [ #install an event filter on the given widget types.
+				'QWidget', 
+				'QAction', 
+				'QLabel', 
+				'QPushButton', 
+				'QToolButton', 
+				'QListWidget', 
+				'QTreeWidget', 
+				'QComboBox', 
+				'QSpinBox',
+				'QDoubleSpinBox',
+				'QCheckBox',
+				'QRadioButton',
+				'QLineEdit',
+				'QTextEdit',
+				'QProgressBar',
+		]
+
+		self.eventTypes = [ #the types of events to be handled here.
+				'showEvent',
+				'hideEvent',
+				'enterEvent',
+				'leaveEvent',
+				'mousePressEvent',
+				'mouseMoveEvent',
+				'mouseReleaseEvent',
+		]
+
 
 	def initWidgets(self, name, widgets=None):
 		'''Set Initial widget states.
@@ -51,25 +79,7 @@ class EventFactoryFilter(QtCore.QObject):
 
 			self.main.style.setStyleSheet(name, widget)
 
-			widgetTypes = [ #install an event filter on the given types.
-				'QWidget', 
-				'QAction', 
-				'QLabel', 
-				'QPushButton', 
-				'QToolButton', 
-				'QListWidget', 
-				'QTreeWidget', 
-				'QComboBox', 
-				'QSpinBox',
-				'QDoubleSpinBox',
-				'QCheckBox',
-				'QRadioButton',
-				'QLineEdit',
-				'QTextEdit',
-				'QProgressBar',
-				]
-
-			if derivedType in widgetTypes:
+			if derivedType in self.widgetTypes:
 				widget.installEventFilter(self)
 				# print (widgetName if widgetName else widget)
 
@@ -116,7 +126,7 @@ class EventFactoryFilter(QtCore.QObject):
 		# print([i.objectName() for i in self.sb.getWidget(name=name) if name=='cameras']), '---'
 		ui = self.sb.getUi(name)
 		widgetsUnderMouse=[] #list of widgets currently under the mouse cursor and their parents. in hierarchical order. ie. [[<widgets.pushButton.PushButton object at 0x00000000045F6948>, <PySide2.QtWidgets.QMainWindow object at 0x00000000045AA8C8>, <__main__.Main_max object at 0x000000000361F508>, <PySide2.QtWidgets.QWidget object at 0x00000000036317C8>]]
-		for widget in self.sb.getWidget(name=name): #all widgets from the current ui.
+		for widget in self.sb.getWidget(name=name): #get all widgets from the current ui.
 			if hasattr(widget, 'rect'): #ignore any widgets not having the 'rect' attribute.
 				try:
 					widgetName = self.sb.getWidgetName(widget, name)
@@ -199,49 +209,28 @@ class EventFactoryFilter(QtCore.QObject):
 			widget = <QWidget>
 			event = <QEvent>
 		'''
-		if event.type()==QtCore.QEvent.Destroy:
-			return False
-
-		eventTypes = [ #types of events to be handled:
-			'QEvent',
-			'QChildEvent',
-			'QResizeEvent',
-			'QShowEvent',
-			'QHideEvent',
-			'QEnterEvent',
-			'QLeaveEvent',
-			'QKeyEvent',
-			'QMouseEvent',
-			'QMoveEvent',
-			'QHoverEvent',
-			'QContextMenuEvent',
-			'QDragEvent',
-			'QDropEvent',
-		]
-
-		if not any([event.__class__.__name__==e for e in eventTypes]): #do not process the event if it is not one of the types listed in 'eventTypes'
-			# print(event.__class__.__name__)
-			return False #;print(event.__class__.__name__)
-
-		self.widget = widget
-		self.name = self.sb.getUiNameFromWidget(self.widget) #get the name of the ui containing the given widget.
-		# if not self.name: print('Error: childEvents.eventFilter: getNameFrom(widget): {0} Failed on Event: {1} #'.format(self.widget.objectName(), str(event.type()).split('.')[-1]))
-		self.widgetName = self.sb.getWidgetName(self.widget, self.name) #get the stored objectName string (pyside objectName() returns unicode).
-		self.widgetType = self.sb.getWidgetType(self.widget, self.name)
-		self.derivedType = self.sb.getDerivedType(self.widget, self.name)
-		self.ui = self.sb.getUi(self.name)
-		self.uiLevel = self.sb.getUiLevel(self.name)
-		self.classMethod = self.sb.getMethod(self.name, self.widgetName)
+		result = False #default to False (event not handled)
 
 		eventName = EventFactoryFilter.createEventName(event) #get 'mousePressEvent' from <QEvent>
-		# print(self.name, eventName, self.widgetType, self.widgetName)
+		if eventName in self.eventTypes: #handle only events listed in 'eventTypes'
 
+			self.widget = widget
+			self.name = self.sb.getUiNameFromWidget(self.widget) #get the name of the ui containing the given widget.
+			# if not self.name: print('Error: childEvents.eventFilter: getNameFrom(widget): {0} Failed on Event: {1} #'.format(self.widget.objectName(), str(event.type()).split('.')[-1]))
+			self.widgetName = self.sb.getWidgetName(self.widget, self.name) #get the stored objectName string (pyside objectName() returns unicode).
+			self.widgetType = self.sb.getWidgetType(self.widget, self.name)
+			self.derivedType = self.sb.getDerivedType(self.widget, self.name)
+			self.ui = self.sb.getUi(self.name)
+			self.uiLevel = self.sb.getUiLevel(self.name)
+			self.classMethod = self.sb.getMethod(self.name, self.widgetName)
 
-		if hasattr(self, eventName):
-			getattr(self, eventName)(event) #handle the event locally. #ie. self.enterEvent(event)
-			return super(EventFactoryFilter, self).eventFilter(widget, event)
-		else:
-			return False
+			# print(self.name, self.widgetType, self.widgetName, event.__class__.__name__, eventName)
+
+			if hasattr(self, eventName):
+				getattr(self, eventName)(event) #handle the event locally. #ie. self.enterEvent(event)
+				result = super(EventFactoryFilter, self).eventFilter(widget, event)
+
+		return result
 
 
 	# ------------------------------------------------
@@ -258,11 +247,15 @@ class EventFactoryFilter(QtCore.QObject):
 		elif self.widgetName=='info':
 			EventFactoryFilter.resizeAndCenterWidget(self.widget)
 
-		if self.widgetType in ['ComboBox', 'TreeWidgetExpandableList']:
-			try:
+		if self.widgetType in ('ComboBox', 'TreeWidgetExpandableList'):
+			try: #call the class method associated with the current widget.
 				self.classMethod()
-			except (AttributeError, NameError, TypeError) as error:
-				print(self.__class__.__name__, 'Call to {}.{} failed:'.format(self.name, self.widgetName), error)
+			except:
+				try: #if call fails (ie. NoneType error); try adding the widget, and call again.
+					self.sb.addWidget(self.name, self.widget)
+					self.sb.getMethod(self.name, self.widgetName)()
+				except (AttributeError, NameError, TypeError) as error:
+					print(self.__class__.__name__, 'Call to {}.{} failed:'.format(self.name, self.widgetName), error)
 
 			if self.widgetType=='TreeWidgetExpandableList':
 				self.addWidgets(self.name, self.widget.newWidgets) #removeWidgets=self.widget._gcWidgets.keys()
@@ -380,4 +373,23 @@ print(os.path.splitext(os.path.basename(__file__))[0])
 
 
 
+#deprecated:
 
+# if event.type()==QtCore.QEvent.Destroy: return result
+
+# self.eventTypes = [ #the types of events to be handled here.
+# 				'QEvent',
+# 				'QChildEvent',
+# 				'QResizeEvent',
+# 				'QShowEvent',
+# 				'QHideEvent',
+# 				'QEnterEvent',
+# 				'QLeaveEvent',
+# 				'QKeyEvent',
+# 				'QMouseEvent',
+# 				'QMoveEvent',
+# 				'QHoverEvent',
+# 				'QContextMenuEvent',
+# 				'QDragEvent',
+# 				'QDropEvent',
+# 		]

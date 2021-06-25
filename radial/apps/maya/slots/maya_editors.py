@@ -31,9 +31,8 @@ class Editors(Init):
 		'''
 		tree = self.current_ui.tree000
 
-		if wItem is 'setMenu':
+		if wItem=='setMenu':
 			tree.expandOnHover = True
-			# tree.convert(tree.getTopLevelItems(), 'QLabel') #construct the tree using the existing contents.
 
 			l = ['General Editors', 'Modeling Editors', 'Animation Editors', 'Rendering Editors', 'Relationship Editors']
 			[tree.add('QLabel', childHeader=s, setText=s) for s in l] #root

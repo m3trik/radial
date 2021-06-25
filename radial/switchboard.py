@@ -102,6 +102,8 @@ class Switchboard(QtCore.QObject):
 
 		:Return:
 			<widget object>
+
+		ex. sb.addWidget('polygons', <widget>, setVisible=False) #example using kwargs to set widget attributes when adding.
 		'''
 		name = str(name) #prevent unicode
 
@@ -875,7 +877,7 @@ class Switchboard(QtCore.QObject):
 		if objectName:
 			return next((w if shiboken2.isValid(w) else self.removeWidgets(w, name) for w in self.sbDict[name]['widgets'].values() if w['widgetName']==objectName), None)
 		else:
-			return [w if shiboken2.isValid(w) else self.removeWidgets(w, name) for w in self.sbDict[name]['widgets'].keys()]
+			return [w if shiboken2.isValid(w) else self.removeWidgets(w, name) for w in self.sbDict[name]['widgets'].copy()] #'copy' is used in place of 'keys' RuntimeError: dictionary changed size during iteration
 
 	#Property
 	def getWidgetName(self, widget=None, name=None):
@@ -1003,24 +1005,24 @@ class Switchboard(QtCore.QObject):
 		if not 'widgets' in self.sbDict[name]:
 			self.widgets(name) #construct the signals and slots for the ui
 
-		if widget:
-			try:
-				if type(widget) is str:
-					return next(w['method'][0] for w in self.sbDict[name]['widgets'].values() if w['widgetName']==widget) #if there are event filters attached (as a list), just get the method (at index 0).
-				
-				if not widget in self.sbDict[name]['widgets']:
-					self.addWidget(name, widget)
-				return self.sbDict[name]['widgets'][widget]['method'][0] #if there are event filters attached (as a list), just get the method (at index 0).
-
-			except:
-				if type(widget) is str:
-					return next((w['method'] for w in self.sbDict[name]['widgets'].values() if w['widgetName']==widget), None)
-				
-				if not widget in self.sbDict[name]['widgets']:
-					self.addWidget(name, widget)
-				return self.sbDict[name]['widgets'][widget]['method']
-		else:
+		if widget is None: #get all methods for the given ui name.
 			return [w['method'] for w in self.sbDict[name]['widgets'].values()]
+
+		try:
+			if type(widget) is str:
+				return next(w['method'][0] for w in self.sbDict[name]['widgets'].values() if w['widgetName']==widget) #if there are event filters attached (as a list), just get the method (at index 0).
+			
+			elif not widget in self.sbDict[name]['widgets']:
+				self.addWidget(name, widget)
+			return self.sbDict[name]['widgets'][widget]['method'][0] #if there are event filters attached (as a list), just get the method (at index 0).
+
+		except:
+			if type(widget) is str:
+				return next((w['method'] for w in self.sbDict[name]['widgets'].values() if w['widgetName']==widget), None)
+			
+			elif not widget in self.sbDict[name]['widgets']:
+				self.addWidget(name, widget)
+			return self.sbDict[name]['widgets'][widget]['method']
 
 
 	def getDocString(self, name, widgetName, first_line_only=True, unformatted=False):

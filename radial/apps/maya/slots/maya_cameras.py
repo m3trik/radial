@@ -86,10 +86,11 @@ class Cameras(Init):
 
 
 	def tree000(self, wItem=None, column=None):
-		''''''
+		'''
+		'''
 		tree = self.current_ui.tree000
 
-		if wItem is 'setMenu':
+		if wItem=='setMenu':
 			tree.expandOnHover = True
 			tree.convert(tree.getTopLevelItems(), 'QLabel') #construct the tree using the existing contents.
 
