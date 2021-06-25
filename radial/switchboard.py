@@ -792,10 +792,10 @@ class Switchboard(QtCore.QObject):
 
 	#Property
 	def setClassInstance(self, class_, name=None, **kwargs):
-		'''Case insensitive. Class string keys are stored lowercase regardless of how they are recieved.
+		'''Case insensitive. Class string keys are stored lowercase regardless of how they are received.
 
 		:Parameters:
-			class_ (str)(obj) = module name.class to import and store class. 
+			class_ (str)(obj) = module.class to import and store class. 
 					ie.  ie. 'polygons', 'slots_max_polygons.Polygons', or <slots_max_polygons.Polygons>
 			name (str) = optional name key to store the class under (else the class name will be used).
 

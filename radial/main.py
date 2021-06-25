@@ -43,7 +43,7 @@ class Main(QtWidgets.QStackedWidget):
 
 		self.sb = Switchboard(self)
 		self.sb.setMainAppWindow(self.parent())
-		self.sb.setClassInstance(self, 'main')
+		self.sb.setClassInstance(self)
 
 		self.childEvents = EventFactoryFilter(self)
 		self.overlay = OverlayFactoryFilter(self) #Paint events are handled by the overlay module.

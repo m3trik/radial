@@ -153,7 +153,7 @@ class EventFactoryFilter(QtCore.QObject):
 								ui.mainWindow.grabMouse()
 								self._mouseGrabber = ui.mainWindow
 				except Exception as e:
-					pass # print('# Error: {}: mouseTracking: {} #'.format(os.path.splitext(os.path.basename(__file__)), e))
+					print('# Error: {}: mouseTracking: {} #'.format(os.path.splitext(os.path.basename(__file__)), e))
 
 
 		widgetsUnderMouse.sort(key=len) #sort 'widgetsUnderMouse' by ascending length so that lowest level child widgets get grabMouse last.
