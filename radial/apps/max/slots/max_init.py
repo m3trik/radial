@@ -9,7 +9,7 @@ from PySide2 import QtGui, QtWidgets, QtCore
 # 3ds Max dependancies
 try:
 	from pymxs import runtime as rt
-	maxEval = rt.executeScriptFile
+	maxEval = rt.execute #rt.executeScriptFile
 
 except ImportError as error:
 	print(error); rt=None; maxEval=lambda s: None
@@ -947,13 +947,14 @@ class Init(Slots):
 		:Return:
 			bool (current state) if query
 		'''
-		currentState = MaxPlus.ViewportManager.GetActiveViewportShowEdgeFaces()
+		graphicsManager = rt.NitrousGraphicsManager.GetActiveViewportSetting()
+		currentState = graphicsManager.ShowEdgedFacesEnabled
 		if query:
 			return currentState
 		if state:
-			MaxPlus.ViewportManager.SetActiveViewportShowEdgeFaces(state)
+			graphicsManager.ShowEdgedFacesEnabled = state
 		else:
-			MaxPlus.ViewportManager.SetActiveViewportShowEdgeFaces(not currentState)
+			graphicsManager.ShowEdgedFacesEnabled = not currentState
 
 
 	previousSmoothPreviewLevel=int

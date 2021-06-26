@@ -65,7 +65,7 @@
       <widget class="QWidget" name="w002" native="true">
        <property name="geometry">
         <rect>
-         <x>130</x>
+         <x>138</x>
          <y>280</y>
          <width>306</width>
          <height>101</height>
@@ -103,7 +103,7 @@
       <widget class="QWidget" name="main" native="true">
        <property name="geometry">
         <rect>
-         <x>130</x>
+         <x>139</x>
          <y>110</y>
          <width>306</width>
          <height>161</height>
@@ -393,7 +393,7 @@
       <widget class="QWidget" name="w000" native="true">
        <property name="geometry">
         <rect>
-         <x>130</x>
+         <x>139</x>
          <y>0</y>
          <width>306</width>
          <height>101</height>
@@ -418,7 +418,7 @@
         <rect>
          <x>-5</x>
          <y>50</y>
-         <width>131</width>
+         <width>141</width>
          <height>291</height>
         </rect>
        </property>

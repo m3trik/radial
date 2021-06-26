@@ -85,6 +85,10 @@ class EventFactoryFilter(QtCore.QObject):
 
 				if widgetType in ('ToolButton', 'PushButtonDraggable', 'ComboBox', 'TreeWidgetExpandableList', 'LineEdit'): #widget types to initialize menus|contextMenu's for.
 					if callable(classMethod):
+						try: #attempt to clear any current menu items.
+							classMethod.clear()
+						except (AttributeError):
+							pass
 						classMethod('setMenu')
 
 				if derivedType in ('QPushButton', 'QToolButton', 'QLabel'): #widget types to resize and center.

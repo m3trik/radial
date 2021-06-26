@@ -192,7 +192,7 @@ class File(Init):
 			cmb.contextMenu.add(wgts.Label, setObjectName='lbl004', setText='Root', setToolTip='Open the project directory.')
 			return
 
-		path = self.formatPath(MaxPlus.PathManager.GetProjectFolderDir()) #current project path.
+		path = self.formatPath(rt.pathconfig.getCurrentProjectFolderPath()) #current project path.
 		list_ = [f for f in os.listdir(path)]
 
 		project = self.getNameFromFullPath(path) #add current project path string to label. strip path and trailing '/'
@@ -239,10 +239,7 @@ class File(Init):
 	def lbl000(self):
 		'''Set Project
 		'''
-		try:
-			MaxPlus.PathManager.SetProjectFolderDir()
-		except:
-			maxEval('macros.run "Tools" "SetProjectFolder"')
+		maxEval('macros.run "Tools" "SetProjectFolder"') #rt.pathconfig.setCurrentProjectFolderPath(path) --Sets the current project folder to the given path. The Project Folder is displayed in the title bar of 3ds Max and will be updated instantly.
 
 		self.cmb006() #refresh cmb006 items to reflect new project folder
 
@@ -280,7 +277,7 @@ class File(Init):
 	def b000(self):
 		'''Autosave: Open Directory
 		'''
-		dir_ = MaxPlus.PathManager.GetAutobackDir()
+		dir_ = rt.GetDir(rt.name('autoback'))
 		os.startfile(self.formatPath(dir_))
 
 
@@ -373,9 +370,40 @@ class File(Init):
 			)
 			''')
 
-		files = rt.getRecentfiles()
+		files = File.getRecentfiles()
 		result = [Init.formatPath(f) for f in files]
 
+		return result
+
+
+	@staticmethod
+	def getRecentFiles():
+		'''Get a list of recent files from "RecentDocuments.xml" in the maxData directory.
+
+		:Return:
+			(list)
+		'''
+		maxEval('''
+		fn _getRecentFiles = (
+			local recentfiles = (getdir #maxData) + "RecentDocuments.xml"
+			if doesfileexist recentfiles then (
+				XMLArray = #()
+				xDoc = dotnetobject "system.xml.xmldocument"
+				xDoc.Load recentfiles
+				Rootelement = xDoc.documentelement
+
+				XMLArray = for i = 0 to rootelement.childnodes.item[4].childnodes.itemof[0].childnodes.count-1 collect (
+					rootelement.childnodes.item[4].childnodes.itemof[0].childnodes.itemof[i].childnodes.itemof[3].innertext
+				)
+
+				Return XMLArray
+				LRXML = Undefined
+				XDoc = Undefined
+				XDoc = nothing
+			)
+		)
+		''')
+		result = rt._getRecentFiles()
 		return result
 
 
@@ -399,7 +427,7 @@ class File(Init):
 		:Return:
 			(list)
 		'''
-		path = MaxPlus.PathManager.GetAutobackDir()
+		path = rt.GetDir(rt.name('autoback'))
 		files = [f for f in os.listdir(path) if f.endswith('.max') or f.endswith('.bak')] #get list of max autosave files
 
 		list_ = [f+'  '+datetime.fromtimestamp(os.path.getmtime(path+'\\'+f)).strftime('%H:%M  %m-%d-%Y') for f in files] #attach modified timestamp
