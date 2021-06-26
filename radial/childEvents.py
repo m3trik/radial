@@ -127,7 +127,7 @@ class EventFactoryFilter(QtCore.QObject):
 		ui = self.sb.getUi(name)
 		widgetsUnderMouse=[] #list of widgets currently under the mouse cursor and their parents. in hierarchical order. ie. [[<widgets.pushButton.PushButton object at 0x00000000045F6948>, <PySide2.QtWidgets.QMainWindow object at 0x00000000045AA8C8>, <__main__.Main_max object at 0x000000000361F508>, <PySide2.QtWidgets.QWidget object at 0x00000000036317C8>]]
 		for widget in self.sb.getWidget(name=name): #get all widgets from the current ui.
-			if hasattr(widget, 'rect'): #ignore any widgets not having the 'rect' attribute.
+			# if hasattr(widget, 'rect'): #ignore any widgets not having the 'rect' attribute.
 				try:
 					widgetName = self.sb.getWidgetName(widget, name)
 				except KeyError:
@@ -152,8 +152,8 @@ class EventFactoryFilter(QtCore.QObject):
 							if ui.mainWindow.isVisible():
 								ui.mainWindow.grabMouse()
 								self._mouseGrabber = ui.mainWindow
-				except Exception as e:
-					print('# Error: {}: mouseTracking: {} #'.format(os.path.splitext(os.path.basename(__file__)), e))
+				except (AttributeError, TypeError) as e:
+					pass #print('# Error: {}: mouseTracking: {} #'.format(os.path.splitext(os.path.basename(__file__))[0], e))
 
 
 		widgetsUnderMouse.sort(key=len) #sort 'widgetsUnderMouse' by ascending length so that lowest level child widgets get grabMouse last.

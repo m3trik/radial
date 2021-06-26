@@ -238,7 +238,7 @@ class TreeWidgetExpandableList(QtWidgets.QTreeWidget, Attributes):
 
 		columnWidths=[]
 		for column in set(columns):
-			if column is 0 and not resizeFirstColumn:
+			if column==0 and not resizeFirstColumn:
 				if not hasattr(self, '_columnWidth0'):
 					self._columnWidth0 = self.columnWidth(column)
 				columnWidth = self._columnWidth0
@@ -446,7 +446,7 @@ class TreeWidgetExpandableList(QtWidgets.QTreeWidget, Attributes):
 		'''
 		header = self.widgets[widget][0]
 		columns=[]
-		while header is not 'root':
+		while header!='root':
 			for i in self.widgets.values():
 				if i[3]==header:
 					columns.append(i[1])
@@ -460,7 +460,7 @@ class TreeWidgetExpandableList(QtWidgets.QTreeWidget, Attributes):
 		'''
 		header = self.widgets[widget][0]
 		widgets=[]
-		while header is not 'root':
+		while header!='root':
 			for w, i in self.widgets.items():
 				if i[3]==header:
 					widgets.append(w)
@@ -479,7 +479,7 @@ class TreeWidgetExpandableList(QtWidgets.QTreeWidget, Attributes):
 		'''
 		header = self.widgets[widget][3]
 		try:
-			return list(set([i[1] for i in self.widgets.values() if header in i and not i[0] is 'root']))
+			return list(set([i[1] for i in self.widgets.values() if header in i and i[0]!='root']))
 		except:
 			return []
 
@@ -725,7 +725,7 @@ class TreeWidgetExpandableList(QtWidgets.QTreeWidget, Attributes):
 		for c in columns:
 			list_ = [str(i.text(c)) for i in items] #get each widgetItem's text string.
 
-			if c is 0:
+			if c==0:
 				[self.add(w, childHeader=i, setText=i) for i in list_ if i]
 			else:
 				header = str(self.headerItem().text(c))
