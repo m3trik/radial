@@ -16,15 +16,10 @@ app_scripts_dir = os.path.join(root_dir, 'apps', 'blender')
 app_slots_dir = os.path.join(app_scripts_dir, 'slots')
 
 #append to system path:
-paths = [root_dir, parent_dir, app_scripts_dir, app_slots_dir]
+paths = [file_path, root_dir, parent_dir, app_scripts_dir, app_slots_dir]
 for path in paths:
 	sys.path.append(path)
-for p in sys.path: print (p) #list all directories on the system environment path.
-
-
-#macros--------------------------------------------------------------
-from macros import Macros
-Macros().setMacros()
+# for p in sys.path: print (p) #list all directories on the system environment path.
 
 
 
@@ -33,8 +28,17 @@ Macros().setMacros()
 
 #--------------------------------------------------------------------
 
-# def register():
-	# bpy.app.handlers.load_post.append(None)
+def register():
+	bpy.app.handlers.load_post.append(None)
+
+# -------------------------------------------------------------------
+
+#defer evaluation
+# from time import sleep
+# sleep(3.0) # Time in seconds
+#run the userSetup module
+import userSetup
+
 
 
 

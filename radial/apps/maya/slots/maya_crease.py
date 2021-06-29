@@ -197,9 +197,9 @@ class Crease(Init):
 	def b002(self):
 		'''Transfer Crease Edges
 		'''
-		# an updated version of this is in the maya python projects folder
-		# the use of separate buttons for donor and target mesh are obsolete
-		# add pm.polySoftEdge (angle=0, constructionHistory=0); #harden edge, when applying crease
+		# an updated version of this is in the maya python projects folder. transferCreaseSets.py
+		# the use of separate buttons for donor and target mesh are deprecated.
+		# add pm.polySoftEdge (angle=0, constructionHistory=0); #harden edge, when applying crease.
 		
 		creaseSet = str(self.crease_ui.b000.text())
 		newObject = str(self.crease_ui.b001.text())

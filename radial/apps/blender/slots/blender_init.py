@@ -6,13 +6,9 @@ import os
 
 from PySide2 import QtGui, QtWidgets, QtCore
 
-# Maya dependancies
+# Blender dependancies
 try:
-	import maya.mel as mel
-	import pymel.core as pm
-	import maya.OpenMayaUI as OpenMayaUI
-
-	import shiboken2
+	import bpy
 
 except ImportError as error:
 	print(error)
@@ -277,11 +273,11 @@ class Init(Slots):
 
 		pm.polySelectConstraint(mode=3, type=componentType, random=True, randomratio=randomRatio)
 
-		if componentType is 'vertex':
+		if componentType=='vertex':
 			pm.selectType(polymeshVertex=True)
-		elif componentType is 'edge':
+		elif componentType=='edge':
 			pm.selectType(polymeshEdge=True)
-		elif componentType is 'face':
+		elif componentType=='face':
 			pm.selectType(polymeshFace=True)
 		else:
 			pm.selectType(polymeshUV=True) #pm.selectType(texture=True)
@@ -537,12 +533,12 @@ class Init(Slots):
 		edges = pm.ls(x, flatten=1)
 		for edge in edges:
 
-			if borderType is 'object': #get edges that form the border of the object.
+			if borderType=='object': #get edges that form the border of the object.
 				attachedFaces = pm.ls(pm.polyListComponentConversion(edge, fromEdge=1, toFace=1), flatten=1)
 				if len(attachedFaces)==1:
 					result.append(edge)
 
-			elif borderType is 'component' and not object_type=='Polygon': #get edges that form the border of the given components.
+			elif borderType=='component' and not object_type=='Polygon': #get edges that form the border of the given components.
 				attachedFaces = pm.ls(pm.polyListComponentConversion(edge, fromEdge=1, toFace=1), flatten=0)
 				attachedEdges = pm.ls(pm.polyListComponentConversion(attachedFaces, fromFace=1, toEdge=1), flatten=1)
 				for e in attachedEdges:

@@ -111,7 +111,7 @@ class Normals(Init):
 		'''
 		tb = self.current_ui.tb002
 		if state is 'setMenu':
-			tb.menu_.add('QSpinBox', setPrefix='Angle: ', setObjectName='s000', setMinMax_='1-180 step1', setValue=30, setToolTip='Angle degree.')
+			tb.menu_.add('QSpinBox', setPrefix='Angle: ', setObjectName='s000', setMinMax_='1-180 step1', setValue=60, setToolTip='Angle degree.')
 			return
 
 		normalAngle = str(tb.menu_.s000.value())
