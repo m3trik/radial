@@ -33,11 +33,48 @@ def register():
 
 # -------------------------------------------------------------------
 
-#defer evaluation
-# from time import sleep
-# sleep(3.0) # Time in seconds
-#run the userSetup module
-import userSetup
+
+# from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor, as_completed
+# from time import sleep, time
+
+# def party_later(kind='', n=''):
+#     sleep(3)
+#     return kind + n + ' party time!: ' + __name__
+
+# def main():
+#     with ProcessPoolExecutor() as proc_executor:
+#         with ThreadPoolExecutor() as thread_executor:
+#             start_time = time()
+#             proc_future1 = proc_executor.submit(party_later, kind='proc', n='1')
+#             proc_future2 = proc_executor.submit(party_later, kind='proc', n='2')
+#             thread_future1 = thread_executor.submit(party_later, kind='thread', n='1')
+#             thread_future2 = thread_executor.submit(party_later, kind='thread', n='2')
+#             for f in as_completed([
+#               proc_future1, proc_future2, thread_future1, thread_future2,]):
+#                 print(f.result())
+#             end_time = time()
+#     print('total time to execute four 3-sec functions:', end_time - start_time)
+
+# if __name__ == '__main__':
+#     main()
+
+
+
+def evalDeferred():
+	'''Defer evaluation for the given amount of time.
+	Runs as a separate process.
+	'''
+	import userSetup
+
+
+
+
+
+from threading import Timer
+t = Timer(3, evalDeferred, args=None, kwargs=None)
+t.start()
+
+
 
 
 

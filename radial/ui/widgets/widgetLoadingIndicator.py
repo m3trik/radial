@@ -1,8 +1,5 @@
 # !/usr/bin/python
 # coding=utf-8
-# from __future__ import print_function, absolute_import
-# from builtins import super
-
 from PySide2 import QtWidgets, QtGui, QtCore
 
 from attributes import Attributes
@@ -132,13 +129,13 @@ class WidgetLoadingIndicator(QtWidgets.QWidget, Attributes):
 
 if __name__ == "__main__":
 	import sys
-	app = QtWidgets.QApplication.instance() #get the qApp instance if it exists.
-	if not app:
-		app = QtWidgets.QApplication(sys.argv)
+	qApp = QtWidgets.QApplication.instance() #get the qApp instance if it exists.
+	if not qApp:
+		qApp = QtWidgets.QApplication(sys.argv)
 
 	w = WidgetLoadingIndicator(color='blue', start=True, setPosition_='cursor')
 	# w.setDelay(70)
 	# w.start()
 	# w.stop()
 
-	sys.exit(app.exec_())
+	sys.exit(qApp.exec_())

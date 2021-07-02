@@ -1,7 +1,5 @@
 # !/usr/bin/python
 # coding=utf-8
-# from __future__ import print_function, absolute_import
-# from builtins import super
 import os.path
 
 from pydoc import locate
@@ -1501,9 +1499,9 @@ class Switchboard(QtCore.QObject):
 if __name__=='__main__':
 	#initialize and create a Switchboard instance
 	from PySide2.QtWidgets import QApplication
-	app = QApplication.instance() #get the qApp instance if it exists.
-	if not app:
-		app = QApplication(sys.argv)
+	qApp = QApplication.instance() #get the qApp instance if it exists.
+	if not qApp:
+		qApp = QApplication(sys.argv)
 
 
 

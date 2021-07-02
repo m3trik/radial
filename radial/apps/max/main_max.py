@@ -1,7 +1,5 @@
 # !/usr/bin/python
 # coding=utf-8
-# from __future__ import print_function, absolute_import
-# from builtins import super
 import sys
 
 from PySide2 import QtCore, QtWidgets
@@ -19,7 +17,7 @@ class Main_max(Main):
 	:Parameters:
 		parent = main application top level window object.
 	'''
-	qapp = QtWidgets.QApplication
+	qApp = QtWidgets.QApplication
 
 	def __init__(self, parent=None, preventHide=False, key_show='Key_F12'):
 		'''
@@ -43,7 +41,7 @@ class Main_max(Main):
 		# import qtmax
 		# main_window = qtmax.GetQMaxMainWindow()
 
-		main_window = next((w.window() for w in self.qapp.instance().topLevelWidgets()
+		main_window = next((w.window() for w in self.qApp.instance().topLevelWidgets()
 			if w.inherits('QMainWindow') and w.metaObject().className()=='QmaxApplicationWindow'), 
 				lambda: (_ for _ in ()).throw(RuntimeError('Count not find QmaxApplicationWindow instance.'))
 			)
@@ -60,7 +58,7 @@ class Main_max(Main):
 			event = <QEvent>
 		'''
 		if not event.isAutoRepeat():
-			modifiers = self.qapp.keyboardModifiers()
+			modifiers = self.qApp.keyboardModifiers()
 
 			if event.key()==self.key_undo and modifiers==QtCore.Qt.ControlModifier:
 				import pymxs
@@ -95,7 +93,7 @@ class Main_max(Main):
 			print(error)
 
 		if __name__ == "__main__":
-			self.qapp.instance().quit()
+			self.qApp.instance().quit()
 			sys.exit() #assure that the sys processes are terminated.
 
 		return Main.hideEvent(self, event) #super().hideEvent(event)
@@ -168,7 +166,7 @@ class Instance():
 		# from PySide2 import QtGui
 		# # forward the keyPress event
 		# event = QtGui.QKeyEvent(QtCore.QEvent.KeyPress, instance.key_show, QtCore.Qt.NoModifier)
-		# instance.qapp.postEvent(instance, event)
+		# instance.qApp.postEvent(instance, event)
 		# # instance.keyPressEvent(keyEvent)
 
 

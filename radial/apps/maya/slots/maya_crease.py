@@ -1,7 +1,5 @@
 # !/usr/bin/python
 # coding=utf-8
-# from __future__ import print_function, absolute_import
-# from builtins import super
 import os.path
 
 from maya_init import *
@@ -23,7 +21,7 @@ class Crease(Init):
 		if not self.crease_ui.chk002.isChecked(): #un-crease
 			if not self.crease_ui.chk003.isChecked(): #toggle max
 				self.creaseValue = self.crease_ui.s003.value()
-				text = self.current_ui.tb000.text().split(' ')[0]
+				text = self.current_ui.tb000.text().split()[0]
 				self.current_ui.tb000.setText('{} {}'.format(text, self.creaseValue))
 
 

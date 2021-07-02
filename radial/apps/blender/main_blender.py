@@ -1,7 +1,5 @@
 # !/usr/bin/python
 # coding=utf-8
-# from __future__ import print_function, absolute_import
-# from builtins import super
 import sys
 
 from PySide2 import QtWidgets, QtCore
@@ -19,7 +17,7 @@ class Main_blender(Main):
 	:Parameters:
 		parent = Application top level window instance.
 	'''
-	qapp = QtWidgets.QApplication
+	qApp = QtWidgets.QApplication
 
 	def __init__(self, parent=None, preventHide=False, key_show='Key_F12'):
 		'''
@@ -65,7 +63,7 @@ class Main_blender(Main):
 			event = <QEvent>
 		'''
 		if __name__ == "__main__":
-			self.qapp.instance().quit()
+			self.qApp.instance().quit()
 			sys.exit() #assure that the sys processes are terminated.
 
 		return Main.hideEvent(self, event) #super(Main_blender, self).hideEvent(event)
@@ -119,9 +117,9 @@ class Instance():
 
 
 if __name__ == "__main__":
-	app = QtWidgets.QApplication.instance() #get the qApp instance if it exists.
-	if not app:
-		app = QtWidgets.QApplication(sys.argv)
+	qApp = QtWidgets.QApplication.instance() #get the qApp instance if it exists.
+	if not qApp:
+		qApp = QtWidgets.QApplication(sys.argv)
 
 	#create a generic parent object to run the code outside of blender.
 	dummyParent = QtWidgets.QWidget()
@@ -130,7 +128,7 @@ if __name__ == "__main__":
 	import cProfile
 	cProfile.run("Instance(dummyParent).show('init')")
 	# Instance(dummyParent).show_() #Main_maya(dummyParent).show()
-	sys.exit(app.exec_())
+	sys.exit(qApp.exec_())
 
 
 

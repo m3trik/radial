@@ -1,7 +1,5 @@
 # !/usr/bin/python
 # coding=utf-8
-# from __future__ import print_function, absolute_import
-# from builtins import super
 import sys
 
 from PySide2 import QtWidgets, QtCore
@@ -19,7 +17,7 @@ class Main_maya(Main):
 	:Parameters:
 		parent = Application top level window instance.
 	'''
-	qapp = QtWidgets.QApplication
+	qApp = QtWidgets.QApplication
 
 	def __init__(self, parent=None, preventHide=False, key_show='Key_F12'):
 		'''
@@ -43,7 +41,7 @@ class Main_maya(Main):
 		# ptr = OpenMayaUI.MQtUtil.mainWindow()
 		# main_window = shiboken2.wrapInstance(long(ptr), QtWidgets.QWidget)
 
-		main_window = next(w for w in self.qapp.instance().topLevelWidgets() if w.objectName()=='MayaWindow')
+		main_window = next(w for w in self.qApp.instance().topLevelWidgets() if w.objectName()=='MayaWindow')
 
 		return main_window
 
@@ -54,7 +52,7 @@ class Main_maya(Main):
 			event = <QEvent>
 		'''
 		if not event.isAutoRepeat():
-			modifiers = self.qapp.keyboardModifiers()
+			modifiers = self.qApp.keyboardModifiers()
 
 			if event.key()==self.key_undo and modifiers==QtCore.Qt.ControlModifier:
 				import Pymel.Core as pm
@@ -78,7 +76,7 @@ class Main_maya(Main):
 			event = <QEvent>
 		'''
 		if __name__ == "__main__":
-			self.qapp.instance().quit()
+			self.qApp.instance().quit()
 			sys.exit() #assure that the sys processes are terminated.
 
 		return Main.hideEvent(self, event) #super().hideEvent(event)
@@ -133,9 +131,9 @@ class Instance():
 
 
 if __name__ == "__main__":
-	app = QtWidgets.QApplication.instance() #get the qApp instance if it exists.
-	if not app:
-		app = QtWidgets.QApplication(sys.argv)
+	qApp = QtWidgets.QApplication.instance() #get the qApp instance if it exists.
+	if not qApp:
+		qApp = QtWidgets.QApplication(sys.argv)
 
 	# import os, sys
 	# VERSION = '2022'
@@ -162,7 +160,7 @@ if __name__ == "__main__":
 	# import cProfile
 	# cProfile.run('Instance(dummyParent).show_()')
 	Instance(dummyParent).show('init') #Main_maya(dummyParent).show()
-	sys.exit(app.exec_())
+	sys.exit(qApp.exec_())
 
 
 

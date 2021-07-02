@@ -1,6 +1,3 @@
-# from __future__ import print_function, absolute_import
-# from builtins import super
-
 from PySide2 import QtWidgets, QtGui, QtCore
 
 from multiprocessing import Pool
@@ -44,9 +41,9 @@ def longInitialization(arg):
 
 if __name__ == "__main__":
 	import sys, time
-	app = QtWidgets.QApplication.instance() #get the qApp instance if it exists.
-	if not app:
-		app = QtWidgets.QApplication(sys.argv)
+	qApp = QtWidgets.QApplication.instance() #get the qApp instance if it exists.
+	if not qApp:
+		qApp = QtWidgets.QApplication(sys.argv)
 
 	# Create and display the splash screen
 	# splash_pix = QtGui.QPixmap('qWidget_imagePlayer.gif')
@@ -54,7 +51,7 @@ if __name__ == "__main__":
 #   splash.setMask(splash_pix.mask())
 	#splash.raise_()
 	splash.show()
-	app.processEvents()
+	qApp.processEvents()
 
 	# this event loop is needed for dispatching of Qt events
 	initLoop = QtCore.QEventLoop()
@@ -65,4 +62,4 @@ if __name__ == "__main__":
 	# form = Form()
 	# form.show()
 	# splash.finish(form)
-	app.exec_()
+	qApp.exec_()

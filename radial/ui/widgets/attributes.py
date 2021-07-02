@@ -1,8 +1,5 @@
 # !/usr/bin/python
 # coding=utf-8
-# from __future__ import print_function, absolute_import
-# from builtins import super
-
 from PySide2 import QtCore, QtGui, QtWidgets
 
 
@@ -131,13 +128,13 @@ class Attributes(object):
 			spinbox (obj) = spinbox widget.
 			value (str) = value as shorthand string. ie. '0.00-100 step1'
 		'''
-		stepStr = value.split(' ')[1].strip('step')
+		stepStr = value.split()[1].strip('step')
 		step = float(stepStr)
 		decimals = len(stepStr.split('.')[-1])
 
 		spanStr = value.split('-')
 		minimum = float(spanStr[0])
-		maximum = float(spanStr[1].split(' ')[0])
+		maximum = float(spanStr[1].split()[0])
 
 		if hasattr(spinbox, 'setDecimals'):
 			self.setAttributes({
@@ -220,11 +217,11 @@ class Attributes(object):
 
 if __name__ == "__main__":
 	import sys
-	app = QtWidgets.QApplication.instance() #get the qApp instance if it exists.
-	if not app:
-		app = QtWidgets.QApplication(sys.argv)
+	qApp = QtWidgets.QApplication.instance() #get the qApp instance if it exists.
+	if not qApp:
+		qApp = QtWidgets.QApplication(sys.argv)
 
-	sys.exit(app.exec_())
+	sys.exit(qApp.exec_())
 
 
 

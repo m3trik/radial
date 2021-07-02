@@ -1,7 +1,5 @@
 # !/usr/bin/python
 # coding=utf-8
-# from __future__ import print_function, absolute_import
-# from builtins import super
 import sys, os.path
 
 from PySide2 import QtCore, QtGui, QtWidgets
@@ -25,7 +23,7 @@ class Main(QtWidgets.QStackedWidget):
 	:Parameters:
 		parent (obj) = The parent application's top level window.
 	'''
-	qapp = QtWidgets.QApplication
+	qApp = QtWidgets.QApplication
 
 	def __init__(self, parent=None, preventHide=False, key_show='Key_F12'):
 		super().__init__(parent)
@@ -34,8 +32,8 @@ class Main(QtWidgets.QStackedWidget):
 		self.key_show = getattr(QtCore.Qt, key_show)
 		self.key_undo = QtCore.Qt.Key_Z
 		self.key_close = QtCore.Qt.Key_Escape
-		# self.qapp.setDoubleClickInterval(400)
-		# self.qapp.setKeyboardInputInterval(400)
+		# self.qApp.setDoubleClickInterval(400)
+		# self.qApp.setKeyboardInputInterval(400)
 
 		self.setWindowFlags(QtCore.Qt.Tool|QtCore.Qt.FramelessWindowHint)
 		self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
@@ -49,7 +47,7 @@ class Main(QtWidgets.QStackedWidget):
 		self.overlay = OverlayFactoryFilter(self) #Paint events are handled by the overlay module.
 		self.style = StyleSheet(self)
 
-		self.qapp.instance().focusChanged.connect(self.focusChanged)
+		self.qApp.instance().focusChanged.connect(self.focusChanged)
 
 		self.centerPos = lambda: QtGui.QCursor.pos() - self.rect().center() #the center point of the widget at any given time.
 
@@ -198,7 +196,7 @@ class Main(QtWidgets.QStackedWidget):
 		'''
 		if not event.isAutoRepeat():
 			# print ('keyPressEvent:', event.key()==self.key_show)
-			modifiers = self.qapp.keyboardModifiers()
+			modifiers = self.qApp.keyboardModifiers()
 
 			if event.key()==self.key_show:
 				self.show()
@@ -216,7 +214,7 @@ class Main(QtWidgets.QStackedWidget):
 			event = <QEvent>
 		'''
 		if not event.isAutoRepeat():
-			modifiers = self.qapp.keyboardModifiers()
+			modifiers = self.qApp.keyboardModifiers()
 			# print ('keyReleaseEvent:', event.key()==self.key_show)
 			if event.key()==self.key_show and not modifiers==QtCore.Qt.ControlModifier:
 				self.hide()
@@ -282,7 +280,7 @@ class Main(QtWidgets.QStackedWidget):
 		:Parameters:
 			event = <QEvent>
 		'''
-		modifiers = self.qapp.keyboardModifiers()
+		modifiers = self.qApp.keyboardModifiers()
 
 		if event.button()==QtCore.Qt.LeftButton:
 
@@ -412,12 +410,12 @@ class Main(QtWidgets.QStackedWidget):
 
 
 if __name__ == '__main__':
-	app = QtWidgets.QApplication.instance() #get the qApp instance if it exists.
-	if not app:
-		app = QtWidgets.QApplication(sys.argv)
+	qApp = QtWidgets.QApplication.instance() #get the qApp instance if it exists.
+	if not qApp:
+		qApp = QtWidgets.QApplication(sys.argv)
 
 	Main().show('init')
-	sys.exit(app.exec_())
+	sys.exit(qApp.exec_())
 
 
 

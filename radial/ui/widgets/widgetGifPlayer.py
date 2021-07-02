@@ -1,8 +1,5 @@
 # !/usr/bin/python
 # coding=utf-8
-# from __future__ import print_function, absolute_import
-# from builtins import super
-
 from PySide2 import QtWidgets, QtGui, QtCore
 
 from attributes import Attributes
@@ -73,11 +70,11 @@ class WidgetGifPlayer(QtWidgets.QWidget, Attributes):
 
 if __name__=='__main__':
 	import sys
-	app = QtWidgets.QApplication.instance() #get the qApp instance if it exists.
-	if not app:
-		app = QtWidgets.QApplication(sys.argv)
+	qApp = QtWidgets.QApplication.instance() #get the qApp instance if it exists.
+	if not qApp:
+		qApp = QtWidgets.QApplication(sys.argv)
 
 	player = WidgetGifPlayer() 
 
 	player.start()
-	app.exec_()
+	qApp.exec_()

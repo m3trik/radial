@@ -1,8 +1,5 @@
 # !/usr/bin/python
 # coding=utf-8
-# from __future__ import print_function, absolute_import
-# from builtins import super
-
 from PySide2 import QtCore, QtGui, QtWidgets
 
 try: import shiboken2
@@ -786,9 +783,9 @@ class TreeWidgetExpandableList(QtWidgets.QTreeWidget, Attributes):
 
 if __name__ == '__main__':
 	import sys
-	app = QtWidgets.QApplication.instance() #get the qApp instance if it exists.
-	if not app:
-		app = QtWidgets.QApplication(sys.argv)
+	qApp = QtWidgets.QApplication.instance() #get the qApp instance if it exists.
+	if not qApp:
+		qApp = QtWidgets.QApplication(sys.argv)
 
 	tree=TreeWidgetExpandableList(stepColumns=1, setVisible=True)
 
@@ -806,7 +803,7 @@ if __name__ == '__main__':
 	tree.add('QLabel', options, setText='Opt2')
 
 	# tree.show()
-	sys.exit(app.exec_())
+	sys.exit(qApp.exec_())
 
 
 
@@ -914,8 +911,8 @@ if __name__ == '__main__':
 	# 	#presets
 	# 	elif attr=='setMinMax_':
 	# 		minimum = float(value.split('-')[0])
-	# 		maximum = float(value.split('-')[1].split(' ')[0])
-	# 		step = float(value.split(' ')[1].strip('step'))
+	# 		maximum = float(value.split('-')[1].split()[0])
+	# 		step = float(value.split()[1].strip('step'))
 
 	# 		self.setAttributes({'setMinimum':minimum, 'setMaximum':maximum, 'setSingleStep':step, 'setButtonSymbols_':'NoButtons'}, action)
 

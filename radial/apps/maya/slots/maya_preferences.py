@@ -1,7 +1,5 @@
 # !/usr/bin/python
 # coding=utf-8
-# from __future__ import print_function, absolute_import
-# from builtins import super
 import os.path
 
 from maya_init import *
@@ -42,7 +40,7 @@ class Preferences(Init):
 			return
 
 		if index is not None:
-			QtGui.qApp.setStyle(cmb.items[index])
+			self.main.qApp.setStyle(cmb.items[index])
 
 
 	def cmb001(self, index=-1):
@@ -71,8 +69,8 @@ class Preferences(Init):
 
 		if index is 'setMenu':
 			#store a corresponding value for each item in the comboBox list_.
-			l = [('15 fps: ','game'),('24 fps: ','film'),('25 fps: ','pal'),('30 fps: ','ntsc'),('48 fps: ','show'),('50 fps: ','palf'),('60 fps: ','ntscf')]
-			list_ = [i[0]+i[1] for i in l] #ie. ['15 fps: game','24 fps: film', ..etc]
+			l = {'15 fps: ':'game','24 fps: ':'film','25 fps: ':'pal','30 fps: ':'ntsc','48 fps: ':'show','50 fps: ':'palf','60 fps: ':'ntscf'}
+			list_ = [k+v for k,v in l.items()] #ie. ['15 fps: game','24 fps: film', ..etc]
 			values = [i[1] for i in l] #ie. ['game','film', ..etc]
 			cmb.addItems_(list_)
 			try:
@@ -83,7 +81,7 @@ class Preferences(Init):
 			return
 
 		if index is not None:
-			pm.currentUnit(time=cmb.items[index]) #game | film | pal | ntsc | show | palf | ntscf
+			pm.currentUnit(time=cmb.items[index].split()[-1]) #game | film | pal | ntsc | show | palf | ntscf
 
 
 	def cmb003(self, index=-1):

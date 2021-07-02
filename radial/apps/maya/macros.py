@@ -1,8 +1,5 @@
 # !/usr/bin/python
 # coding=utf-8
-# from __future__ import print_function, absolute_import
-# from __future__ import print_function, absolute_import
-# from builtins import super
 
 import pymel.core as pm
 import maya.mel as mel

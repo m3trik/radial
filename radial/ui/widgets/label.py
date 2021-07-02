@@ -1,8 +1,5 @@
 # !/usr/bin/python
 # coding=utf-8
-# from __future__ import print_function, absolute_import
-# from builtins import super
-
 from PySide2 import QtWidgets, QtCore
 
 from attributes import Attributes
@@ -68,9 +65,9 @@ class Label(QtWidgets.QLabel, MenuInstance, Attributes):
 
 if __name__ == "__main__":
 	import sys
-	app = QtWidgets.QApplication.instance() #get the qApp instance if it exists.
-	if not app:
-		app = QtWidgets.QApplication(sys.argv)
+	qApp = QtWidgets.QApplication.instance() #get the qApp instance if it exists.
+	if not qApp:
+		qApp = QtWidgets.QApplication(sys.argv)
 
 	w = Label(setText='QLabel', setVisible=True)
 	w.resize(w.sizeHint().width(), 19)
@@ -78,7 +75,7 @@ if __name__ == "__main__":
 	contextMenuItem = w.contextMenu.add(Label, setText='context menu item')
 	print (menuItem, contextMenuItem)
 	# w.show()
-	sys.exit(app.exec_())
+	sys.exit(qApp.exec_())
 
 
 

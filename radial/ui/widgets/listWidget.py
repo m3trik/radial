@@ -1,6 +1,3 @@
-# from __future__ import print_function, absolute_import
-# from builtins import super
-
 from PySide2 import QtCore, QtGui, QtWidgets
 
 from attributes import Attributes
@@ -77,9 +74,9 @@ class ListWidget(QtWidgets.QListWidget, Attributes):
 
 if __name__ == "__main__":
 	import sys
-	app = QtWidgets.QApplication.instance() #get the qApp instance if it exists.
-	if not app:
-		app = QtWidgets.QApplication(sys.argv)
+	qApp = QtWidgets.QApplication.instance() #get the qApp instance if it exists.
+	if not qApp:
+		qApp = QtWidgets.QApplication(sys.argv)
 
 	w = ListWidget()
 	w.add('QPushButton', setObjectName='b001', setText='Button1')
@@ -87,7 +84,7 @@ if __name__ == "__main__":
 	w.add('QLabel', setObjectName='lbl001', setText='Label1')
 
 	w.show()
-	sys.exit(app.exec_())
+	sys.exit(qApp.exec_())
 
 
 

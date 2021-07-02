@@ -1,7 +1,5 @@
 # !/usr/bin/python
 # coding=utf-8
-# from __future__ import print_function, absolute_import
-# from builtins import super
 import os
 
 from PySide2 import QtGui, QtWidgets, QtCore
@@ -1444,7 +1442,7 @@ class Init(Slots):
 
 		dict_={}
 		for n in normals:
-			l = list(s.replace(regEx,'') for s in n.split(' ') if s) #['FACE_NORMAL', '150:', '0.935741', '0.110496', '0.334931\n']
+			l = list(s.replace(regEx,'') for s in n.split() if s) #['FACE_NORMAL', '150:', '0.935741', '0.110496', '0.334931\n']
 
 			key = int(l[1].strip(':')) #int face number as key ie. 150
 			value = list(float(i) for i in l[-3:])  #vector list as value. ie. [[0.935741, 0.110496, 0.334931]]

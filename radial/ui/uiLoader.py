@@ -1,7 +1,5 @@
 # !/usr/bin/python
 # coding=utf-8
-# from __future__ import print_function, absolute_import
-# from builtins import super
 import sys, os.path
 
 from PySide2 import QtCore
@@ -31,9 +29,9 @@ class UiLoader(QUiLoader):
 			'<uiName>':{'ui':<ui obj>, 'level':<int>}
 		}
 	'''
-	app = QApplication.instance() #get the qApp instance if it exists.
-	if not app:
-		app = QApplication(sys.argv)
+	qApp = QApplication.instance() #get the qApp instance if it exists.
+	if not qApp:
+		qApp = QApplication(sys.argv)
 
 	def __init__(self, parent=None):
 		super().__init__(parent)

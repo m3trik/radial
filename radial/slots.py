@@ -1,7 +1,5 @@
 # !/usr/bin/python
 # coding=utf-8
-# from __future__ import print_function, absolute_import
-# from builtins import super
 import os.path, sys
 
 from PySide2 import QtCore
@@ -23,8 +21,8 @@ class Slots(QtCore.QObject):
 		:Parameters: 
 			**kwargs (passed in via the switchboard module's 'getClassFromUiName' method.)
 			_current_ui (method) = Returns the current ui if it is either the parent or a child ui for the class; else, return the parent ui.
-			<name>_ui (ui) = ui of <name> ie. self.polygons for the ui of filename polygons
-			<name>_submenu_ui (ui) = ui of <name_submenu> ie. self.polygons_submenu
+			<name>_ui (ui) = ui of <name> ie. self.polygons for the ui of filename polygons.
+			<name>_submenu_ui (ui) = ui of <name_submenu> ie. self.polygons_submenu.
 			sb (class) = switchboard instance.
 			main (class) = main stacked widget instance.
 		'''

@@ -1,8 +1,5 @@
 # !/usr/bin/python
 # coding=utf-8
-# from __future__ import print_function, absolute_import
-# from builtins import super
-
 from PySide2 import QtCore, QtGui, QtWidgets
 
 from attributes import Attributes
@@ -78,9 +75,9 @@ class LineEdit(QtWidgets.QLineEdit, MenuInstance, Attributes):
 
 if __name__ == "__main__":
 	import sys
-	app = QtWidgets.QApplication.instance() #get the qApp instance if it exists.
-	if not app:
-		app = QtWidgets.QApplication(sys.argv)
+	qApp = QtWidgets.QApplication.instance() #get the qApp instance if it exists.
+	if not qApp:
+		qApp = QtWidgets.QApplication(sys.argv)
 
 	w = LineEdit()
 
@@ -88,7 +85,7 @@ if __name__ == "__main__":
 	w.insertText('Previous Camera: <font style="color: Yellow;">Perspective')
 
 	w.show()
-	sys.exit(app.exec_())
+	sys.exit(qApp.exec_())
 
 
 

@@ -1,8 +1,5 @@
 # !/usr/bin/python
 # coding=utf-8
-# from __future__ import print_function, absolute_import
-# from builtins import super
-
 import time, random
 import threading
 
@@ -114,7 +111,7 @@ class Worker(QtCore.QObject):
 
 if __name__ == "__main__":
 	import sys
-	app = QtWidgets.QApplication(sys.argv)
+	qApp = QtWidgets.QApplication(sys.argv)
 	ui = ProgressWidget()
 	ui.show()
-	sys.exit(app.exec_())
+	sys.exit(qApp.exec_())
