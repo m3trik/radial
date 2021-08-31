@@ -216,7 +216,7 @@ class Create(Init):
 			elif index==1: #sphere:
 				node = pm.polySphere (axis=axis, radius=5, subdivisionsX=12, subdivisionsY=12)
 			elif index==2: #cylinder:
-				node = pm.polyCylinder (axis=axis, radius=5, height=10, subdivisionsX=1, subdivisionsY=1, subdivisionsZ=1)
+				node = pm.polyCylinder (axis=axis, radius=5, height=10, subdivisionsX=12, subdivisionsY=1, subdivisionsZ=1)
 			elif index==3: #plane:
 				node = pm.polyPlane (axis=axis, width=5, height=5, subdivisionsX=1, subdivisionsY=1)
 			elif index==4: #circle:

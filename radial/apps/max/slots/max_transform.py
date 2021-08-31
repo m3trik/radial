@@ -124,9 +124,9 @@ class Transform(Init):
 				scaleValue = pm.manipScaleContext('Scale', q=True, snapValue=True)
 				rotateValue = pm.manipRotateContext('Rotate', q=True, snapValue=True)
 
-				list_ = [('chk021', 'Move <b>Off</b>'), ('s021', 'increment:', moveValue, '1-1000 step1'), 
-						('chk022', 'Scale <b>Off</b>'), ('s022', 'increment:', scaleValue, '1-1000 step1'), 
-						('chk023', 'Rotate <b>Off</b>'), ('s023', 'degrees:', rotateValue, '1-360 step1')]
+				list_ = [('chk021', 'Move <b>Off</b>'), ('s021', 'increment:', moveValue, '1.00-1000 step2.8125'), 
+						('chk022', 'Scale <b>Off</b>'), ('s022', 'increment:', scaleValue, '1.00-1000 step2.8125'), 
+						('chk023', 'Rotate <b>Off</b>'), ('s023', 'degrees:', rotateValue, '1.00-360 step2.8125')]
 
 				widgets = [cmb.menu_.add(wgts.CheckBox, setObjectName=i[0], setText=i[1], setTristate=1) if len(i) is 2 
 						else cmb.menu_.add('QDoubleSpinBox', setObjectName=i[0], setPrefix=i[1], setValue=i[2], setMinMax_=i[3], setDisabled=1) for i in list_]
@@ -137,12 +137,12 @@ class Transform(Init):
 
 
 	def chk014(self, state=None):
-		'''Snap: Toggle Rotation 15
+		'''Snap: Toggle Rotation
 		'''
 		cmb = self.transform_ui.cmb003
 		cmb.menu_.chk023.setChecked(True)
-		cmb.menu_.s023.setValue(22.5)
-		state = 1 if self.transform_submenu.chk014.isChecked() else 0
+		cmb.menu_.s023.setValue(11.25)
+		state = 1 if self.transform_submenu_ui.chk014.isChecked() else 0
 		self.chk023(state=state)
 
 

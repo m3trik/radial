@@ -227,6 +227,8 @@ class Main(QtWidgets.QStackedWidget):
 		:Parameters:
 			event = <QEvent>
 		'''
+		modifiers = self.qApp.keyboardModifiers()
+
 		if self.sb.uiLevel<3:
 			self.move(self.centerPos())
 
@@ -234,14 +236,15 @@ class Main(QtWidgets.QStackedWidget):
 			self.drawPath=[] #initiate the drawPath list that will contain points as the user moves along a hierarchical path.
 			self.drawPath.append(self.mapToGlobal(self.rect().center()))
 
-			if event.button()==QtCore.Qt.LeftButton:
-				self.setUi('cameras')
+			if not modifiers:
+				if event.button()==QtCore.Qt.LeftButton:
+					self.setUi('cameras')
 
-			elif event.button()==QtCore.Qt.MiddleButton:
-				self.setUi('editors')
+				elif event.button()==QtCore.Qt.MiddleButton:
+					self.setUi('editors')
 
-			elif event.button()==QtCore.Qt.RightButton:
-				self.setUi('main')
+				elif event.button()==QtCore.Qt.RightButton:
+					self.setUi('main')
 
 		return QtWidgets.QStackedWidget.mousePressEvent(self, event)
 
@@ -284,8 +287,9 @@ class Main(QtWidgets.QStackedWidget):
 
 		if event.button()==QtCore.Qt.LeftButton:
 
-			if modifiers==QtCore.Qt.ControlModifier:
+			if modifiers==QtCore.Qt.AltModifier:
 				self.repeatLastCommand()
+				self.hide()
 				return
 			else:
 				self.repeatLastUi()

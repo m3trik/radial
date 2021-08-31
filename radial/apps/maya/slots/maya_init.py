@@ -459,7 +459,9 @@ class Init(Slots):
 		faces = pm.ls(faces, flatten=1)
 		for face in faces:
 			borderFaces = Init.getBorderComponents(face, returnType='faces', borderType='component', flatten=True)
-			sets.append(set([f for f in borderFaces if f in faces]))
+			set_ = set([f for f in borderFaces if f in faces])
+			if set_:
+				sets.append(set_)
 
 		while len(sets)>0: #combine sets in 'sets' that share common elements.
 			first, rest = sets[0], sets[1:] #python 3: first, *rest = sets
@@ -1987,13 +1989,12 @@ class Init(Slots):
 			(dict) {'string attribute': current value}
 		'''
 		if not all((include, exclude)):
-			exclude = ['message', 'caching', 'frozen', 'isHistoricallyInteresting', 'nodeState', 'binMembership', 'output', 'edgeIdMap', 'miterAlong', 'message',
-					'axis', 'axisX', 'axisY', 'axisZ', 'paramWarn', 'uvSetName', 'createUVs', 'texture', 'maya70', 'inputPolymesh', 'maya2017Update1', 
-					'manipMatrix', 'inMeshCache', 'faceIdMap', 'subdivideNgons', 'useOldPolyArchitecture', 'inputComponents', 
-					'binMembership', 'maya2015', 'cacheInput', 'inputMatrix', 'forceParallel', 'autoFit', 'maya2016SP3', 'maya2017', 'caching', 'output', 'vertexIdMap', 
-					'useInputComp', 'worldSpace', 'taperCurve_Position', 'taperCurve_FloatValue', 'taperCurve_Interp',
-					]
-
+			exclude = ['message', 'caching', 'frozen', 'isHistoricallyInteresting', 'nodeState', 'binMembership', 'output', 'edgeIdMap', 'miterAlong',
+				'axis', 'axisX', 'axisY', 'axisZ', 'paramWarn', 'uvSetName', 'createUVs', 'texture', 'maya70', 'inputPolymesh', 'maya2017Update1', 
+				'manipMatrix', 'inMeshCache', 'faceIdMap', 'subdivideNgons', 'useOldPolyArchitecture', 'inputComponents', 'vertexIdMap',
+				'binMembership', 'maya2015', 'cacheInput', 'inputMatrix', 'forceParallel', 'autoFit', 'maya2016SP3', 'maya2017', 'caching', 'output',
+				'useInputComp', 'worldSpace', 'taperCurve_Position', 'taperCurve_FloatValue', 'taperCurve_Interp',
+			]
 		# print('node:', node); print('attr:', pm.listAttr(node))
 		attributes={} 
 		for attr in pm.listAttr(node):
@@ -2314,8 +2315,8 @@ class Init(Slots):
 			if not e in excludeFromInput:
 				try:
 					py = mel2py.mel2pyStr(e, pymelNamespace='pm')
-					for _ in excludeFromOutput:
-						py = py.strip(_)
+					for i in excludeFromOutput:
+						py = py.strip(i)
 				except:
 					py = e
 				python.append(py)
@@ -2411,7 +2412,7 @@ class Init(Slots):
 		editors			= '{}\n{}\n{}\n'.format("Editors", "All currently existing editors:", pm.lsUI (editors=True))
 		controls		= '{}\n{}\n{}\n'.format("Controls", "Controls created using ELF UI commands: [e.g. buttons, checkboxes, etc]", pm.lsUI (controls=True))
 		control_layouts = '{}\n{}\n{}\n'.format("Control Layouts", "Control layouts created using ELF UI commands: [e.g. formLayouts, paneLayouts, etc.]", pm.lsUI (controlLayouts=True))
-		menus				= '{}\n{}\n{}\n'.format("Menus", "Menus created using ELF UI commands:", pm.lsUI (menus=True))
+		menus			= '{}\n{}\n{}\n'.format("Menus", "Menus created using ELF UI commands:", pm.lsUI (menus=True))
 		menu_items	= '{}\n{}\n{}\n'.format("Menu Items", "Menu items created using ELF UI commands:", pm.lsUI (menuItems=True))
 		contexts		= '{}\n{}\n{}\n'.format("Tool Contexts", "Tool contexts created using ELF UI commands:", pm.lsUI (contexts=True))
 		output_text	= '{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}'.format(windows, panels, editors, menus, menu_items, controls, control_layouts, contexts)

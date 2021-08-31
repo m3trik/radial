@@ -242,7 +242,7 @@ class Create(Init):
 			elif index==1: #sphere:
 				node = rt.Sphere(radius=5, segs=12)
 			elif index==2: #cylinder:
-				node = rt.Cylinder(radius=5, height=10, sides=5, heightsegs=1, capsegs=1, smooth=True)
+				node = rt.Cylinder(radius=5, height=10, sides=12, heightsegs=1, capsegs=1, smooth=True)
 			elif index==3: #plane:
 				node = rt.Plane(width=5, length=5, widthsegs=1, lengthsegs=1)
 			elif index==4: #circle:

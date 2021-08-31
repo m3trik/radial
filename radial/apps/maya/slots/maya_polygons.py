@@ -412,6 +412,7 @@ class Polygons(Init):
 	def b022(self):
 		'''Attach
 		'''
+		# pm.mel.AttachComponent()
 		pm.mel.dR_connectTool()
 
 
@@ -466,10 +467,10 @@ class Polygons(Init):
 		if facetMask:
 			pm.mel.performPolyPoke(1)
 
-		if edgeMask:
+		elif edgeMask:
 			pm.polySubdivideEdge(ws=0, s=0, dv=1, ch=0)
 
-		if vertexMask:
+		elif vertexMask:
 			pm.mel.polyChamferVtx(0, 0.25, 0)
 
 
