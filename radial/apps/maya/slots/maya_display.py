@@ -128,7 +128,8 @@ class Display(Init):
 	def b009(self):
 		'''Toggle Material Override
 		'''
-		currentPanel = pm.getPanel(withFocus=True)
+		from maya.cmds import getPanel #pymel getPanel is broken in ver: 2022.
+		currentPanel = getPanel(withFocus=True)
 		state = pm.modelEditor(currentPanel, query=1, useDefaultMaterial=1)
 		pm.modelEditor(currentPanel, edit=1, useDefaultMaterial=not state)
 		self.viewPortMessage('Default Material Override: <hl>{}</hl>.'.format(state))

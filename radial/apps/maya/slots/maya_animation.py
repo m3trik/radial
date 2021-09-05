@@ -38,6 +38,23 @@ class Animation(Init):
 			cmb.setCurrentIndex(0)
 
 
+	def tb000(self, state=None):
+		'''Set Current Frame
+		'''
+		tb = self.current_ui.tb000
+		if state is 'setMenu':
+			tb.menu_.add('QSpinBox', setPrefix='Frame: ', setObjectName='s000', setMinMax_='0-10000 step1', setValue=1, setToolTip='')
+			tb.menu_.add('QCheckBox', setText='Relative', setObjectName='chk000', setChecked=True, setToolTip='')
+			tb.menu_.add('QCheckBox', setText='Update', setObjectName='chk001', setChecked=True, setToolTip='')
+			return
+
+		frame = self.invertOnModifier(tb.menu_.s000.value())
+		relative = tb.menu_.chk000.isChecked()
+		update = tb.menu_.chk001.isChecked()
+
+		Animation.setCurrentFrame(frame, relative=relative, update=update)
+
+
 	def b000(self):
 		''''''
 		pass
@@ -86,6 +103,26 @@ class Animation(Init):
 	def b009(self):
 		''''''
 		pass
+
+
+	@staticmethod
+	def setCurrentFrame(frame=1, relative=False, update=True):
+		'''Set the current frame on the timeslider.
+
+		:Parameters:
+		frame (int) = Desired from number.
+		relative (bool) = If True; the frame will be moved relative to 
+			it's current position using the frame value as a move amount.
+		update (bool) = Change the current time, but do not update the world. (default=True)
+
+		ex. call:
+			setCurrentFrame(24, relative=True, update=1)
+		'''
+		currentTime=0
+		if relative:
+			currentTime = pm.currentTime(query=True)
+
+		pm.currentTime(currentTime+frame, edit=True, update=update)
 
 
 

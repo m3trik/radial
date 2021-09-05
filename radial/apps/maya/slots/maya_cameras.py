@@ -328,9 +328,10 @@ class Cameras(Init):
 	def createCameraFromView():
 		'''Create a new camera base on the current view.
 		'''
-		curPanel = str(pm.getPanel(wf=1))
-		if pm.getPanel(typeOf=curPanel) == "modelPanel":
-			camera = str(pm.modelPanel(curPanel, q=1, cam=1))
+		from maya.cmds import getPanel #pymel getPanel is broken in ver: 2022.
+		curPanel = getPanel(withFocus=True)
+		if getPanel(typeOf=curPanel) == "modelPanel":
+			camera = pm.modelPanel(curPanel, q=1, cam=1)
 			newCameras = pm.duplicate(camera)
 			newCamera = newCameras[0]
 			pm.showHidden(newCamera)

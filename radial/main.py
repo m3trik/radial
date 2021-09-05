@@ -287,10 +287,8 @@ class Main(QtWidgets.QStackedWidget):
 
 		if event.button()==QtCore.Qt.LeftButton:
 
-			if modifiers==QtCore.Qt.AltModifier:
+			if modifiers in (QtCore.Qt.ControlModifier, QtCore.Qt.ControlModifier | QtCore.Qt.AltModifier):
 				self.repeatLastCommand()
-				self.hide()
-				return
 			else:
 				self.repeatLastUi()
 
@@ -375,8 +373,6 @@ class Main(QtWidgets.QStackedWidget):
 		'''
 		method = self.sb.prevCommand()
 		if callable(method):
-			name = self.sb.getUiNameFromMethod(method)
-			self.setUi(name)
 			method()
 		else:
 			print('# Warning: No recent commands in history. #')

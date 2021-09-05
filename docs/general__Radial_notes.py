@@ -19,23 +19,35 @@ fix: self.transform_submenu_ui
 
 
 
-maya_polygons
-O:\Cloud\Code\_scripts\radial\radial\apps\maya\slots\maya_polygons.py
-split and attach commands need testing.
-
-
-
+maya_selection
+trying to select every nth in loop
+# Traceback (most recent call last):
+#   File "O:/Cloud/Code/_scripts/radial/radial\apps\maya\slots\maya_selection.py", line 508, in tb000
+#     result = self.getEdgeLoop(selection, step=step)
+#   File "O:/Cloud/Code/_scripts/radial/radial\apps\maya\slots\maya_init.py", line 1193, in getEdgeLoop
+#     edges = Init.getEdgePath(pm.ls(edges, flatten=1), 'edgeLoop')
+#   File "O:/Cloud/Code/_scripts/radial/radial\apps\maya\slots\maya_init.py", line 1052, in getEdgePath
+#     componentNumbers = Init.getComponents(obj, 'edges', returnType='int', flatten=1).values()[0] #get the vertex numbers as integer values. ie. [818, 1380]
+# TypeError: 'dict_values' object is not subscriptable
+**also
+marquee / lasson selection type toggles not working.
+**also
 #   File "O:/Cloud/Code/_scripts/radial/radial\apps\maya\slots\maya_init.py"
 in 'getContigiousIslands' method:  line 462
 # TypeError: unhashable type: 'MeshFace' (cannot create a set from this MeshFace object list: [MeshFace('pCylinderShape1.f[11]'), MeshFace('pCylinderShape1.f[24]'), MeshFace('pCylinderShape1.f[34]'), MeshFace('pCylinderShape1.f[35]')])
 
 
 
-selection:
-marquee / lasson selection type toggles not working.
+maya_polygons
+O:\Cloud\Code\_scripts\radial\radial\apps\maya\slots\maya_polygons.py
+split and attach commands need testing.
+**also:
+// Warning: file: C:/Program Files/Autodesk/Maya2022/scripts/others/performPolyCollapse.mel line 46: Polygon edges or faces must be selected to collapse them // 
+support vertices by using merge command
 
 
 
+maya_rigging
 # Traceback (most recent call last):
 #   File "O:/Cloud/Code/_scripts/radial/radial\apps\maya\slots\maya_rigging.py", line 172, in tb002
 #     pm.parentConstraint(obj, objects[:-1], maintainOffset=1, weight=1)
@@ -46,14 +58,20 @@ marquee / lasson selection type toggles not working.
 #   File "C:\Program Files\Autodesk\Maya2022\Python37\lib\site-packages\pymel\internal\pmcmds.py", line 217, in parentConstraint_wrapped
 #     res = new_cmd(*new_args, **new_kwargs)
 # RuntimeError: Object cannot be constrained to itself.
+**also
+parent button not working
 
 
+
+maya_transform
 # Traceback (most recent call last):
 #   File "O:/Cloud/Code/_scripts/radial/radial\apps\maya\slots\maya_transform.py", line 416, in b005
 #     sel = rt.getCurrentSelection()
 # NameError: name 'rt' is not defined
 
 
+
+maya_mirror
 # Traceback (most recent call last):
 #   File "O:/Cloud/Code/_scripts/radial/radial\apps\maya\slots\maya_mirror.py", line 44, in chk000_3
 #     axis = self.getAxisFromCheckBoxes('chk000-3')
@@ -62,10 +80,9 @@ marquee / lasson selection type toggles not working.
 # AttributeError: 'Mirror' object has no attribute 'currentUi'
 
 
-maya macros (broken in maya 2022):
-isolateSelect -state 0 modelPanel4
 
 
+max_edit
 max_edit.py", line 66, in tb000
     self.meshCleanup(isolatedVerts=isolatedVerts, edgeAngle=edgeAngle, nGons=nGons, repair=repair)
   File "O:\Cloud\__portable\_scripts/max/slots\tk_slots_max_edit.py", line 268, in meshCleanup

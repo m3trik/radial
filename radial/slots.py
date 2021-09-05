@@ -422,6 +422,27 @@ class Slots(QtCore.QObject):
 		return collapsedList
 
 
+	def invertOnModifier(self, value):
+		'''Invert a numerical or boolean value if the alt key is pressed.
+
+		:Parameters:
+			value (int, float, bool) = The value to invert.
+		
+		:Return:
+			(int, float, bool)
+		'''
+		modifiers = self.main.qApp.keyboardModifiers()
+		if not modifiers in (QtCore.Qt.AltModifier, QtCore.Qt.ControlModifier | QtCore.Qt.AltModifier):
+			return value
+
+		if type(value) in (int, float):
+			result = abs(value) if value<0 else -value
+		elif type(value)==bool:
+			result = True if value else False
+
+		return result
+
+
 	# @classmethod
 	# def progress(cls, fn):
 	# 	'''A decorator for progressBar.

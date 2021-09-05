@@ -145,7 +145,8 @@ class Macros(Init):
 		'''
 		sel = pm.ls(selection=True)
 		if sel:
-			currentPanel = pm.getPanel(withFocus=True)
+			from maya.cmds import getPanel #pymel getPanel is broken in ver: 2022.
+			currentPanel = getPanel(withFocus=True)
 			state = pm.polyOptions(sel, query=True, wireBackCulling=True)[0]
 
 			if not state:
@@ -235,7 +236,8 @@ class Macros(Init):
 		'''hk_isolate_selected
 		Isolate the current selection.
 		'''
-		currentPanel = pm.getPanel(withFocus=1)
+		from maya.cmds import getPanel #pymel version of getPanel is broken in ver: 2022.
+		currentPanel = getPanel(withFocus=1)
 		state = pm.isolateSelect(currentPanel, query=1, state=1)
 		if state:
 			pm.isolateSelect(currentPanel, state=0)
@@ -344,7 +346,8 @@ class Macros(Init):
 		'''hk_wireframe_on_shaded
 		Toggle wireframe on shaded.
 		'''
-		currentPanel = pm.getPanel(withFocus=True)
+		from maya.cmds import getPanel #pymel getPanel is broken in ver: 2022.
+		currentPanel = getPanel(withFocus=True)
 		state = Macros.cycle([0,1,2], 'hk_wireframe_on_shaded')
 
 		if state is 0:
