@@ -256,11 +256,11 @@ class Rigging(Init):
 			suffix (str) = A string appended to the end of the created locators name. (default: '_LOC') '_LOC#'
 			stripDigits (bool) = Strip numeric characters from the string. If the resulting name is not unique, maya will append a trailing digit. (default=False)
 			strip (str) = Strip a specific character set from the locator name. The locators name is based off of the selected objects name. (default=None)
-			parent (bool) = Parent to object to the locator. (not valid with component selections) (default=False)
+			parent (bool) = Parent to object to the locator. (default=False)
 			scale (float) = The scale of the locator. (default=1)
-			lockTranslate (bool) = Lock the translate values of the child object. (not valid with component selections) (default=False)
-			lockRotation (bool) = Lock the rotation values of the child object. (not valid with component selections) (default=False)
-			lockScale (bool) = Lock the scale values of the child object. (not valid with component selections) (default=False)
+			lockTranslate (bool) = Lock the translate values of the child object. (default=False)
+			lockRotation (bool) = Lock the rotation values of the child object. (default=False)
+			lockScale (bool) = Lock the scale values of the child object. (default=False)
 			_fullPath (bool) = Internal use only (recursion). Use full path names for Dag objects. This can prevent naming conflicts when creating the locator. (default=False)
 
 		ex. call:
@@ -274,23 +274,41 @@ class Rigging(Init):
 			print (error)
 			return error
 
-		def formatName(name, stripDigits, strip, suffix):
+		def _formatName(name, stripDigits=stripDigits, strip=strip, suffix=suffix):
 			if stripDigits:
 				name_ = ''.join([i for i in name if not i.isdigit()])	
 			return name_.replace(strip, '')+suffix
+
+		def _parent(obj, loc, parent=parent):
+			if parent: #parent
+				objParent = pm.listRelatives(obj, parent=1)
+				pm.parent(obj, loc)
+				pm.parent(loc, objParent)
+
+		def _lockChildAttributes(obj, lockTranslate=lockTranslate, lockRotation=lockRotation, lockScale=lockScale):
+			if lockTranslate: #lock translation values
+				[pm.setAttr('{}.{}'.format(obj, attr), lock=True) for attr in ('tx','ty','tz')]
+
+			if lockRotation: #lock rotation values
+				[pm.setAttr('{}.{}'.format(obj, attr), lock=True) for attr in ('rx','ry','rz')]
+					
+			if lockScale: #lock scale values
+				[pm.setAttr('{}.{}'.format(obj, attr), lock=True) for attr in ('sx','sy','sz')]
+
+		_fullPath = lambda: Rigging.createLocatorAtSelection(suffix=suffix, stripDigits=stripDigits, 
+					strip=strip, parent=parent, scale=scale, _fullPath=True, 
+					lockTranslate=lockTranslate, lockRotation=lockRotation, lockScale=lockScale)
 
 		pm.undoInfo(openChunk=1)
 
 		if sel_verts: #vertex selection
 
-			locName_ = sel_verts[0].split('.')[0]
-			locName = formatName(locName_, stripDigits, strip, suffix)
+			objName = sel_verts[0].split('.')[0]
+			locName = _formatName(objName, stripDigits, strip, suffix)
 
 			loc = pm.spaceLocator(name=locName)
 			if not any([loc, _fullPath]): #if locator creation fails; try again using the objects full path name.
-				Rigging.createLocatorAtSelection(suffix=suffix, stripDigits=stripDigits, 
-					strip=strip, parent=parent, scale=scale, _fullPath=True, 
-					lockTranslate=lockTranslate, lockRotation=lockRotation, lockScale=lockScale)
+				_fullPath()
 
 			pm.scale(scale, scale, scale)
 
@@ -298,17 +316,18 @@ class Rigging(Init):
 			pos = ((bb[0] + bb[3]) / 2, (bb[1] + bb[4]) / 2, (bb[2] + bb[5]) / 2)
 			pm.move(pos[0], pos[1], pos[2], loc)
 
+			_parent(objName, loc)
+			_lockChildAttributes(objName)
+
 		else: #object selection
 			for obj in sel:
 
-				locName_ = obj.name()
-				locName = formatName(locName_, stripDigits, strip, suffix)
+				objName = obj.name()
+				locName = _formatName(objName, stripDigits, strip, suffix)
 
 				loc = pm.spaceLocator(name=locName)
 				if not any([loc, _fullPath]): #if locator creation fails; try again using the objects fullpath name.
-					Rigging.createLocatorAtSelection(suffix=suffix, stripDigits=stripDigits, 
-						strip=strip, parent=parent, scale=scale, _fullPath=True, 
-						lockTranslate=lockTranslate, lockRotation=lockRotation, lockScale=lockScale)
+					_fullPath()
 
 				pm.scale(scale, scale, scale)
 
@@ -316,17 +335,8 @@ class Rigging(Init):
 				pm.delete(tempConst)
 				pm.select(clear=True)
 
-				if parent: #parent 
-					pm.parent(obj, loc)
-
-				if lockTranslate: #lock translation values
-					[pm.setAttr('{}.{}'.format(obj, attr), lock=True) for attr in ('tx','ty','tz')]
-
-				if lockRotation: #lock rotation values
-					[pm.setAttr('{}.{}'.format(obj, attr), lock=True) for attr in ('rx','ry','rz')]
-						
-				if lockScale: #lock scale values
-					[pm.setAttr('{}.{}'.format(obj, attr), lock=True) for attr in ('sx','sy','sz')]
+				_parent(obj, loc)
+				_lockChildAttributes(obj)
 
 		pm.undoInfo(closeChunk=1)
 
