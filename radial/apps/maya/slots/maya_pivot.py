@@ -104,7 +104,7 @@ class Pivot(Init):
 	def b004(self):
 		'''Bake Pivot
 		'''
-		mel.eval("BakeCustomPivot;")
+		pm.mel.BakeCustomPivot()
 
 
 	@staticmethod

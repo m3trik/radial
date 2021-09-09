@@ -134,6 +134,7 @@ class Polygons(Init):
 		return node
 
 
+	@Slots.message
 	def tb002(self, state=None):
 		'''Combine
 		'''
@@ -144,9 +145,20 @@ class Polygons(Init):
 
 		# pm.polyUnite( 'plg1', 'plg2', 'plg3', name='result' ) #for future reference. if more functionality is needed use polyUnite
 		if tb.menu_.chk000.isChecked():
-			pm.polyUnite(ch=1, mergeUVSets=1, centerPivot=1)
+			sel = pm.ls(sl=1, objectsOnly=1)
+			if not sel:
+				return '# Error: Nothing selected. #'
+			objName = sel[0].name()
+			objParent = pm.listRelatives(objName, parent=1)
+			#combine
+			newObj = pm.polyUnite(ch=1, mergeUVSets=1, centerPivot=1)
+			#rename using the first selected object
+			pm.bakePartialHistory(objName, all=True)
+			objName_ = pm.rename(newObj[0], objName)
+			#reparent
+			pm.parent(objName_, objParent)
 		else:
-			mel.eval('CombinePolygons;')
+			pm.mel.CombinePolygons()
 
 
 	@Init.attr
@@ -443,6 +455,7 @@ class Polygons(Init):
 	def b043(self):
 		'''Target Weld
 		'''
+		pm.select(deselect=True)
 		pm.mel.dR_targetWeldTool()
 
 

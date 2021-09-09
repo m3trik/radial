@@ -160,13 +160,13 @@ class EventFactoryFilter(QtCore.QObject):
 
 
 		widgetsUnderMouse.sort(key=len) #sort 'widgetsUnderMouse' by ascending length so that lowest level child widgets get grabMouse last.
-		if widgetsUnderMouse:
-			for widgetList in widgetsUnderMouse:
-				widget = widgetList[0]
-				widget.grabMouse() #set widget to receive mouse events.
-				self._mouseGrabber = widget
-				# print (widget.objectName())
-				# print('grab:', widget.mouseGrabber().objectName(), '(childEvents)')
+		for widgetList in widgetsUnderMouse:
+			widget = widgetList[0]
+			widget.grabMouse() #set widget to receive mouse events.
+			self._mouseGrabber = widget
+			break
+			# print (widget.objectName())
+			# print('grab:', widget.mouseGrabber().objectName(), '(childEvents)')
 
 
 	@staticmethod

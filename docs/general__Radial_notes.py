@@ -18,6 +18,38 @@ fix: self.transform_submenu_ui
 # ======================================================================
 
 
+main module / child events
+not registering mouse enter events properly to switch to the correct ui.
+highlighting on mouse over works correctly.
+
+
+
+# Traceback (most recent call last):
+#   File "O:/Cloud/Code/_scripts/radial/radial\apps\maya\slots\maya_nurbs.py", line 159, in tb001
+#     Nurbs.loft(uniform=uniform, close=close, degree=degree, autoReverse=autoReverse, sectionSpans=sectionSpans, range_=range_, polygon=polygon, reverseSurfaceNormals=reverseSurfaceNormals, angleLoftBetweenTwoCurves=angleLoftBetweenTwoCurves, angleLoftSpans=angleLoftSpans)
+#   File "O:/Cloud/Code/_scripts/radial/radial\apps\maya\slots\maya_init.py", line 137, in wrapper
+#     fn(*args, **kwargs)
+#   File "O:/Cloud/Code/_scripts/radial/radial\apps\maya\slots\maya_nurbs.py", line 335, in loft
+#     result = Init.angleLoftBetweenTwoCurves(start, end, count=angleLoftSpans, cleanup=True, uniform=uniform, close=close, autoReverse=autoReverse, degree=degree, sectionSpans=sectionSpans, range=range_, polygon=0, reverseSurfaceNormals=reverseSurfaceNormals)
+#   File "O:/Cloud/Code/_scripts/radial/radial\apps\maya\slots\maya_init.py", line 137, in wrapper
+#     fn(*args, **kwargs)
+#   File "O:/Cloud/Code/_scripts/radial/radial\apps\maya\slots\maya_init.py", line 1773, in angleLoftBetweenTwoCurves
+#     path = Init.createCurveBetweenTwoObjects(start, end)
+#   File "O:/Cloud/Code/_scripts/radial/radial\apps\maya\slots\maya_init.py", line 137, in wrapper
+#     fn(*args, **kwargs)
+#   File "O:/Cloud/Code/_scripts/radial/radial\apps\maya\slots\maya_init.py", line 1660, in createCurveBetweenTwoObjects
+#     v1, v2 = Init.getCrossProductOfCurves([start, end], normalize=1, values=1)
+#   File "O:/Cloud/Code/_scripts/radial/radial\apps\maya\slots\maya_init.py", line 734, in getCrossProductOfCurves
+#     cvPos = Init.getCvInfo(curve, 'position')
+#   File "O:/Cloud/Code/_scripts/radial/radial\apps\maya\slots\maya_init.py", line 665, in getCvInfo
+#     parameters = Init.getClosestCV(cvs, curve) #use getClosestCV to get the parameter location for each of the curves CVs.
+#   File "O:/Cloud/Code/_scripts/radial/radial\apps\maya\slots\maya_init.py", line 137, in wrapper
+#     fn(*args, **kwargs)
+#   File "O:/Cloud/Code/_scripts/radial/radial\apps\maya\slots\maya_init.py", line 624, in getClosestCV
+#     result[i] = p
+# TypeError: unhashable type: 'NurbsCurveCV'
+
+
 
 maya_selection
 trying to select every nth in loop

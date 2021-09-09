@@ -145,8 +145,7 @@ class Macros(Init):
 		'''
 		sel = pm.ls(selection=True)
 		if sel:
-			from maya.cmds import getPanel #pymel getPanel is broken in ver: 2022.
-			currentPanel = getPanel(withFocus=True)
+			currentPanel = Macros.getPanel(withFocus=True)
 			state = pm.polyOptions(sel, query=True, wireBackCulling=True)[0]
 
 			if not state:
@@ -236,8 +235,7 @@ class Macros(Init):
 		'''hk_isolate_selected
 		Isolate the current selection.
 		'''
-		from maya.cmds import getPanel #pymel version of getPanel is broken in ver: 2022.
-		currentPanel = getPanel(withFocus=1)
+		currentPanel = Macros.getPanel(withFocus=1)
 		state = pm.isolateSelect(currentPanel, query=1, state=1)
 		if state:
 			pm.isolateSelect(currentPanel, state=0)
@@ -346,8 +344,7 @@ class Macros(Init):
 		'''hk_wireframe_on_shaded
 		Toggle wireframe on shaded.
 		'''
-		from maya.cmds import getPanel #pymel getPanel is broken in ver: 2022.
-		currentPanel = getPanel(withFocus=True)
+		currentPanel = Macros.getPanel(withFocus=True)
 		state = Macros.cycle([0,1,2], 'hk_wireframe_on_shaded')
 
 		if state is 0:
@@ -385,7 +382,7 @@ class Macros(Init):
 		'''hk_wireframe
 		Toggle wireframe/shaded/shaded w/texture display.
 		'''
-		currentPanel = pm.getPanel(withFocus=1)
+		currentPanel = Macros.getPanel(withFocus=True)
 		state = pm.modelEditor(currentPanel, query=1, displayAppearance=1)
 		displayTextures = pm.modelEditor(currentPanel, query=1, displayTextures=1)
 
@@ -408,7 +405,7 @@ class Macros(Init):
 		'''hk_shading
 		Toggle viewport shading.
 		'''
-		currentPanel = pm.getPanel (withFocus=1)
+		currentPanel = Macros.getPanel(withFocus=True)
 		displayAppearance = pm.modelEditor (currentPanel, query=1, displayAppearance=1)
 		displayTextures = pm.modelEditor (currentPanel, query=1, displayTextures=1)
 		displayLights = pm.modelEditor (currentPanel, query=1, displayLights=1)
@@ -639,12 +636,12 @@ class Macros(Init):
 			pm.mel.source('HotboxControlsMenu')
 
 		#toggle panel menus
-		panels=pm.getPanel(allPanels=1)
-		state=int(pm.panel(panels[0], menuBarVisible=1, query=1))
+		panels = Macros.getPanel(allPanels=1)
+		state = int(pm.panel(panels[0], menuBarVisible=1, query=1))
 		for panel in panels:
 			pm.panel(panel, edit=1, menuBarVisible=(not state))
 			# int $state = `panel -query -menuBarVisible $panel`;
-			
+
 		pm.mel.toggleMainMenubar(not state)
 		#toggle main menubar
 		#toggle titlebar
@@ -671,7 +668,22 @@ class Macros(Init):
 		# 		pm.optionVar(iv=("workspacesInFullScreenUIMode", (not inFullScreenMode)))
 				
 
+	@staticmethod
+	def getPanel(*args, **kwargs):
+		'''Returns panel and panel configuration information.
+		A fix for broken pymel class.
 
+		:Parameters:
+			[allConfigs=boolean], [allPanels=boolean], [allScriptedTypes=boolean], [allTypes=boolean], [configWithLabel=string], [containing=string], [invisiblePanels=boolean], [scriptType=string], [type=string], [typeOf=string], [underPointer=boolean], [visiblePanels=boolean], [withFocus=boolean], [withLabel=string])
+
+		:Return:
+			(str) An array of panel names.
+		'''
+		from maya.cmds import getPanel #pymel getPanel is broken in ver: 2022.
+
+		result = getPanel(*args, **kwargs)
+
+		return result
 
 
 

@@ -32,14 +32,14 @@ class Preferences(Init):
 			from PySide2 import QtWidgets, QtCore
 			list_ = QtWidgets.QStyleFactory.keys() #get styles from QStyleFactory
 			cmb.addItems_(list_)
-			try:
+			try: #get/set current value
 				index = self.styleComboBox.findText(QtGui.qApp.style().objectName(), QtCore.Qt.MatchFixedString)
 				cmb.setCurrentIndex(index)
 			except:
 				pass
 			return
 
-		if index is not None:
+		if index>0:
 			self.main.qApp.setStyle(cmb.items[index])
 
 
@@ -51,14 +51,14 @@ class Preferences(Init):
 		if index is 'setMenu':
 			list_ = ['millimeter','centimeter','meter','kilometer','inch','foot','yard','mile']
 			cmb.addItems_(list_)
-			try:
+			try: #get/set current value
 				index = cmb.items.index(pm.currentUnit(query=1, fullName=1, linear=1)) #get/set current linear value
 				cmb.setCurrentIndex(index)
 			except:
 				pass
 			return
 
-		if index is not None:
+		if index>0:
 			pm.currentUnit(linear=cmb.items[index]) #millimeter | centimeter | meter | kilometer | inch | foot | yard | mile
 
 
@@ -73,14 +73,14 @@ class Preferences(Init):
 			list_ = [k+v for k,v in l.items()] #ie. ['15 fps: game','24 fps: film', ..etc]
 			values = [i[1] for i in l] #ie. ['game','film', ..etc]
 			cmb.addItems_(list_)
-			try:
+			try: #get/set current value
 				index = cmb.items.index(pm.currentUnit(query=1, fullName=1, time=1)) #get/set current time value
 				cmb.setCurrentIndex(index)
 			except:
 				pass
 			return
 
-		if index is not None:
+		if index>0:
 			pm.currentUnit(time=cmb.items[index].split()[-1]) #game | film | pal | ntsc | show | palf | ntscf
 
 

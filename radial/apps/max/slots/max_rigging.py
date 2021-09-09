@@ -179,12 +179,14 @@ class Rigging(Init):
 		if state is 'setMenu':
 			tb.menu_.add('QLineEdit', setPlaceholderText='Suffix:', setText='', setObjectName='t000', setToolTip='A string appended to the end of the created locators name.')
 			tb.menu_.add('QCheckBox', setText='Strip Digits', setObjectName='chk005', setChecked=True, setToolTip='Strip numeric characters from the string. If the resulting name is not unique, maya will append a trailing digit.')
-			tb.menu_.add('QLineEdit', setPlaceholderText='Strip:', setText='', setObjectName='t001', setToolTip='Strip a specific character set from the locator name. The locators name is based off of the selected objects name.')
-			tb.menu_.add('QCheckBox', setText='Parent', setObjectName='chk006', setChecked=True, setToolTip='Parent to object to the locator. (not valid with component selections)')
-			tb.menu_.add('QDoubleSpinBox', setPrefix='Scale: ', setObjectName='s001', setMinMax_='.000-1000 step1', setValue=10, setToolTip='The scale of the locator.')
-			tb.menu_.add('QCheckBox', setText='Lock Child Translate', setObjectName='chk007', setChecked=True, setToolTip='Lock the translate values of the child object. (not valid with component selections)')
-			tb.menu_.add('QCheckBox', setText='Lock Child Rotation', setObjectName='chk008', setChecked=True, setToolTip='Lock the rotation values of the child object. (not valid with component selections)')
-			tb.menu_.add('QCheckBox', setText='Lock Child Scale', setObjectName='chk009', setChecked=False, setToolTip='Lock the scale values of the child object. (not valid with component selections)')
+			tb.menu_.add('QLineEdit', setPlaceholderText='Strip:', setText='_GEO', setObjectName='t001', setToolTip='Strip a specific character set from the locator name. The locators name is based off of the selected objects name.')
+			tb.menu_.add('QCheckBox', setText='Parent', setObjectName='chk006', setChecked=True, setToolTip='Parent to object to the locator.')
+			tb.menu_.add('QDoubleSpinBox', setPrefix='Scale: ', setObjectName='s001', setMinMax_='.000-1000 step1', setValue=1, setToolTip='The scale of the locator.')
+			tb.menu_.add('QCheckBox', setText='Freeze Child Transforms', setObjectName='chk010', setChecked=True, setToolTip='Freeze transforms on the child object. (Valid only with parent flag).')
+			tb.menu_.add('QCheckBox', setText='Bake Child Pivot', setObjectName='chk011', setChecked=True, setToolTip='Bake pivot positions on the child object. (Valid only with parent flag).')
+			tb.menu_.add('QCheckBox', setText='Lock Child Translate', setObjectName='chk007', setChecked=True, setToolTip='Lock the translate values of the child object.')
+			tb.menu_.add('QCheckBox', setText='Lock Child Rotation', setObjectName='chk008', setChecked=True, setToolTip='Lock the rotation values of the child object.')
+			tb.menu_.add('QCheckBox', setText='Lock Child Scale', setObjectName='chk009', setChecked=False, setToolTip='Lock the scale values of the child object.')
 			return
 
 		suffix = tb.menu_.t000.text()
@@ -195,8 +197,10 @@ class Rigging(Init):
 		lockTranslate = tb.menu_.chk007.isChecked()
 		lockRotation = tb.menu_.chk008.isChecked()
 		lockScale = tb.menu_.chk009.isChecked()
+		freezeChildTransforms = tb.menu_.chk010.isChecked()
+		bakeChildPivot = tb.menu_.chk011.isChecked()
 
-		Rigging.createLocatorAtSelection(suffix=suffix, stripDigits=stripDigits, strip=strip, scale=scale, parent=parent, lockTranslate=lockTranslate, lockRotation=lockRotation, lockScale=lockScale)
+		Rigging.createLocatorAtSelection(suffix=suffix, stripDigits=stripDigits, strip=strip, scale=scale, parent=parent, bakeChildPivot=bakeChildPivot, freezeChildTransforms=freezeChildTransforms, lockTranslate=lockTranslate, lockRotation=lockRotation, lockScale=lockScale)
 
 
 	def b001(self):
@@ -248,7 +252,7 @@ class Rigging(Init):
 
 
 	@staticmethod
-	def createLocatorAtSelection(suffix='_LOC', stripDigits=False, strip='', parent=False, scale=1, lockTranslate=False, lockRotation=False, lockScale=False, _fullPath=False):
+	def createLocatorAtSelection(suffix='_LOC', stripDigits=False, strip='', parent=False, freezeChildTransforms=False, bakeChildPivot=False, scale=1, lockTranslate=False, lockRotation=False, lockScale=False, _fullPath=False):
 		'''Create locators with the same transforms as any selected object(s).
 		If there are vertices selected it will create a locator at the center of the selected vertices bounding box.
 
@@ -256,16 +260,19 @@ class Rigging(Init):
 			suffix (str) = A string appended to the end of the created locators name. (default: '_LOC') '_LOC#'
 			stripDigits (bool) = Strip numeric characters from the string. If the resulting name is not unique, maya will append a trailing digit. (default=False)
 			strip (str) = Strip a specific character set from the locator name. The locators name is based off of the selected objects name. (default=None)
-			parent (bool) = Parent to object to the locator. (default=False)
 			scale (float) = The scale of the locator. (default=1)
+			parent (bool) = Parent to object to the locator. (default=False)
+			freezeChildTransforms (bool) = Freeze transforms on the child object. (Valid only with parent flag) (default=False)
+			bakeChildPivot (bool) = Bake pivot positions on the child object. (Valid only with parent flag) (default=False)
 			lockTranslate (bool) = Lock the translate values of the child object. (default=False)
 			lockRotation (bool) = Lock the rotation values of the child object. (default=False)
 			lockScale (bool) = Lock the scale values of the child object. (default=False)
 			_fullPath (bool) = Internal use only (recursion). Use full path names for Dag objects. This can prevent naming conflicts when creating the locator. (default=False)
 
 		ex. call:
-			createLocatorAtSelection(strip='_GEO', suffix='', stripDigits=True, scale=10, parent=True, lockTranslate=True, lockRotation=True)
+			createLocatorAtSelection(strip='_GEO', suffix='', stripDigits=1, freezeChildTransforms=1, bakeChildPivot=1, parent=1, lockTranslate=1, lockRotation=1)
 		'''
+		import pymel.core as pm
 		sel = pm.ls(selection=True, long=_fullPath)
 		sel_verts = pm.filterExpand(sm=31)
 
@@ -279,8 +286,12 @@ class Rigging(Init):
 				name_ = ''.join([i for i in name if not i.isdigit()])	
 			return name_.replace(strip, '')+suffix
 
-		def _parent(obj, loc, parent=parent):
+		def _parent(obj, loc, parent=parent, freezeChildTransforms=freezeChildTransforms, bakeChildPivot=bakeChildPivot):
 			if parent: #parent
+				if freezeChildTransforms:
+					pm.makeIdentity(obj, apply=True, t=1, r=1, s=1, normal=2) #normal parameter: 1=the normals on polygonal objects will be frozen. 2=the normals on polygonal objects will be frozen only if its a non-rigid transformation matrix.
+				if bakeChildPivot:
+					pm.select(obj); pm.mel.BakeCustomPivot() #bake pivot on child object.
 				objParent = pm.listRelatives(obj, parent=1)
 				pm.parent(obj, loc)
 				pm.parent(loc, objParent)

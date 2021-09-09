@@ -332,10 +332,12 @@ class Cameras(Init):
 		curPanel = getPanel(withFocus=True)
 		if getPanel(typeOf=curPanel) == "modelPanel":
 			camera = pm.modelPanel(curPanel, q=1, cam=1)
-			newCameras = pm.duplicate(camera)
-			newCamera = newCameras[0]
+			newCamera = pm.duplicate(camera)[0]
 			pm.showHidden(newCamera)
-			pm.mel.lookThroughModelPanel(newCamera, curPanel)
+			# pm.mel.lookThroughModelPanel(newCamera, curPanel)
+			newCamera_ = pm.rename(newCamera, 'Camera')
+			print (newCamera_)
+			return newCamera_
 
 
 
