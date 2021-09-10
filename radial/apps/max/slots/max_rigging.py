@@ -180,8 +180,8 @@ class Rigging(Init):
 			tb.menu_.add('QLineEdit', setPlaceholderText='Suffix:', setText='', setObjectName='t000', setToolTip='A string appended to the end of the created locators name.')
 			tb.menu_.add('QCheckBox', setText='Strip Digits', setObjectName='chk005', setChecked=True, setToolTip='Strip numeric characters from the string. If the resulting name is not unique, maya will append a trailing digit.')
 			tb.menu_.add('QLineEdit', setPlaceholderText='Strip:', setText='_GEO', setObjectName='t001', setToolTip='Strip a specific character set from the locator name. The locators name is based off of the selected objects name.')
-			tb.menu_.add('QCheckBox', setText='Parent', setObjectName='chk006', setChecked=True, setToolTip='Parent to object to the locator.')
 			tb.menu_.add('QDoubleSpinBox', setPrefix='Scale: ', setObjectName='s001', setMinMax_='.000-1000 step1', setValue=1, setToolTip='The scale of the locator.')
+			tb.menu_.add('QCheckBox', setText='Parent', setObjectName='chk006', setChecked=True, setToolTip='Parent to object to the locator.')
 			tb.menu_.add('QCheckBox', setText='Freeze Child Transforms', setObjectName='chk010', setChecked=True, setToolTip='Freeze transforms on the child object. (Valid only with parent flag).')
 			tb.menu_.add('QCheckBox', setText='Bake Child Pivot', setObjectName='chk011', setChecked=True, setToolTip='Bake pivot positions on the child object. (Valid only with parent flag).')
 			tb.menu_.add('QCheckBox', setText='Lock Child Translate', setObjectName='chk007', setChecked=True, setToolTip='Lock the translate values of the child object.')
@@ -201,6 +201,39 @@ class Rigging(Init):
 		bakeChildPivot = tb.menu_.chk011.isChecked()
 
 		Rigging.createLocatorAtSelection(suffix=suffix, stripDigits=stripDigits, strip=strip, scale=scale, parent=parent, bakeChildPivot=bakeChildPivot, freezeChildTransforms=freezeChildTransforms, lockTranslate=lockTranslate, lockRotation=lockRotation, lockScale=lockScale)
+
+
+	def tb004(self, state=None):
+		'''Lock/Unlock Attributes
+		'''
+		tb = self.current_ui.tb004
+		if state is 'setMenu':
+			tb.menu_.add('QCheckBox', setText='Translate', setObjectName='chk012', setChecked=False, setToolTip='')
+			tb.menu_.add('QCheckBox', setText='Rotate', setObjectName='chk013', setChecked=False, setToolTip='')
+			tb.menu_.add('QCheckBox', setText='Scale', setObjectName='chk014', setChecked=False, setToolTip='')
+
+			self.connect_((tb.menu_.chk012,tb.menu_.chk013,tb.menu_.chk014), 'toggled', 
+				[lambda state: self.rigging_ui.tb004.setText('Lock Attributes' 
+					if any((tb.menu_.chk012.isChecked(),tb.menu_.chk013.isChecked(),tb.menu_.chk014.isChecked())) else 'Unlock Attributes'), 
+				lambda state: self.rigging_submenu_ui.tb004.setText('Lock Attributes' 
+					if any((tb.menu_.chk012.isChecked(),tb.menu_.chk013.isChecked(),tb.menu_.chk014.isChecked())) else 'Unlock Attributes')])
+			return
+
+
+		lockTranslate = tb.menu_.chk012.isChecked()
+		lockRotation = tb.menu_.chk013.isChecked()
+		lockScale = tb.menu_.chk014.isChecked()
+
+		sel = pm.ls(selection=True, transforms=1, long=True)
+		for obj in sel:
+
+			attrs_and_state = {
+				('tx','ty','tz'):lockTranslate, #ex. ('tx','ty','tz'):False
+				('rx','ry','rz'):lockRotation, 
+				('sx','sy','sz'):lockScale
+			}
+
+			[pm.setAttr('{}.{}'.format(obj, i), lock=v) for i in k for k, v in attrs_and_state.items()]
 
 
 	def b001(self):
@@ -252,7 +285,7 @@ class Rigging(Init):
 
 
 	@staticmethod
-	def createLocatorAtSelection(suffix='_LOC', stripDigits=False, strip='', parent=False, freezeChildTransforms=False, bakeChildPivot=False, scale=1, lockTranslate=False, lockRotation=False, lockScale=False, _fullPath=False):
+	def createLocatorAtSelection(suffix='_LOC', stripDigits=False, strip='', scale=1, parent=False, freezeChildTransforms=False, bakeChildPivot=False, lockTranslate=False, lockRotation=False, lockScale=False, _fullPath=False):
 		'''Create locators with the same transforms as any selected object(s).
 		If there are vertices selected it will create a locator at the center of the selected vertices bounding box.
 
@@ -270,10 +303,10 @@ class Rigging(Init):
 			_fullPath (bool) = Internal use only (recursion). Use full path names for Dag objects. This can prevent naming conflicts when creating the locator. (default=False)
 
 		ex. call:
-			createLocatorAtSelection(strip='_GEO', suffix='', stripDigits=1, freezeChildTransforms=1, bakeChildPivot=1, parent=1, lockTranslate=1, lockRotation=1)
+			createLocatorAtSelection(strip='_GEO', suffix='', stripDigits=True, scale=10, parent=True, lockTranslate=True, lockRotation=True)
 		'''
 		import pymel.core as pm
-		sel = pm.ls(selection=True, long=_fullPath)
+		sel = pm.ls(selection=True, long=_fullPath, objectsOnly=True)
 		sel_verts = pm.filterExpand(sm=31)
 
 		if not sel:
@@ -297,14 +330,16 @@ class Rigging(Init):
 				pm.parent(loc, objParent)
 
 		def _lockChildAttributes(obj, lockTranslate=lockTranslate, lockRotation=lockRotation, lockScale=lockScale):
+			setAttrs = lambda attrs: [pm.setAttr('{}.{}'.format(obj, attr), lock=True) for attr in attrs]
+
 			if lockTranslate: #lock translation values
-				[pm.setAttr('{}.{}'.format(obj, attr), lock=True) for attr in ('tx','ty','tz')]
+				setAttrs(('tx','ty','tz'))
 
 			if lockRotation: #lock rotation values
-				[pm.setAttr('{}.{}'.format(obj, attr), lock=True) for attr in ('rx','ry','rz')]
+				setAttrs(('rx','ry','rz'))
 					
 			if lockScale: #lock scale values
-				[pm.setAttr('{}.{}'.format(obj, attr), lock=True) for attr in ('sx','sy','sz')]
+				setAttrs(('sx','sy','sz'))
 
 		_fullPath = lambda: Rigging.createLocatorAtSelection(suffix=suffix, stripDigits=stripDigits, 
 					strip=strip, parent=parent, scale=scale, _fullPath=True, 
@@ -333,8 +368,7 @@ class Rigging(Init):
 		else: #object selection
 			for obj in sel:
 
-				objName = obj.name()
-				locName = _formatName(objName, stripDigits, strip, suffix)
+				locName = _formatName(obj.name(), stripDigits, strip, suffix)
 
 				loc = pm.spaceLocator(name=locName)
 				if not any([loc, _fullPath]): #if locator creation fails; try again using the objects fullpath name.
@@ -347,7 +381,7 @@ class Rigging(Init):
 				pm.select(clear=True)
 
 				_parent(obj, loc)
-				_lockChildAttributes(obj)
+				_lockChildAttributes(objName)
 
 		pm.undoInfo(closeChunk=1)
 

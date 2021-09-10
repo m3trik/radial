@@ -202,7 +202,7 @@
    <widget class="ToolButton" name="tb001">
     <property name="geometry">
      <rect>
-      <x>155</x>
+      <x>145</x>
       <y>210</y>
       <width>86</width>
       <height>19</height>

@@ -18,10 +18,19 @@ fix: self.transform_submenu_ui
 # ======================================================================
 
 
-main module / child events
-not registering mouse enter events properly to switch to the correct ui.
-highlighting on mouse over works correctly.
+# Traceback (most recent call last):
+#   File "O:/Cloud/Code/_scripts/radial/radial\apps\maya\slots\maya_rigging.py", line 240, in tb004
+#     [pm.setAttr('{}.{}'.format(obj, i), lock=v) for i in k for k, v in attrs_and_state.items()]
+# NameError: name 'k' is not defined
 
+
+maya_polygons
+merge vertices default too low
+bevel default too low
+
+maya_edit
+clean
+repair and select works, but not repair
 
 
 # Traceback (most recent call last):

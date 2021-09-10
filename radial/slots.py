@@ -102,11 +102,15 @@ class Slots(QtCore.QObject):
 
 		:Parameters:
 			widgets (str)(obj)(list) = ie. 'chk000-2' or [tb.menu_.chk000, tb.menu_.chk001]
-			signals (str)(list) = ie. 'toggled' or [toggled]
+			signals (str)(list) = ie. 'toggled' or ['toggled']
 			slots (obj)(list) = ie. self.cmb002 or [self.cmb002]
 			class_ (obj)(list) = if the widgets arg is given as a string, then the class_ it belongs to can be explicitly given. else, the current ui will be used.
 
-		ex call: self.connect_('chk000-2', 'toggled', self.cmb002, tb.menu_) *or self.connect_([tb.menu_.chk000, tb.menu_.chk001], 'toggled', self.cmb002)
+		ex call: self.connect_('chk000-2', 'toggled', self.cmb002, tb.menu_) 
+		*or self.connect_([tb.menu_.chk000, tb.menu_.chk001], 'toggled', self.cmb002)
+		*or self.connect_(tb.menu_.chk015, 'toggled', 
+				[lambda state: self.rigging_ui.tb004.setText('Unlock Transforms' if state else 'Lock Transforms'), 
+				lambda state: self.rigging_submenu_ui.tb004.setText('Unlock Transforms' if state else 'Lock Transforms')])
 		'''
 		if isinstance(widgets, (str)):
 			try:
