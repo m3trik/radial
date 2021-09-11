@@ -381,14 +381,14 @@ class Main(QtWidgets.QStackedWidget):
 	def repeatLastCameraView(self):
 		'''Show the previous camera view.
 		'''
-		camera = self.sb.prevCamera()
-		if callable(camera):
-			camera()
-
-			cam = self.sb.prevCamera(allowCurrent=True, as_list=1)[-2]
-			self.sb.prevCamera(allowCurrent=True, as_list=1).append(cam) #store the camera view
+		method = self.sb.prevCamera()
+		if method:
+			method()
+			method_ = self.sb.prevCamera(allowCurrent=True, as_list=1)[-2][0]
 		else:
-			print('# Warning: No recent camera views in history. #')
+			method_ = self.sb.getMethod('cameras', 'v004') #get the persp camera.
+			method_()
+		self.sb.prevCamera(add=method_) #store the camera view
 
 
 	def repeatLastUi(self):

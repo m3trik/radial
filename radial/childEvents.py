@@ -65,7 +65,7 @@ class EventFactoryFilter(QtCore.QObject):
 			widgets (str)(list) = <QWidgets> if no arg is given, the operation will be performed on all widgets of the given ui name.
 		'''
 		if widgets is None:
-			widgets = self.sb.getWidget(name=name) #get all widgets for the given ui name.
+			widgets = self.sb.getWidget(ui=name) #get all widgets for the given ui name.
 		widgets = self.sb.list(widgets) #if 'widgets' isn't a list, convert it to one.
 
 		for widget in widgets: #get all widgets for the given ui name.
@@ -74,7 +74,7 @@ class EventFactoryFilter(QtCore.QObject):
 			derivedType = self.sb.getDerivedType(widget, name) #get the derived class type as string.
 			ui = self.sb.getUi(name)
 			uiLevel = self.sb.getUiLevel(name)
-			classMethod = self.sb.getMethod(name, widgetName)
+			method = self.sb.getMethod(name, widgetName)
 
 			self.main.style.setStyleSheet(name, widget)
 
@@ -83,12 +83,12 @@ class EventFactoryFilter(QtCore.QObject):
 				# print (widgetName if widgetName else widget)
 
 				if widgetType in ('ToolButton', 'PushButtonDraggable', 'ComboBox', 'TreeWidgetExpandableList', 'LineEdit'): #widget types to initialize menus|contextMenu's for.
-					if callable(classMethod):
+					if callable(method):
 						try: #attempt to clear any current menu items.
-							classMethod.clear()
+							method.clear()
 						except (AttributeError):
 							pass
-						classMethod('setMenu')
+						method('setMenu')
 
 				if derivedType in ('QPushButton', 'QToolButton', 'QLabel'): #widget types to resize and center.
 					if uiLevel<3:
@@ -126,10 +126,10 @@ class EventFactoryFilter(QtCore.QObject):
 		:Parameters:
 			name (str) = ui name.
 		'''
-		# print([i.objectName() for i in self.sb.getWidget(name=name) if name=='cameras']), '---'
+		# print([i.objectName() for i in self.sb.getWidget(ui=name) if name=='cameras']), '---'
 		ui = self.sb.getUi(name)
 		widgetsUnderMouse=[] #list of widgets currently under the mouse cursor and their parents. in hierarchical order. ie. [[<widgets.pushButton.PushButton object at 0x00000000045F6948>, <PySide2.QtWidgets.QMainWindow object at 0x00000000045AA8C8>, <__main__.Main_max object at 0x000000000361F508>, <PySide2.QtWidgets.QWidget object at 0x00000000036317C8>]]
-		for widget in self.sb.getWidget(name=name): #get all widgets from the current ui.
+		for widget in self.sb.getWidget(ui=name): #get all widgets from the current ui.
 			# if hasattr(widget, 'rect'): #ignore any widgets not having the 'rect' attribute.
 				try:
 					widgetName = self.sb.getWidgetName(widget, name)
@@ -225,7 +225,7 @@ class EventFactoryFilter(QtCore.QObject):
 			self.derivedType = self.sb.getDerivedType(self.widget, self.name)
 			self.ui = self.sb.getUi(self.name)
 			self.uiLevel = self.sb.getUiLevel(self.name)
-			self.classMethod = self.sb.getMethod(self.name, self.widgetName)
+			self.method = self.sb.getMethod(self.name, self.widgetName)
 
 			# print(self.name, self.widgetType, self.widgetName, event.__class__.__name__, eventName)
 
@@ -252,7 +252,7 @@ class EventFactoryFilter(QtCore.QObject):
 
 		if self.widgetType in ('ComboBox', 'TreeWidgetExpandableList'):
 			try: #call the class method associated with the current widget.
-				self.classMethod()
+				self.method()
 			except:
 				try: #if call fails (ie. NoneType error); try adding the widget, and call again.
 					self.sb.addWidget(self.name, self.widget)
@@ -344,10 +344,7 @@ class EventFactoryFilter(QtCore.QObject):
 
 				elif self.sb.prefix(self.widget, 'v'):
 					if self.name=='cameras':
-						#add the buttons command info to the prevCamera list.
-						method = self.sb.getMethod(self.name, self.widgetName)
-						docString = self.sb.getDocString(self.name, self.widgetName)
-						self.sb.prevCamera(allowCurrent=True, as_list=1).append([method, docString]) #store the camera view
+						self.sb.prevCamera(add=self.method)
 					#send click signal on mouseRelease.
 					self.widget.click()
 
@@ -355,11 +352,7 @@ class EventFactoryFilter(QtCore.QObject):
 					if self.sb.getUiLevel(self.name)==2: #if submenu:
 						self.widget.click()
 					#add the buttons command info to the prevCommand list.
-					method = self.sb.getMethod(self.name, self.widgetName)
-					docString = self.sb.getDocString(self.name, self.widgetName)
-					toolTip = self.widget.toolTip()
-					self.sb.prevCommand(as_list=1).append([method, docString, toolTip]) #store the method object and other relevant information about the command.
-
+					self.sb.prevCommand(add=self.method)
 
 
 

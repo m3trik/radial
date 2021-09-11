@@ -18,11 +18,6 @@ fix: self.transform_submenu_ui
 # ======================================================================
 
 
-# Traceback (most recent call last):
-#   File "O:/Cloud/Code/_scripts/radial/radial\apps\maya\slots\maya_rigging.py", line 240, in tb004
-#     [pm.setAttr('{}.{}'.format(obj, i), lock=v) for i in k for k, v in attrs_and_state.items()]
-# NameError: name 'k' is not defined
-
 
 maya_polygons
 merge vertices default too low
@@ -186,15 +181,16 @@ scene> rename;  with selection, and find field empty, nothing is renamed. (an * 
 # ======================================================================
 
 
+Animation
+copy keyframes to (with reverse option)
 
 
 Rigging:
 add basic skinning to the menu (bind/unbind skin, etc)
-add: add locator parent, and move to center of object.
 
 
 polygons:
-build arc align tool similar to circularize, but for semi-circles.
+extend circularize to allow for semi-circles (0-360 spinbox).
 
 
 keep list of any checked flags such as constraints and add them to the hud info if they are active.

@@ -215,10 +215,9 @@ class Rigging(Init):
 			self.connect_((tb.menu_.chk012,tb.menu_.chk013,tb.menu_.chk014), 'toggled', 
 				[lambda state: self.rigging_ui.tb004.setText('Lock Attributes' 
 					if any((tb.menu_.chk012.isChecked(),tb.menu_.chk013.isChecked(),tb.menu_.chk014.isChecked())) else 'Unlock Attributes'), 
-				lambda state: self.rigging_submenu_ui.tb004.setText('Lock Attributes' 
+				lambda state: self.rigging_submenu_ui.tb004.setText('Lock Transforms' 
 					if any((tb.menu_.chk012.isChecked(),tb.menu_.chk013.isChecked(),tb.menu_.chk014.isChecked())) else 'Unlock Attributes')])
 			return
-
 
 		lockTranslate = tb.menu_.chk012.isChecked()
 		lockRotation = tb.menu_.chk013.isChecked()
@@ -228,12 +227,12 @@ class Rigging(Init):
 		for obj in sel:
 
 			attrs_and_state = {
-				('tx','ty','tz'):lockTranslate, #ex. ('tx','ty','tz'):False
+				('tx','ty','tz'):lockTranslate, #attributes and state. ex. ('tx','ty','tz'):False
 				('rx','ry','rz'):lockRotation, 
 				('sx','sy','sz'):lockScale
 			}
 
-			[pm.setAttr('{}.{}'.format(obj, i), lock=v) for i in k for k, v in attrs_and_state.items()]
+			[[pm.setAttr('{}.{}'.format(obj, i), lock=v) for i in k] for k, v in attrs_and_state.items()]
 
 
 	def b001(self):
@@ -368,7 +367,8 @@ class Rigging(Init):
 		else: #object selection
 			for obj in sel:
 
-				locName = _formatName(obj.name(), stripDigits, strip, suffix)
+				objName = obj.name()
+				locName = _formatName(objName, stripDigits, strip, suffix)
 
 				loc = pm.spaceLocator(name=locName)
 				if not any([loc, _fullPath]): #if locator creation fails; try again using the objects fullpath name.

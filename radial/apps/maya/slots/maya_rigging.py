@@ -232,7 +232,7 @@ class Rigging(Init):
 		for obj in sel:
 
 			attrs_and_state = {
-				('tx','ty','tz'):lockTranslate, #ex. ('tx','ty','tz'):False
+				('tx','ty','tz'):lockTranslate, #attributes and state. ex. ('tx','ty','tz'):False
 				('rx','ry','rz'):lockRotation, 
 				('sx','sy','sz'):lockScale
 			}
@@ -372,7 +372,8 @@ class Rigging(Init):
 		else: #object selection
 			for obj in sel:
 
-				locName = _formatName(obj.name(), stripDigits, strip, suffix)
+				objName = obj.name()
+				locName = _formatName(objName, stripDigits, strip, suffix)
 
 				loc = pm.spaceLocator(name=locName)
 				if not any([loc, _fullPath]): #if locator creation fails; try again using the objects fullpath name.
