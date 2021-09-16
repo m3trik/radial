@@ -17,15 +17,41 @@ fix: self.transform_submenu_ui
 # BUGFIXES:
 # ======================================================================
 
+set menu stylesheet to have more of an invisible edge buffer before closing.
 
+build calculator
 
 maya_polygons
-merge vertices default too low
-bevel default too low
+fix mirror once and for all!
 
 maya_edit
-clean
-repair and select works, but not repair
+clean: does not repair when repair selected (only in repair and select mode)
+delete: deletes entire object when in multi-select mode.
+
+force open file with autosave
+# Traceback (most recent call last):
+#   File "O:/Cloud/Code/_scripts/radial/radial\slots.py", line 480, in wrapper
+#     self.messageBox(fn(self, *args, **kwargs))
+#   File "O:/Cloud/Code/_scripts/radial/radial\apps\maya\slots\maya_file.py", line 95, in cmb002
+#     pm.openFile(cmb.items[index], open=1, force=force)
+#   File "C:\Program Files\Autodesk\Maya2022\Python37\lib\site-packages\pymel\internal\factories.py", line 1217, in wrappedMelFunc
+#     return inFunc(*args, **kwargs)
+#   File "C:\Program Files\Autodesk\Maya2022\Python37\lib\site-packages\pymel\core\system.py", line 2158, in openFile
+#     res = cmds.file(filepath, **kwargs)
+#   File "C:\Program Files\Autodesk\Maya2022\Python37\lib\site-packages\pymel\internal\pmcmds.py", line 217, in file_wrapped
+#     res = new_cmd(*new_args, **new_kwargs)
+# RuntimeError: Unsaved changes.
+
+
+
+# Traceback (most recent call last):
+#   File "O:/Cloud/Code/_scripts/radial/radial\apps\maya\slots\maya_selection.py", line 508, in tb000
+#     result = self.getEdgeLoop(selection, step=step)
+#   File "O:/Cloud/Code/_scripts/radial/radial\apps\maya\slots\maya_init.py", line 1193, in getEdgeLoop
+#     edges = Init.getEdgePath(pm.ls(edges, flatten=1), 'edgeLoop')
+#   File "O:/Cloud/Code/_scripts/radial/radial\apps\maya\slots\maya_init.py", line 1052, in getEdgePath
+#     componentNumbers = Init.getComponents(obj, 'edges', returnType='int', flatten=1).values()[0] #get the vertex numbers as integer values. ie. [818, 1380]
+# TypeError: 'dict_values' object is not subscriptable
 
 
 # Traceback (most recent call last):

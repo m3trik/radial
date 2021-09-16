@@ -72,6 +72,23 @@ class Animation(Init):
 		Animation.setCurrentFrame(frame, relative=relative, update=update)
 
 
+	@Slots.message
+	@Init.undoChunk
+	def tb001(self, state=None):
+		'''Invert Selected Keyframes
+		'''
+		tb = self.current_ui.tb001
+		if state is 'setMenu':
+			tb.menu_.add('QSpinBox', setPrefix='Time: ', setObjectName='s001', setMinMax_='0-10000 step1', setValue=1, setToolTip='The desired start time for the inverted keys.')
+			tb.menu_.add('QCheckBox', setText='Relative', setObjectName='chk002', setChecked=False, setToolTip='Start time position as relative or absolute.')
+			return
+
+		time = tb.menu_.s001.value()
+		relative = tb.menu_.chk002.isChecked()
+
+		Animation.invertSelectedKeyframes(time=time, relative=relative)
+
+
 	def b000(self):
 		'''Delete Keys on Selected
 		'''
@@ -176,6 +193,39 @@ class Animation(Init):
 
 		pm.currentTime(currentTime+frame, edit=True, update=update)
 
+
+	@staticmethod
+	def invertSelectedKeyframes(time=1, relative=True):
+		'''Duplicate any selected keyframes and paste them inverted at the given time.
+
+		:Parameters:
+			time (int) = The desired start time for the inverted keys.
+			relative (bool) = Start time position as relative or absolute.
+
+		ex. call: invertSelectedKeyframes(time=48, relative=0)
+		'''
+		allActiveKeyTimes = pm.keyframe(query=True, sl=True, tc=True) #get times from all selected keys.
+		if not allActiveKeyTimes:
+			error = '# Error: No keys selected. #'
+			print (error)
+			return error
+		range_ = max(allActiveKeyTimes) - min(allActiveKeyTimes)
+		time = time - max(allActiveKeyTimes) if not relative else time
+
+		selection = pm.ls(sl=1, transforms=1)
+		for obj in selection:
+
+			keys = pm.keyframe(obj, query=True, name=True, sl=True)
+			for node in keys:
+
+				activeKeyTimes = pm.keyframe(node, query=True, sl=True, tc=True)
+				for t, rt in zip(activeKeyTimes, reversed(activeKeyTimes)):
+
+					pm.copyKey(node, time=t)
+					pm.pasteKey(node, time=rt+range_+time)
+
+					inAngle = pm.keyTangent(node, query=True, time=t, inAngle=True)
+					pm.keyTangent(node, edit=True, time=rt+range_+time, inAngle=-inAngle[0])
 
 
 

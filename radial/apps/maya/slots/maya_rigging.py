@@ -177,6 +177,7 @@ class Rigging(Init):
 
 
 	@Slots.message
+	@Init.undoChunk
 	def tb003(self, state=None):
 		'''Create Locator at Selection
 		'''
@@ -334,7 +335,10 @@ class Rigging(Init):
 				pm.parent(loc, objParent)
 
 		def _lockChildAttributes(obj, lockTranslate=lockTranslate, lockRotation=lockRotation, lockScale=lockScale):
-			setAttrs = lambda attrs: [pm.setAttr('{}.{}'.format(obj, attr), lock=True) for attr in attrs]
+			try: #split in case of long name to get the obj attribute.  ex. 'f15e_door_61_bellcrank|Bolt_GEO.tx' to: Bolt_GEO.tx
+				setAttrs = lambda attrs: [pm.setAttr('{}.{}'.format(obj.split('|')[-1], attr), lock=True) for attr in attrs]
+			except: #if obj is type object:
+				setAttrs = lambda attrs: [pm.setAttr('{}.{}'.format(obj, attr), lock=True) for attr in attrs]
 
 			if lockTranslate: #lock translation values
 				setAttrs(('tx','ty','tz'))
@@ -348,8 +352,6 @@ class Rigging(Init):
 		_fullPath = lambda: Rigging.createLocatorAtSelection(suffix=suffix, stripDigits=stripDigits, 
 					strip=strip, parent=parent, scale=scale, _fullPath=True, 
 					lockTranslate=lockTranslate, lockRotation=lockRotation, lockScale=lockScale)
-
-		pm.undoInfo(openChunk=1)
 
 		if sel_verts: #vertex selection
 
@@ -388,7 +390,8 @@ class Rigging(Init):
 				_parent(obj, loc)
 				_lockChildAttributes(objName)
 
-		pm.undoInfo(closeChunk=1)
+
+
 
 
 

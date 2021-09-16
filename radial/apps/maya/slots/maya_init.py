@@ -923,12 +923,12 @@ class Init(Slots):
 
 	@staticmethod
 	@undoChunk
-	def findNonManifoldVertex(objects, select=True):
+	def findNonManifoldVertex(objects, select=2):
 		'''Locate a connected vertex of non-manifold geometry where the faces share a single vertex.
 
 		:Parameters:
 			objects (str)(obj) = A polygon mesh or a list of meshes.
-			select (bool) = Select any found non-manifold vertices. (default is True)
+			select (int) = Select any found non-manifold vertices. 0=off, 1=on, 2=on while keeping any existing vertex selections. (default is True)
 
 		:Return:
 			(list) any found non-manifold verts.
@@ -976,8 +976,11 @@ class Init(Slots):
 				nonManifoldVerts.add(vertex)
 		# pm.undoInfo(closeChunk=True)
 
-		if select:
+		if select==2:
 			pm.select(nonManifoldVerts, add=1)
+		elif select==1:
+			pm.select(nonManifoldVerts)
+
 		return nonManifoldVerts
 
 

@@ -233,7 +233,7 @@
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set the current frame on the timeslider.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="text">
-     <string>Set Current Frame</string>
+     <string>Move to Frame</string>
     </property>
     <property name="checkable">
      <bool>true</bool>

@@ -109,8 +109,8 @@ class Edit(Init):
 
 		if any((quads,nsided,concave,holed,nonplanar,zeroGeom,zeroEdge,zeroMap,sharedUVs,nonmanifold,invalidComponents)):
 			arg_list = '"{0}","{1}","{2}","{3}","{4}","{5}","{6}","{7}","{8}","{9}","{10}","{11}","{12}","{13}","{14}","{15}","{16}","{17}"'.format(
-					allMeshes, selectOnly, historyOn, quads, nsided, concave, holed, nonplanar, zeroGeom, 
-					zeroGeomTol, zeroEdge, zeroEdgeTol, zeroMap, zeroMapTol, sharedUVs, nonmanifold, lamina, invalidComponents)
+					allMeshes, selectOnly, historyOn, quads, nsided, concave, holed, nonplanar, zeroGeom, zeroGeomTol, 
+					zeroEdge, zeroEdgeTol, zeroMap, zeroMapTol, sharedUVs, nonmanifold, lamina, invalidComponents)
 			command = 'polyCleanupArgList 4 {'+arg_list+'}' # command = 'polyCleanup '+arg_list #(not used because of arg count error, also the quotes in the arg list would need to be removed). 
 			print (command)
 			mel.eval(command)
@@ -119,7 +119,7 @@ class Edit(Init):
 			if selectOnly==2:
 				Init.findNonManifoldVertex(objects)
 			else:
-				select = False if selectOnly==0 else True
+				select = 0 if selectOnly==0 else 2
 				nonManifoldVerts = Init.getComponents('vtx', objects, selection=1) #user selection
 				if not nonManifoldVerts:
 					nonManifoldVerts = Init.findNonManifoldVertex(objects, select=select) # vertices = Init.getComponents('vtx', objects, flatten=True)
