@@ -1413,6 +1413,12 @@ class Init(Slots):
 
 
 
+
+
+
+
+
+
 	# -----------------------------------------------
 	' Normals'
 	# -----------------------------------------------
@@ -1801,6 +1807,35 @@ class Init(Slots):
 
 
 
+
+
+
+
+	# ------------------------------------------------
+	' Animation'
+	# ------------------------------------------------
+
+	@staticmethod
+	def getSelectedChannels():
+		'''Get any attributes (channels) that are selected in the channel box.
+
+		:Return:
+			(str) list of any selected attributes as strings. (ie. ['tx', ry', 'sz'])
+		'''
+		channelBox = mel.eval('global string $gChannelBoxName; $temp=$gChannelBoxName;') #fetch maya's main channelbox
+		attrs = pm.channelBox(channelBox, q=True, sma=True)
+
+		if attrs is None:
+			attrs=[]
+		return attrs
+
+
+
+
+
+
+
+
 	# ------------------------------------------------
 	' DAG objects'
 	# ------------------------------------------------
@@ -2079,6 +2114,24 @@ class Init(Slots):
 
 
 	@staticmethod
+	def getPanel(*args, **kwargs):
+		'''Returns panel and panel configuration information.
+		A fix for broken pymel class.
+
+		:Parameters:
+			[allConfigs=boolean], [allPanels=boolean], [allScriptedTypes=boolean], [allTypes=boolean], [configWithLabel=string], [containing=string], [invisiblePanels=boolean], [scriptType=string], [type=string], [typeOf=string], [underPointer=boolean], [visiblePanels=boolean], [withFocus=boolean], [withLabel=string])
+
+		:Return:
+			(str) An array of panel names.
+		'''
+		from maya.cmds import getPanel #pymel getPanel is broken in ver: 2022.
+
+		result = getPanel(*args, **kwargs)
+
+		return result
+
+
+	@staticmethod
 	def convertToWidget(name):
 		'''
 		:Parameters:
@@ -2288,6 +2341,9 @@ class Init(Slots):
 
 
 
+
+
+
 	# ------------------------------------------------
 	' Scripting'
 	# ------------------------------------------------
@@ -2420,6 +2476,10 @@ class Init(Slots):
 		contexts		= '{}\n{}\n{}\n'.format("Tool Contexts", "Tool contexts created using ELF UI commands:", pm.lsUI (contexts=True))
 		output_text	= '{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}'.format(windows, panels, editors, menus, menu_items, controls, control_layouts, contexts)
 		outputscrollField(output_text, "Ui Elements", 6.4, 0.85)
+
+
+
+
 
 
 

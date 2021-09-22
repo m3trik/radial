@@ -19,7 +19,16 @@ fix: self.transform_submenu_ui
 
 set menu stylesheet to have more of an invisible edge buffer before closing.
 
+transform
+add: display combobox
+toggle -localAxis; #Local Rotation Axes
+toggle -rotatePivot; #ToggleRotationPivots; #Rotate Pivots
+toggle -scalePivot; #ToggleScalePivots; #Scale Pivots
+toggle -selectHandle; #ToggleSelectionHandles; #Selection Handles
+
 build calculator
+
+generate fbx previews
 
 maya_polygons
 fix mirror once and for all!

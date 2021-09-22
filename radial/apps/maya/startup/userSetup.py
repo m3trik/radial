@@ -43,9 +43,7 @@ import scriptEditorOutputTextHighlighting #syntax highlighting
 
 mel.eval('source "scriptEditorOutput.mel";')
 mel.eval('evalDeferred -lowPriority ("initScriptEditorOutputWin");')
-
-pm.evalDeferred("scriptEditorOutputTextHighlighting.wrap()", lowestPriority=1)
-
+pm.evalDeferred('scriptEditorOutputTextHighlighting.wrap()', lowestPriority=1)
 
 
 #--------------------------------------------------------------------

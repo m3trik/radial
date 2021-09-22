@@ -40,6 +40,9 @@ class Macros(Init):
 				('hk_toggle_panels', '9', 'UI', 'Toggle UI toolbars.'),
 				('hk_toggle_UV_select_type', 'sht+t', 'Edit', 'Toggle UV / UV shell component selection.'),
 				('hk_merge_vertices', 'ctl+m', 'Edit', 'Merge vertices on selection.'),
+				('hk_group', 'ctl+g', 'Edit', 'Group selected object(s).'),
+				('hk_setSelectedKeys', 'alt+s', 'Animation', 'Set keys for any attributes (channels) that are selected in the channel box.'),
+				('hk_unsetSelectedKeys', 'alt+ctl+s', 'Animation', 'Un-set keys for any attributes (channels) that are selected in the channel box.'),
 			]
 
 		for m in macros:
@@ -187,12 +190,12 @@ class Macros(Init):
 			for obj in scene:
 				obj = obj.split('.')[0] #get u'pSphereShape1' from u'pSphereShape1.vtx[105]' if in component mode.
 
-				if state is 0: #if pm.getAttr(str(obj) + ".displaySmoothMesh") != 2:
+				if state==0: #if pm.getAttr(str(obj) + ".displaySmoothMesh") != 2:
 					pm.setAttr((str(obj) + ".displaySmoothMesh"), 2) #smooth preview on
 					pm.displayPref(wireframeOnShadedActive="none") #selection wireframe off
 					pm.inViewMessage(position='topCenter', fade=1, statusMessage="S-Div Preview <hl>ON</hl>.<br>Wireframe <hl>Off</hl>.")
 
-				elif state is 1:
+				elif state==1:
 					pm.setAttr((str(obj) + ".displaySmoothMesh"), 2) #smooth preview on
 					pm.displayPref(wireframeOnShadedActive="full") #selection wireframe off
 					pm.inViewMessage(position='topCenter', fade=1, statusMessage="S-Div Preview <hl>ON</hl>.<br>Wireframe <hl>Full</hl>.")
@@ -347,17 +350,17 @@ class Macros(Init):
 		currentPanel = Macros.getPanel(withFocus=True)
 		state = Macros.cycle([0,1,2], 'hk_wireframe_on_shaded')
 
-		if state is 0:
+		if state==0:
 			# Macros.setWireframeOnShadedOption(currentPanel, 1, 1)
 			pm.displayPref(wireframeOnShadedActive="full") #selection wireframe full
 			pm.inViewMessage(position='topCenter', fade=1, statusMessage="Wireframe <hl>Full</hl>.")
 
-		if state is 1:
+		if state==1:
 			# Macros.setWireframeOnShadedOption(currentPanel, 1, 0)
 			pm.displayPref(wireframeOnShadedActive="reduced") #selection wireframe reduced
 			pm.inViewMessage(position='topCenter', fade=1, statusMessage="Wireframe <hl>Reduced</hl>.")
 
-		if state is 2:
+		if state==2:
 			# Macros.setWireframeOnShadedOption(currentPanel, 0, 0)
 			pm.displayPref(wireframeOnShadedActive="none") #selection wireframe off
 			pm.inViewMessage(position='topCenter', fade=1, statusMessage="Wireframe <hl>Off</hl>.")
@@ -516,15 +519,15 @@ class Macros(Init):
 		maskVertex=pm.selectType(query=1, vertex=1)
 		maskEdge=pm.selectType(query=1, edge=1)
 		maskFacet=pm.selectType(facet=1, query=1)
-		if maskEdge == 0 and maskFacet == 1:
+		if maskEdge==0 and maskFacet==1:
 			pm.selectType(vertex=True)
 			pm.inViewMessage(position='topCenter', fade=1, statusMessage="<hl>Vertex</hl> Mask is now <hl>ON</hl>.")
 			
-		if maskVertex == 1 and maskFacet == 0:
+		if maskVertex==1 and maskFacet==0:
 			pm.selectType(edge=True)
 			pm.inViewMessage(position='topCenter', fade=1, statusMessage="<hl>Edge</hl> Mask is now <hl>ON</hl>.")
 			
-		if maskVertex == 0 and maskEdge == 1:
+		if maskVertex==0 and maskEdge==1:
 			pm.selectType(facet=True)
 			pm.inViewMessage(position='topCenter', fade=1, statusMessage="<hl>Facet</hl> Mask is now <hl>ON</hl>.")
 
@@ -562,6 +565,21 @@ class Macros(Init):
 
 					for obj in selection:
 						pm.select(obj, add=1)
+
+
+	@staticmethod
+	def hk_group():
+		'''hk_group
+		Group selected object(s).
+		'''
+		sel = pm.ls(sl=1)
+		try:
+			pm.group(sel, name=sel[0])
+			pm.xform(sel, pivots='center')
+
+		except Exception as error: #if nothing selected; create empty group.
+			pm.group(empty=True, name='null')
+
 
 
 	# Selection ------------------------------------------------------------------------------------------------------------------------------
@@ -666,24 +684,44 @@ class Macros(Init):
 		# 			# enter fullscreen mode
 					
 		# 		pm.optionVar(iv=("workspacesInFullScreenUIMode", (not inFullScreenMode)))
-				
+
+
+	# Animation -------------------------------------------------------------------------------------------------------------------------------------
 
 	@staticmethod
-	def getPanel(*args, **kwargs):
-		'''Returns panel and panel configuration information.
-		A fix for broken pymel class.
-
-		:Parameters:
-			[allConfigs=boolean], [allPanels=boolean], [allScriptedTypes=boolean], [allTypes=boolean], [configWithLabel=string], [containing=string], [invisiblePanels=boolean], [scriptType=string], [type=string], [typeOf=string], [underPointer=boolean], [visiblePanels=boolean], [withFocus=boolean], [withLabel=string])
-
-		:Return:
-			(str) An array of panel names.
+	def hk_setSelectedKeys():
+		'''hk_setSelectedKeys
+		Set keys for any attributes (channels) that are selected in the channel box.
 		'''
-		from maya.cmds import getPanel #pymel getPanel is broken in ver: 2022.
+		sel = pm.ls(selection=True, transforms=1, long=1)
+		for obj in sel:
+			attrs = Macros.getSelectedChannels()
+			for attr in attrs:
+				attr_ = getattr(obj, attr)
+				pm.setKeyframe(attr_)
+				#cutKey -cl -t ":" -f ":" -at "tx" -at "ty" -at "tz" pSphere1; #remove keys
 
-		result = getPanel(*args, **kwargs)
 
-		return result
+	@staticmethod
+	def hk_unsetSelectedKeys():
+		'''hk_unsetSelectedKeys
+		Un-set keys for any attributes (channels) that are selected in the channel box.
+		'''
+		sel = pm.ls(selection=True, transforms=1, long=1)
+		for obj in sel:
+			attrs = Macros.getSelectedChannels()
+			for attr in attrs:
+				attr_ = getattr(obj, attr)
+				pm.setKeyframe(attr_)
+				pm.cutKey(attr_, cl=True) #remove keys
+
+
+	# ------------------------------------------------------------------------------------------------
+
+
+
+
+
 
 
 
